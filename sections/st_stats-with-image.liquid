@@ -1,0 +1,1113 @@
+{% comment %} Version: 1.1.3 {% endcomment %}
+
+{% comment %}
+  ---------------------------------------------------------
+  Copyright © 2024 Sternify. All rights reserved.
+  Any unauthorized reproduction, alteration, or distribution
+  of this code, in part or in whole, is expressly forbidden.
+  Violators will be subject to legal prosecution to the maximum
+  extent permitted by law. For permissions or inquiries,
+  please contact us in our discord server: https://discord.gg/NHHCEPhsG8
+  ---------------------------------------------------------
+{% endcomment %}
+
+<script
+  src="https://app.sternify.com/verifier.js?v={{ 'now' | date: '%s' }}"
+  data-section-id="{{ section.id }}"
+  defer></script>
+
+<div
+  id="st_not-found--{{ section.id }}"
+  class="st_not-found"
+  style="display: none;"></div>
+
+{% style %}
+  /* BFC gegen Margin-Collapsing mit Nachbar-Sections (Standard Regel 3) */
+  #shopify-section-{{ section.id }} {
+    display: flow-root;
+    background-color: {{ section.settings.section_background_color }};
+    padding-top: {{ section.settings.margin_top }}px;
+    padding-bottom: {{ section.settings.margin_bottom }}px;
+  }
+
+  {%- assign header_title_font = section.settings.header_title_font -%}
+  {%- assign header_title_font_bold = header_title_font | font_modify: 'weight', 'bold' -%}
+  {%- assign header_title_font_italic = header_title_font | font_modify: 'style', 'italic' -%}
+  {%- assign header_title_font_bold_italic = header_title_font | font_modify: 'weight', 'bold' | font_modify: 'style', 'italic' -%}
+  {%- assign header_subtitle_font = section.settings.header_subtitle_font -%}
+  {%- assign header_subtitle_font_bold = header_subtitle_font | font_modify: 'weight', 'bold' -%}
+  {%- assign header_subtitle_font_italic = header_subtitle_font | font_modify: 'style', 'italic' -%}
+  {%- assign header_subtitle_font_bold_italic = header_subtitle_font | font_modify: 'weight', 'bold' | font_modify: 'style', 'italic' -%}
+  {%- assign stat_font = section.settings.stat_font -%}
+  {%- assign stat_title_font = section.settings.stat_title_font -%}
+  {%- assign stat_subtitle_font = section.settings.stat_subtitle_font -%}
+  {%- assign footer_text_font = section.settings.footer_text_font -%}
+
+  {{ header_title_font | font_face: font_display: 'swap' }}
+  {%- if header_title_font_bold != header_title_font -%}{{ header_title_font_bold | font_face: font_display: 'swap' }}{%- endif -%}
+  {%- if header_title_font_italic != header_title_font -%}{{ header_title_font_italic | font_face: font_display: 'swap' }}{%- endif -%}
+  {%- if header_title_font_bold_italic != header_title_font -%}{{ header_title_font_bold_italic | font_face: font_display: 'swap' }}{%- endif -%}
+
+  {{ header_subtitle_font | font_face: font_display: 'swap' }}
+  {%- if header_subtitle_font_bold != header_subtitle_font -%}{{ header_subtitle_font_bold | font_face: font_display: 'swap' }}{%- endif -%}
+  {%- if header_subtitle_font_italic != header_subtitle_font -%}{{ header_subtitle_font_italic | font_face: font_display: 'swap' }}{%- endif -%}
+  {%- if header_subtitle_font_bold_italic != header_subtitle_font -%}{{ header_subtitle_font_bold_italic | font_face: font_display: 'swap' }}{%- endif -%}
+  
+  {{ stat_font | font_face }}
+  {{ stat_title_font | font_face }}
+  {{ stat_subtitle_font | font_face }}
+  {{ footer_text_font | font_face }}
+
+  /* --- Section Wrapper --- */
+    .st_swi-wrapper--{{ section.id }} {
+      overflow: hidden;
+      padding-inline: 0;
+    }
+
+    .st_swi-wrapper--{{ section.id }}
+    .st_swi-section {
+      width: 100%;
+      {% if section.settings.desktop_card_layout %}
+      {% if section.settings.bg_color_mode == 'solid' %}
+        background-color: {{ section.settings.section_bg_color_solid }};
+      {% else %}
+        background: {{ section.settings.section_bg_color_gradient }};
+      {% endif %}
+      {% endif %}
+      padding: 40px;
+      border-radius: 0;
+      max-width: 100%;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+  /* --- */
+
+  /* ── Exclude card layout from mobile ── */
+    @media screen and (min-width: 768px) {
+      .st_swi-wrapper--{{ section.id }} {
+        {% if section.settings.desktop_card_layout %}
+          padding-inline: 45px;
+          margin: 0 auto;
+        {% elsif section.settings.full_width %}
+          padding-inline: 0;
+        {% else %}
+          padding-inline: 0;
+          margin: 0 auto;
+        {% endif %}
+      }
+
+      .st_swi-wrapper--{{ section.id }}
+      .st_swi-section {
+        {% if section.settings.desktop_card_layout %}
+          max-width: {{ section.settings.max_width }}px;
+          margin-left: auto;
+          margin-right: auto;
+          border-radius: 12px;
+        {% elsif section.settings.full_width %}
+          border-radius: 0;
+          max-width: 100%;
+        {% else %}
+          max-width: {{ section.settings.max_width }}px;
+          margin-left: auto;
+          margin-right: auto;
+          border-radius: 0;
+        {% endif %}
+      }
+    }
+  /* --- */
+
+  /* ── Counter st_reset.css to allow richtext styling ── */
+    .st_swi-wrapper--{{ section.id }} :is(strong, b),
+    .st_swi-wrapper--{{ section.id }} :is(strong, b) * {
+      font-weight: bold !important;
+      font-family: inherit;
+      color: inherit;
+      font-style: inherit;
+    }
+
+    .st_swi-wrapper--{{ section.id }} :is(em, i),
+    .st_swi-wrapper--{{ section.id }} :is(em, i) * {
+      font-style: italic !important;
+      font-family: inherit;
+      color: inherit;
+      font-weight: inherit;
+    }
+
+    .st_swi-wrapper--{{ section.id }} span {
+      font-size: inherit;
+      font-family: inherit;
+      color: inherit;
+      font-style: inherit;
+      font-weight: inherit;
+    }
+  /* --- */
+
+  /* ── Inner grid layout (desktop) ── */
+    .st_swi-wrapper--{{ section.id }}
+    .st_swi-section-inner {
+      display: grid;
+      grid-template-columns: {% if section.settings.desktop_image_position == 'left' %}{{ section.settings.image_size }}% 1fr{% else %}1fr {{ section.settings.image_size }}%{% endif %};
+      grid-template-rows: auto auto auto;
+      column-gap: 40px;
+      align-items: start;
+    }
+
+    {% assign text_col = 1 %}
+    {% assign img_col = 2 %}
+    {% if section.settings.desktop_image_position == 'left' %}
+      {% assign text_col = 2 %}
+      {% assign img_col = 1 %}
+    {% endif %}
+
+    .st_swi-wrapper--{{ section.id }}
+    .st_swi-section-inner-header {
+      grid-column: {{ text_col }};
+      grid-row: 1;
+      margin-bottom: 20px;
+      text-align: {{ section.settings.header_alignment }};
+    }
+
+    .st_swi-wrapper--{{ section.id }}
+    .st_swi-section-inner-stats {
+      grid-column: {{ text_col }};
+      grid-row: 2;
+    }
+
+    .st_swi-wrapper--{{ section.id }}
+    .st_swi-section-inner-footer {
+      grid-column: {{ text_col }};
+      grid-row: 3;
+      margin-top: 16px;
+    }
+
+    .st_swi-wrapper--{{ section.id }}
+    .st_swi-section-inner-image {
+      grid-column: {{ img_col }};
+      grid-row: 1 / -1;
+    }
+  /* --- */
+
+  /* ── Section Header ── */
+    .st_swi-wrapper--{{ section.id }}
+    .st_swi-section-inner-header .st_swi-section-inner-header-title {
+      font-family: {{ header_title_font.family }}, {{ header_title_font.fallback_families }};
+      font-weight: {{ header_title_font.weight }};
+      font-style: {{ header_title_font.style }};
+      font-size: {{ section.settings.header_title_fontsize_desktop }}px;
+      color: {{ section.settings.header_title_color }} !important;
+      margin: 0 0 8px;
+      display: block;
+    }
+
+    .st_swi-wrapper--{{ section.id }}
+    .st_swi-section-inner-header .st_swi-section-inner-header-title .st_swi-section-inner-header-title-highlight {
+      {% if section.settings.header_title_highlight_mode == 'gradient' %}
+        background: {{ section.settings.header_title_highlight_color_gradient }};
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      {% else %}
+        color: {{ section.settings.header_title_highlight_color_solid }} !important;
+      {% endif %}
+    }
+
+    .st_swi-wrapper--{{ section.id }}
+    .st_swi-section-inner-header .st_swi-section-inner-header-subtitle {
+      font-family: {{ header_subtitle_font.family }}, {{ header_subtitle_font.fallback_families }};
+      font-weight: {{ header_subtitle_font.weight }};
+      font-style: {{ header_subtitle_font.style }};
+      font-size: {{ section.settings.header_subtitle_fontsize_desktop }}px;
+      color: {{ section.settings.header_subtitle_color }} !important;
+      /* Section standard: 10px under the section title. */
+      margin: 10px 0 0;
+      display: block;
+    }
+  /* --- */
+
+  /* ── Image ── */
+    .st_swi-wrapper--{{ section.id }}
+    .st_swi-section-inner-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: {{ section.settings.image_border_radius }}px;
+      display: block;
+    }
+  /* --- */
+
+  /* ── Stats list ── */
+    .st_swi-wrapper--{{ section.id }}
+    .st_swi-section-inner-stats .st_swi-section-inner-stats-stat {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 0;
+    }
+
+    .st_swi-wrapper--{{ section.id }}
+    .st_swi-section-inner-stats .st_swi-section-inner-stats-stat:not(:last-child) {
+      {% if section.settings.stat_divider == false %}
+        border-bottom: none !important;
+        padding-bottom: 0 !important;
+      {% else %}
+        border-bottom: 1px solid {{ section.settings.stat_divider_color }} !important;
+      {% endif %}
+    }
+
+    .st_swi-wrapper--{{ section.id }}
+    .st_swi-section-inner-stats .st_swi-section-inner-stats-stat .st_swi-section-inner-stats-stat-number {
+      font-family: {{ stat_font.family }}, {{ stat_font.fallback_families }};
+      font-weight: {{ stat_font.weight }};
+      font-style: {{ stat_font.style }};
+      font-size: {{ section.settings.stat_fontsize_desktop }}px;
+      {% if section.settings.stat_color_mode == 'gradient' %}
+        background: {{ section.settings.stat_color_gradient }};
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      {% else %}
+        color: {{ section.settings.stat_color_solid }} !important;
+      {% endif %}
+      flex-shrink: 0;
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity 0.45s ease-out, transform 0.45s ease-out;
+    }
+
+    .st_swi-wrapper--{{ section.id }}
+    .st_swi-section-inner-stats .st_swi-section-inner-stats-stat .st_swi-section-inner-stats-stat-number.st_swi-stat-number--visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .st_swi-wrapper--{{ section.id }}
+      .st_swi-section-inner-stats .st_swi-section-inner-stats-stat .st_swi-section-inner-stats-stat-number {
+        opacity: 1;
+        transform: none;
+        transition: none;
+      }
+    }
+
+    .st_swi-wrapper--{{ section.id }}
+    .st_swi-section-inner-stats .st_swi-section-inner-stats-stat .st_swi-section-inner-stats-stat-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .st_swi-wrapper--{{ section.id }}
+    .st_swi-section-inner-stats .st_swi-section-inner-stats-stat .st_swi-section-inner-stats-stat-title {
+      font-family: {{ stat_title_font.family }}, {{ stat_title_font.fallback_families }};
+      font-weight: {{ stat_title_font.weight }};
+      font-style: {{ stat_title_font.style }};
+      font-size: {{ section.settings.stat_title_fontsize_desktop }}px;
+      color: {{ section.settings.stat_title_color }} !important;
+      margin: 0;
+    }
+
+    .st_swi-wrapper--{{ section.id }}
+    .st_swi-section-inner-stats .st_swi-section-inner-stats-stat .st_swi-section-inner-stats-stat-subtitle {
+      font-family: {{ stat_subtitle_font.family }}, {{ stat_subtitle_font.fallback_families }};
+      font-weight: {{ stat_subtitle_font.weight }};
+      font-style: {{ stat_subtitle_font.style }};
+      font-size: {{ section.settings.stat_subtitle_fontsize_desktop }}px;
+      color: {{ section.settings.stat_subtitle_color }} !important;
+      margin: 0;
+    }
+  /* --- */
+
+  /* ── Footer ── */
+    .st_swi-wrapper--{{ section.id }}
+    .st_swi-section-inner-footer .st_swi-section-inner-footer-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      border: 1.5px dashed {{ section.settings.footer_border_color }};
+      border-radius: 8px;
+    }
+
+    .st_swi-wrapper--{{ section.id }}
+    .st_swi-section-inner-footer .st_swi-section-inner-footer-box-icon {
+      flex-shrink: 0;
+      width: {{ section.settings.footer_icon_size }}px;
+      height: {{ section.settings.footer_icon_size }}px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .st_swi-wrapper--{{ section.id }}
+    .st_swi-section-inner-footer .st_swi-section-inner-footer-box-icon img,
+    .st_swi-wrapper--{{ section.id }}
+    .st_swi-section-inner-footer .st_swi-section-inner-footer-box-icon svg {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .st_swi-wrapper--{{ section.id }}
+    .st_swi-section-inner-footer .st_swi-section-inner-footer-box-icon svg {
+      fill: {{ section.settings.footer_text_color }};
+    }
+
+    .st_swi-wrapper--{{ section.id }}
+    .st_swi-section-inner-footer .st_swi-section-inner-footer-box-text {
+      font-family: {{ footer_text_font.family }}, {{ footer_text_font.fallback_families }};
+      font-weight: {{ footer_text_font.weight }};
+      font-style: {{ footer_text_font.style }};
+      font-size: {{ section.settings.footer_text_fontsize_desktop }}px;
+      color: {{ section.settings.footer_text_color }} !important;
+      margin: 0;
+    }
+  /* --- */
+
+  /* 1. Tablet adjustments (1200px) */
+  @media (max-width: 1200px) {
+    .st_swi-wrapper--{{ section.id }}
+    .st_swi-section-inner-header .st_swi-section-inner-header-title {
+      font-size: {{ section.settings.header_title_fontsize_mobile }}px;
+    }
+
+    .st_swi-wrapper--{{ section.id }}
+    .st_swi-section-inner-header .st_swi-section-inner-header-subtitle {
+      font-size: {{ section.settings.header_subtitle_fontsize_mobile }}px;
+    }
+
+    .st_swi-wrapper--{{ section.id }}
+    .st_swi-section-inner-stats .st_swi-section-inner-stats-stat .st_swi-section-inner-stats-stat-number {
+      font-size: {{ section.settings.stat_fontsize_mobile }}px;
+    }
+
+    .st_swi-wrapper--{{ section.id }}
+    .st_swi-section-inner-stats .st_swi-section-inner-stats-stat .st_swi-section-inner-stats-stat-title {
+      font-size: {{ section.settings.stat_title_fontsize_mobile }}px;
+    }
+
+    .st_swi-wrapper--{{ section.id }}
+    .st_swi-section-inner-stats .st_swi-section-inner-stats-stat .st_swi-section-inner-stats-stat-subtitle {
+      font-size: {{ section.settings.stat_subtitle_fontsize_mobile }}px;
+    }
+
+    .st_swi-wrapper--{{ section.id }}
+    .st_swi-section-inner-footer .st_swi-section-inner-footer-box-text {
+      font-size: {{ section.settings.footer_text_fontsize_mobile }}px;
+    }
+  }
+
+  /* 2. Mobile layout changes (1000px) */
+  @media (max-width: 1000px) {
+    ;
+    /* Major layout restructuring for mobile */
+  }
+
+  /* ── Mobile ── */
+    @media (max-width: 768px) {
+      .st_swi-wrapper--{{ section.id }}
+      .st_swi-section {
+        padding: 30px 20px;
+      }
+
+      .st_swi-wrapper--{{ section.id }}
+      .st_swi-section-inner {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        align-items: center;
+      }
+
+      .st_swi-wrapper--{{ section.id }} .st_swi-section-inner-header {
+        order: 1;
+        margin-bottom: 0;
+      }
+      .st_swi-wrapper--{{ section.id }} .st_swi-section-inner-image {
+        order: 2;
+        width: 100%;
+      }
+      .st_swi-wrapper--{{ section.id }} .st_swi-section-inner-stats {
+        order: 3;
+      }
+      .st_swi-wrapper--{{ section.id }} .st_swi-section-inner-stats .st_swi-section-inner-stats-stat {
+        padding: 12px 0;
+      }
+      .st_swi-wrapper--{{ section.id }} .st_swi-section-inner-footer {
+        order: 4;
+        margin-top: 0;
+      }
+
+      .st_swi-wrapper--{{ section.id }}
+      .st_swi-section-inner-header .st_swi-section-inner-header-title {
+        font-size: {{ section.settings.header_title_fontsize_mobile }}px;
+      }
+
+      .st_swi-wrapper--{{ section.id }}
+      .st_swi-section-inner-header .st_swi-section-inner-header-subtitle {
+        font-size: {{ section.settings.header_subtitle_fontsize_mobile }}px;
+      }
+
+      .st_swi-wrapper--{{ section.id }}
+      .st_swi-section-inner-stats .st_swi-section-inner-stats-stat .st_swi-section-inner-stats-stat-number {
+        font-size: {{ section.settings.stat_fontsize_mobile }}px;
+      }
+
+      .st_swi-wrapper--{{ section.id }}
+      .st_swi-section-inner-stats .st_swi-section-inner-stats-stat .st_swi-section-inner-stats-stat-title {
+        font-size: {{ section.settings.stat_title_fontsize_mobile }}px;
+      }
+
+      .st_swi-wrapper--{{ section.id }}
+      .st_swi-section-inner-stats .st_swi-section-inner-stats-stat .st_swi-section-inner-stats-stat-subtitle {
+        font-size: {{ section.settings.stat_subtitle_fontsize_mobile }}px;
+      }
+
+      .st_swi-wrapper--{{ section.id }}
+      .st_swi-section-inner-footer .st_swi-section-inner-footer-box-text {
+        font-size: {{ section.settings.footer_text_fontsize_mobile }}px;
+      }
+    }
+  /* --- */
+{% endstyle %}
+
+<div class="st_swi-wrapper--{{ section.id }} st_wrapper st_check-section--{{ section.id }}">
+  <div class="st_swi-section">
+    <div class="st_swi-section-inner">
+
+      {% if section.settings.header_title != blank or section.settings.header_subtitle != blank %}
+        <div class="st_swi-section-inner-header">
+          {% if section.settings.header_title != blank %}
+            <div class="st_swi-section-inner-header-title">
+              {{ section.settings.header_title | replace: '[', '<span class="st_swi-section-inner-header-title-highlight">' | replace: ']', '</span>' }}
+            </div>
+          {% endif %}
+          {% if section.settings.header_subtitle != blank %}
+            <div class="st_swi-section-inner-header-subtitle">{{ section.settings.header_subtitle }}</div>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      {% if section.settings.image != blank %}
+        <div class="st_swi-section-inner-image">
+          {{ section.settings.image | image_url: width: 1000 | image_tag: loading: 'lazy', alt: section.settings.image.alt }}
+        </div>
+      {% elsif section.settings.image_demo_url != blank %}
+        <div class="st_swi-section-inner-image">
+          <img src="{{ section.settings.image_demo_url }}" loading="lazy" alt="">
+        </div>
+      {% else %}
+        <div class="st_swi-section-inner-image">
+          <img src="https://cdn.shopify.com/s/files/1/0865/0588/1634/files/Sternify_Black_Skin_Care.png?v=1772104938" width="1000" height="1000" alt="Sternify Skin Care" loading="lazy">
+        </div>
+      {% endif %}
+
+      {% if section.blocks.size > 0 %}
+        <div class="st_swi-section-inner-stats">
+          {% for block in section.blocks %}
+            <div class="st_swi-section-inner-stats-stat" {{ block.shopify_attributes }}>
+              {% if block.settings.stat_text != blank %}
+                <div class="st_swi-section-inner-stats-stat-number">{{ block.settings.stat_text }}</div>
+              {% endif %}
+              {% if block.settings.stat_title != blank or block.settings.stat_subtitle != blank %}
+                <div class="st_swi-section-inner-stats-stat-info">
+                  {% if block.settings.stat_title != blank %}
+                    <div class="st_swi-section-inner-stats-stat-title">{{ block.settings.stat_title }}</div>
+                  {% endif %}
+                  {% if block.settings.stat_subtitle != blank %}
+                    <div class="st_swi-section-inner-stats-stat-subtitle">{{ block.settings.stat_subtitle }}</div>
+                  {% endif %}
+                </div>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% if section.settings.footer_text != blank and section.settings.show_footer %}
+        <div class="st_swi-section-inner-footer">
+          <div class="st_swi-section-inner-footer-box">
+            {% if section.settings.footer_icon != blank %}
+              <div class="st_swi-section-inner-footer-box-icon">
+                {{ section.settings.footer_icon | image_url: width: 64 | image_tag: loading: 'lazy', alt: 'Footer icon' }}
+              </div>
+            {% elsif section.settings.footer_icon_demo_url != blank %}
+              <div class="st_swi-section-inner-footer-box-icon">
+                <img src="{{ section.settings.footer_icon_demo_url }}" loading="lazy" alt="Footer icon">
+              </div>
+            {% else %}
+              <div class="st_swi-section-inner-footer-box-icon">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                </svg>
+              </div>
+            {% endif %}
+            <div class="st_swi-section-inner-footer-box-text">{{ section.settings.footer_text }}</div>
+          </div>
+        </div>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    function initStatNumberScrollAnimation() {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      const section = document.querySelector('.st_swi-wrapper--{{ section.id }}');
+      if (!section) return;
+
+      const statNumbers = section.querySelectorAll('.st_swi-section-inner-stats-stat-number');
+      if (statNumbers.length === 0) return;
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('st_swi-stat-number--visible');
+          }
+        });
+      }, { threshold: 0.15, rootMargin: '0px 0px -30px 0px' });
+
+      statNumbers.forEach(el => observer.observe(el));
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initStatNumberScrollAnimation);
+    } else {
+      initStatNumberScrollAnimation();
+    }
+
+    document.addEventListener('shopify:section:load', (e) => {
+      if (e.detail?.sectionId === '{{ section.id }}') initStatNumberScrollAnimation();
+    });
+  })();
+</script>
+
+{% schema %}
+  {
+    "name": "💫: Stats with Image",
+    "class": "swi-section",
+    "tag": "section",
+    "max_blocks": 5,
+    "settings": [
+      {
+        "type": "header",
+        "content": "Important",
+        "info": "Please ensure that Sternify [App Extensions](https://www.sternify.com/app-extentions) are activated."
+      },
+      {
+        "type": "header",
+        "content": "Section Layout"
+      },
+      {
+        "type": "range",
+        "id": "margin_top",
+        "label": "Top Margin",
+        "min": 0,
+        "max": 150,
+        "step": 5,
+        "default": 50,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "margin_bottom",
+        "label": "Bottom Margin",
+        "min": 0,
+        "max": 150,
+        "step": 5,
+        "default": 50,
+        "unit": "px"
+      },
+      {
+        "type": "color",
+        "id": "section_background_color",
+        "label": "Section Background Color",
+        "default": "rgba(0,0,0,0)",
+        "info": "Fills the full section including the top and bottom margins"
+      },
+      {
+        "type": "checkbox",
+        "id": "full_width",
+        "label": "Full Width",
+        "default": false,
+        "visible_if": "{{ section.settings.desktop_card_layout == false }}"
+      },
+      {
+        "type": "range",
+        "id": "max_width",
+        "label": "Section Max Width",
+        "min": 1200,
+        "max": 1600,
+        "step": 50,
+        "default": 1400,
+        "unit": "px",
+        "visible_if": "{{ section.settings.desktop_card_layout or section.settings.full_width == false }}"
+      },
+      {
+        "type": "header",
+        "content": "Card Settings"
+      },
+      {
+        "type": "checkbox",
+        "id": "desktop_card_layout",
+        "label": "Desktop Card Layout",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "bg_color_mode",
+        "label": "Card Background Color Mode",
+        "options": [
+          { "value": "solid", "label": "Solid" },
+          { "value": "gradient", "label": "Gradient" }
+        ],
+        "default": "solid",
+        "visible_if": "{{ section.settings.desktop_card_layout }}"
+      },
+      {
+        "type": "color",
+        "id": "section_bg_color_solid",
+        "label": "Card Background Color",
+        "default": "#f9f9f9",
+        "visible_if": "{{ section.settings.desktop_card_layout and section.settings.bg_color_mode == 'solid' }}"
+      },
+      {
+        "type": "color_background",
+        "id": "section_bg_color_gradient",
+        "label": "Card Background Gradient",
+        "default": "linear-gradient(0deg, #f1f1f1, #f9f9f9 100%)",
+        "visible_if": "{{ section.settings.desktop_card_layout and section.settings.bg_color_mode == 'gradient' }}"
+      },
+      {
+        "type": "header",
+        "content": "Section Header"
+      },
+      {
+        "type": "text_alignment",
+        "id": "header_alignment",
+        "label": "Header Alignment",
+        "default": "center"
+      },
+      {
+        "type": "inline_richtext",
+        "id": "header_title",
+        "label": "Title",
+        "info": "Text in [brackets] will be highlighted",
+        "default": "Numbers <em>[Speak Volumes.]</em>"
+      },
+      {
+        "type": "color",
+        "id": "header_title_color",
+        "label": "Title Color",
+        "default": "#1a1a1a"
+      },
+      {
+        "type": "select",
+        "id": "header_title_highlight_mode",
+        "label": "Title Highlight Mode",
+        "options": [
+          { "value": "solid", "label": "Solid" },
+          { "value": "gradient", "label": "Gradient" }
+        ],
+        "default": "solid"
+      },
+      {
+        "type": "color",
+        "id": "header_title_highlight_color_solid",
+        "label": "Title Highlight Color",
+        "default": "#dbbd21",
+        "visible_if": "{{ section.settings.header_title_highlight_mode == 'solid' }}"
+      },
+      {
+        "type": "color_background",
+        "id": "header_title_highlight_color_gradient",
+        "label": "Title Highlight Color",
+        "default": "linear-gradient(0deg, rgba(247, 222, 94, 1), rgba(219, 189, 33, 1) 100%)",
+        "visible_if": "{{ section.settings.header_title_highlight_mode == 'gradient' }}"
+      },
+      {
+        "type": "font_picker",
+        "id": "header_title_font",
+        "label": "Title Font",
+        "default": "poppins_n6"
+      },
+      {
+        "type": "range",
+        "id": "header_title_fontsize_desktop",
+        "label": "Title Font Size (Desktop)",
+        "min": 28,
+        "max": 45,
+        "step": 1,
+        "default": 34,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "header_title_fontsize_mobile",
+        "label": "Title Font Size (Mobile)",
+        "min": 20,
+        "max": 40,
+        "step": 1,
+        "default": 24,
+        "unit": "px"
+      },
+      {
+        "type": "inline_richtext",
+        "id": "header_subtitle",
+        "label": "Subtitle",
+        "default": "Our results speak for themselves."
+      },
+      {
+        "type": "color",
+        "id": "header_subtitle_color",
+        "label": "Subtitle Color",
+        "default": "#666666"
+      },
+      {
+        "type": "font_picker",
+        "id": "header_subtitle_font",
+        "label": "Subtitle Font",
+        "default": "poppins_n4"
+      },
+      {
+        "type": "range",
+        "id": "header_subtitle_fontsize_desktop",
+        "label": "Subtitle Font Size (Desktop)",
+        "min": 15,
+        "max": 30,
+        "step": 1,
+        "default": 16,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "header_subtitle_fontsize_mobile",
+        "label": "Subtitle Font Size (Mobile)",
+        "min": 12,
+        "max": 24,
+        "step": 1,
+        "default": 14,
+        "unit": "px"
+      },
+      {
+        "type": "header",
+        "content": "Statistics"
+      },
+      {
+        "type": "select",
+        "id": "stat_color_mode",
+        "label": "Stat Color Mode",
+        "options": [
+          { "value": "solid", "label": "Solid" },
+          { "value": "gradient", "label": "Gradient" }
+        ],
+        "default": "solid"
+      },
+      {
+        "type": "color",
+        "id": "stat_color_solid",
+        "label": "Stat Color",
+        "default": "#dbbd21",
+        "visible_if": "{{ section.settings.stat_color_mode == 'solid' }}"
+      },
+      {
+        "type": "color_background",
+        "id": "stat_color_gradient",
+        "label": "Stat Color",
+        "default": "linear-gradient(90deg, rgba(242, 223, 126, 1), rgba(219, 189, 33, 1) 100%)",
+        "visible_if": "{{ section.settings.stat_color_mode == 'gradient' }}"
+      },
+      {
+        "type": "font_picker",
+        "id": "stat_font",
+        "label": "Stat Font",
+        "default": "poppins_n6"
+      },
+      {
+        "type": "range",
+        "id": "stat_fontsize_desktop",
+        "label": "Stat Font Size (Desktop)",
+        "min": 34,
+        "max": 55,
+        "step": 1,
+        "default": 48,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "stat_fontsize_mobile",
+        "label": "Stat Font Size (Mobile)",
+        "min": 28,
+        "max": 45,
+        "step": 1,
+        "default": 36,
+        "unit": "px"
+      },
+      {
+        "type": "color",
+        "id": "stat_title_color",
+        "label": "Stat Title Color",
+        "default": "#1a1a1a"
+      },
+      {
+        "type": "font_picker",
+        "id": "stat_title_font",
+        "label": "Stat Title Font",
+        "default": "poppins_n6"
+      },
+      {
+        "type": "range",
+        "id": "stat_title_fontsize_desktop",
+        "label": "Stat Title Font Size (Desktop)",
+        "min": 14,
+        "max": 26,
+        "step": 1,
+        "default": 16,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "stat_title_fontsize_mobile",
+        "label": "Stat Title Font Size (Mobile)",
+        "min": 13,
+        "max": 19,
+        "step": 1,
+        "default": 14,
+        "unit": "px"
+      },
+      {
+        "type": "color",
+        "id": "stat_subtitle_color",
+        "label": "Stat Subtitle Color",
+        "default": "#666666"
+      },
+      {
+        "type": "font_picker",
+        "id": "stat_subtitle_font",
+        "label": "Stat Subtitle Font",
+        "default": "poppins_n4"
+      },
+      {
+        "type": "range",
+        "id": "stat_subtitle_fontsize_desktop",
+        "label": "Stat Subtitle Font Size (Desktop)",
+        "min": 13,
+        "max": 20,
+        "step": 1,
+        "default": 14,
+        "unit": "px"
+      },
+      {
+        "type": "range",
+        "id": "stat_subtitle_fontsize_mobile",
+        "label": "Stat Subtitle Font Size (Mobile)",
+        "min": 12,
+        "max": 17,
+        "step": 1,
+        "default": 13,
+        "unit": "px"
+      },
+      {
+        "type": "checkbox",
+        "id": "stat_divider",
+        "label": "Show Stat Divider",
+        "default": true
+      },
+      {
+        "type": "color",
+        "id": "stat_divider_color",
+        "label": "Stat Divider Color",
+        "default": "#e0e0e0",
+        "visible_if": "{{ section.settings.stat_divider }}"
+      },
+      {
+        "type": "header",
+        "content": "Image"
+      },
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Image"
+      },
+      {
+        "type": "text",
+        "id": "image_demo_url",
+        "label": "Demo Image URL",
+        "default": "https://cdn.shopify.com/s/files/1/0865/0588/1634/files/Sternify_Black_Skin_Care.png?v=1772104938",
+        "visible_if": "{{ section.settings.image_demo_url == 'st-internal' }}"
+      },
+      {
+        "type": "select",
+        "id": "desktop_image_position",
+        "label": "Desktop Image Position",
+        "options": [
+          { "value": "left", "label": "Left" },
+          { "value": "right", "label": "Right" }
+        ],
+        "default": "right"
+      },
+      {
+        "type": "range",
+        "id": "image_size",
+        "label": "Image Size",
+        "min": 30,
+        "max": 60,
+        "step": 5,
+        "default": 45,
+        "unit": "%",
+        "info": "Percentage of section width the image column occupies on desktop"
+      },
+      {
+        "type": "range",
+        "id": "image_border_radius",
+        "label": "Image Border Radius",
+        "min": 0,
+        "max": 30,
+        "step": 2,
+        "default": 12,
+        "unit": "px"
+      },
+      {
+        "type": "header",
+        "content": "Footer"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_footer",
+        "label": "Show Footer",
+        "default": true
+      },
+      {
+        "type": "inline_richtext",
+        "id": "footer_text",
+        "label": "Footer Text",
+        "default": "Based on over 7,000 verified reviews.",
+        "visible_if": "{{ section.settings.show_footer }}"
+      },
+      {
+        "type": "color",
+        "id": "footer_text_color",
+        "label": "Footer Text Color",
+        "default": "#666666",
+        "visible_if": "{{ section.settings.show_footer }}"
+      },
+      {
+        "type": "font_picker",
+        "id": "footer_text_font",
+        "label": "Footer Text Font",
+        "default": "poppins_n4",
+        "visible_if": "{{ section.settings.show_footer }}"
+      },
+      {
+        "type": "range",
+        "id": "footer_text_fontsize_desktop",
+        "label": "Footer Text Font Size (Desktop)",
+        "min": 11,
+        "max": 18,
+        "step": 1,
+        "default": 13,
+        "unit": "px",
+        "visible_if": "{{ section.settings.show_footer }}"
+      },
+      {
+        "type": "range",
+        "id": "footer_text_fontsize_mobile",
+        "label": "Footer Text Font Size (Mobile)",
+        "min": 10,
+        "max": 18,
+        "step": 1,
+        "default": 12,
+        "unit": "px",
+        "visible_if": "{{ section.settings.show_footer }}"
+      },
+      {
+        "type": "image_picker",
+        "id": "footer_icon",
+        "label": "Footer Icon",
+        "info": "Upload a custom icon. If empty, a default info icon is shown.",
+        "visible_if": "{{ section.settings.show_footer }}"
+      },
+      {
+        "type": "text",
+        "id": "footer_icon_demo_url",
+        "label": "Demo Image URL",
+        "visible_if": "{{ section.settings.footer_icon_demo_url == 'st-internal' }}"
+      },
+      {
+        "type": "range",
+        "id": "footer_icon_size",
+        "label": "Footer Icon Size",
+        "min": 14,
+        "max": 28,
+        "step": 2,
+        "default": 16,
+        "unit": "px",
+        "visible_if": "{{ section.settings.show_footer }}"
+      },
+      {
+        "type": "color",
+        "id": "footer_border_color",
+        "label": "Footer Border Color",
+        "default": "#cccccc",
+        "visible_if": "{{ section.settings.show_footer }}"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "stat",
+        "name": "Statistic",
+        "settings": [
+          {
+            "type": "text",
+            "id": "stat_text",
+            "label": "Stat Text",
+            "default": "100%"
+          },
+          {
+            "type": "text",
+            "id": "stat_title",
+            "label": "Stat Title",
+            "default": "Guaranteed AOV Boost"
+          },
+          {
+            "type": "text",
+            "id": "stat_subtitle",
+            "label": "Stat Subtitle",
+            "default": "Boost your average order value with our proven sections."
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "💫: Stats with Image",
+        "blocks": [
+          {
+            "type": "stat",
+            "settings": {
+              "stat_text": "5,000+",
+              "stat_title": "Success Stories",
+              "stat_subtitle": "See how our sections have helped businesses grow."
+            }
+          },
+          {
+            "type": "stat",
+            "settings": {
+              "stat_text": "99%",
+              "stat_title": "Positive Reviews",
+              "stat_subtitle": "Loved by customers worldwide."
+            }
+          },
+          {
+            "type": "stat",
+            "settings": {
+              "stat_text": "24/7",
+              "stat_title": "Support Available",
+              "stat_subtitle": "We're here to help you every step of the way."
+            }
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

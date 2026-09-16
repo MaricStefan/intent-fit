@@ -1,0 +1,4068 @@
+{% comment %} Version: 1.4.3 {% endcomment %}
+
+{% comment %}
+  ---------------------------------------------------------
+  Copyright © 2026 Sternify. All rights reserved.
+  Any unauthorized reproduction, alteration, or distribution
+  of this code, in part or in whole, is expressly forbidden.
+  Violators will be subject to legal prosecution to the maximum
+  extent permitted by law. For permissions or inquiries,
+  please contact us in our discord server: https://discord.gg/NHHCEPhsG8
+  ---------------------------------------------------------
+{% endcomment %}
+
+<script
+  src="https://app.sternify.com/verifier.js?v={{ 'now' | date: '%s' }}"
+  data-section-id="{{ section.id }}"
+  defer
+></script>
+
+<div id="st_not-found--{{ section.id }}" class="st_not-found" style="display: none;"></div>
+
+<!-- Swiper JS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/8.4.7/swiper-bundle.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/8.4.7/swiper-bundle.min.js"></script>
+
+<style>
+  /* BFC gegen Margin-Collapsing mit Nachbar-Sections (Standard Regel 3) */
+  #shopify-section-{{ section.id }} {
+    display: flow-root;
+    {% if section.settings.section_bg_gradient_enable %}
+      background: {{ section.settings.section_bg_gradient }};
+    {% else %}
+      background-color: {{ section.settings.section_bg_color }};
+    {% endif %}
+    padding-top: {{ section.settings.margin_top }}px;
+    padding-bottom: {{ section.settings.margin_bottom }}px;
+  }
+
+  {%- assign heading_font = section.settings.heading_font -%}
+  {%- assign body_font = section.settings.body_font -%}
+  {%- assign st_buy = section.blocks | where: 'type', 'buy_buttons' | first -%}
+  {%- assign st_price = section.blocks | where: 'type', 'price' | first -%}
+  {%- assign st_title = section.blocks | where: 'type', 'title' | first -%}
+  {%- assign st_subtitle = section.blocks | where: 'type', 'subtitle' | first -%}
+
+  /* ── Counter st_reset.css to allow richtext styling ── */
+  .st_product-info--{{ section.id }} :is(strong, b),
+  .st_product-info--{{ section.id }} :is(strong, b) * {
+    font-weight: bold !important;
+    font-family: inherit;
+    color: inherit;
+    font-style: inherit;
+  }
+
+  .st_product-info--{{ section.id }} :is(em, i),
+  .st_product-info--{{ section.id }} :is(em, i) * {
+    font-style: italic !important;
+    font-family: inherit;
+    color: inherit;
+    font-weight: inherit;
+  }
+  /* --- */
+
+  {%- assign st_desc = section.blocks | where: 'type', 'description' | first -%}
+  {%- assign st_vp = section.blocks | where: 'type', 'variant_picker' | first -%}
+
+  {{ heading_font | font_face }}
+  {{ body_font | font_face }}
+
+  {%- comment -%}
+    The pickers only load the ONE weight the merchant chose (the default body
+    font is poppins_n4), but this section hardcodes 500/600/700 in several
+    places, most visibly on the add-to-cart button. Without a real face at those
+    weights the browser synthesises a fake bold, and how heavy that looks depends
+    on the theme, so the same button rendered differently on Horizon and Dawn.
+    Load the heavier cuts explicitly. font_modify returns nil when a family has
+    no such weight, and font_face on nil outputs nothing, so this is safe for
+    fonts that only ship one weight.
+  {%- endcomment -%}
+  {%- assign body_font_medium = body_font | font_modify: 'weight', '500' -%}
+  {%- assign body_font_semibold = body_font | font_modify: 'weight', '600' -%}
+  {%- assign body_font_bold = body_font | font_modify: 'weight', 'bold' -%}
+  {%- assign heading_font_bold = heading_font | font_modify: 'weight', 'bold' -%}
+  {%- if body_font_medium -%}{{ body_font_medium | font_face }}{%- endif -%}
+  {%- if body_font_semibold -%}{{ body_font_semibold | font_face }}{%- endif -%}
+  {%- if body_font_bold -%}{{ body_font_bold | font_face }}{%- endif -%}
+  {%- if heading_font_bold -%}{{ heading_font_bold | font_face }}{%- endif -%}
+
+  .st_product-info--{{ section.id }} {
+    /* Seitlicher Rand auf dem Library-Standard (45px ab Tablet), damit die
+       Spalte exakt so breit ist wie bei jeder anderen Section. Vorher fix
+       20px, wodurch die Buy-Box 25px pro Seite breiter lief als alles
+       darunter und die Kanten sichtbar nicht fluchteten.
+       Der vertikale Abstand bleibt unveraendert. */
+    padding: 30px 20px;
+  }
+
+  @media screen and (min-width: 768px) {
+    .st_product-info--{{ section.id }} {
+      padding-inline: 45px;
+    }
+  }
+
+  .st_product-info--{{ section.id }} * {
+    box-sizing: border-box;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-container {
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    gap: 48px;
+    align-items: start;
+    font-family: {{ body_font.family }}, {{ body_font.fallback_families }};
+    font-weight: {{ body_font.weight }};
+    font-style: {{ body_font.style }};
+  }
+
+  {% if section.settings.media_position == 'right' %}
+    .st_product-info--{{ section.id }} .st_pi-media-col { order: 2; }
+    .st_product-info--{{ section.id }} .st_pi-details { order: 1; }
+  {% endif %}
+
+  /* ---------- Gallery ---------- */
+  .st_product-info--{{ section.id }} .st_pi-media-col {
+    position: sticky;
+    top: 20px;
+    min-width: 0;
+  }
+
+  /* Stretch is what makes the benefit column match the image height. It is safe
+     because the column carries `min-height: 0` + `overflow: hidden`, so its
+     content can never be what defines the row: the image always is. */
+  .st_product-info--{{ section.id }} .st_pi-viewer {
+    display: flex;
+    gap: 12px;
+    align-items: stretch;
+    min-width: 0;
+  }
+
+  /* Benefit boxes: fixed-width column beside the image; boxes share the
+     image height equally so the stack always matches the gallery exactly */
+  /* The IMAGE is the single source of height for the whole gallery row. Both
+     side columns (benefit boxes here, thumbs in the grid) must be able to shrink
+     below their content, or whichever is tallest silently becomes the row height
+     and the image no longer fills it. `min-height: 0` + `align-self: stretch` is
+     what expresses "match the image, do not drive it". */
+  .st_product-info--{{ section.id }} .st_pi-gallery-boxes {
+    flex: 0 0 min({{ section.settings.gallery_boxes_width | default: 120 }}px, 26vw);
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: {{ section.settings.gallery_boxes_gap | default: 8 }}px;
+    min-height: 0;
+    align-self: stretch;
+    overflow: hidden;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-gallery-boxes--right {
+    order: 2;
+  }
+
+  /* Desktop uses the persistent column beside the gallery; the copy rendered
+     inside slide 1 (for the mobile swipe-away behaviour) stays hidden here. */
+  .st_product-info--{{ section.id }} .swiper-slide .st_pi-gallery-boxes {
+    display: none;
+  }
+
+  /* Boxes grow from their content and share any leftover image height between
+     them. `flex: 1 1 auto` (not `1 1 0`) means a two-line label makes its own
+     box taller instead of being clipped by the equal-split. */
+  /* On desktop the column must match the image height exactly, so the boxes
+     split it equally (`1 1 0`, not `1 1 auto` which lets content push the column
+     taller than the image). Mobile relaxes this below. */
+  .st_product-info--{{ section.id }} .st_pi-gallery-box {
+    flex: 1 1 0;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 6px;
+    padding: 14px 10px;
+    overflow-wrap: anywhere;
+    {% if section.settings.gallery_box_gradient_enable %}
+      background: {{ section.settings.gallery_box_gradient }};
+    {% else %}
+      background: {{ section.settings.gallery_box_bg_color }};
+    {% endif %}
+    {% if section.settings.gallery_box_border_enable %}
+      border: {{ section.settings.gallery_box_border_width | default: 1 }}px solid {{ section.settings.gallery_box_border_color | default: '#E4E2E2' }};
+    {% endif %}
+    border-radius: {{ section.settings.gallery_box_radius }}px;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-gallery-box svg {
+    width: 20px;
+    height: 20px;
+    {% if section.settings.gallery_box_icon_gradient_enable %}
+      fill: url(#st-pi-icongrad-{{ section.id }});
+    {% else %}
+      fill: {{ section.settings.gallery_box_icon_color }};
+    {% endif %}
+    flex: 0 0 auto;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-gallery-box img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-gallery-box-heading {
+    font-size: 12px;
+    font-weight: 700;
+    color: {{ section.settings.gallery_box_text_color }};
+    line-height: 1.25;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-gallery-box-text {
+    font-size: 11px;
+    color: {{ section.settings.gallery_box_text_color }};
+    opacity: 0.75;
+    line-height: 1.35;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-gallery-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  /* Takes all the width the benefit column does not use. Without `flex: 1` it
+     sizes to content, so the image comes out narrower (and therefore shorter)
+     than the boxes beside it. */
+  .st_product-info--{{ section.id }} .st_pi-main {
+    position: relative;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  /* Main media carousel.
+     Sizing follows Dawn: the FRAME owns the aspect ratio and every slide fills
+     it, so mixed portrait/square/landscape media from the Shopify backend all
+     occupy the same box and the carousel never jumps height between slides.
+     `natural` opts out and lets each image keep its own ratio (Swiper autoHeight
+     handles the varying height in that mode). */
+  .st_product-info--{{ section.id }} .st_pi-swiper {
+    width: 100%;
+    border-radius: {{ section.settings.image_border_radius }}px;
+    overflow: hidden;
+    background: #f6f6f6;
+    {% if section.settings.image_ratio == 'square' %}
+      --st-pi-ratio: 1 / 1;
+      aspect-ratio: var(--st-pi-ratio);
+    {% elsif section.settings.image_ratio == 'portrait' %}
+      --st-pi-ratio: 4 / 5;
+      aspect-ratio: var(--st-pi-ratio);
+    {% endif %}
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-swiper .swiper-slide {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-swiper .swiper-slide img,
+  .st_product-info--{{ section.id }} .st_pi-swiper .swiper-slide video,
+  .st_product-info--{{ section.id }} .st_pi-swiper .swiper-slide iframe {
+    width: 100%;
+    height: 100%;
+    display: block;
+    {% if section.settings.image_ratio == 'natural' %}
+      height: auto;
+    {% else %}
+      object-fit: cover;
+    {% endif %}
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-swiper .swiper-slide iframe {
+    aspect-ratio: 16 / 9;
+    height: auto;
+    border: 0;
+  }
+
+  /* Main gallery arrows */
+  .st_product-info--{{ section.id }} .st_pi-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    background: {{ section.settings.arrow_bg_color }}80;
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 3;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    transition: transform 0.15s ease, opacity 0.15s ease, background 0.15s ease;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-arrow:hover {
+    transform: translateY(-50%) scale(1.08);
+    background: {{ section.settings.arrow_bg_color }}CC;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-arrow svg {
+    width: 18px;
+    height: 18px;
+    fill: {{ section.settings.arrow_icon_color }};
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-arrow--prev {
+    left: 10px;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-arrow--next {
+    right: 10px;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-arrow.swiper-button-disabled {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Thumbnails strip with minimal nav arrows */
+  /* Flex row rather than absolute arrows pinned to the zone edges: that left the
+     chevrons ~32px away from a centred strip. As flex siblings they sit directly
+     beside the thumbnails at any strip width. `order` fixes the visual sequence
+     because the arrows come after the strip in the markup. */
+  .st_product-info--{{ section.id }} .st_pi-thumbs-zone {
+    position: relative;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: {% if section.settings.thumbs_align_desktop == 'center' %}center{% else %}flex-start{% endif %};
+    gap: 12px;
+  }
+
+  /* `flex: 0 1 auto` + no width lets the element shrink to the slides when they
+     fit (so the row centres as a unit) and cap at the available width when they
+     overflow (so Swiper scrolls). */
+  .st_product-info--{{ section.id }} .st_pi-thumbs {
+    overflow: hidden;
+    order: 2;
+    min-width: 0;
+    flex: 0 1 auto;
+    /* Swiper's base CSS sets `.swiper { margin-inline: auto }`. As a flex item
+       those auto margins absorb ALL free space, which overrides the row's
+       `justify-content: center` and strands the chevrons at the zone edges. */
+    margin-inline: 0;
+  }
+
+  /* Thumbnails run below the main image at every breakpoint. Size and alignment
+     are set per breakpoint; `centerInsufficientSlides` on the Swiper centres a
+     short strip while a long one still scrolls from the start. */
+  .st_product-info--{{ section.id }} .st_pi-thumbs .swiper-slide {
+    width: {{ section.settings.thumbs_size_desktop | default: 84 }}px;
+    height: {{ section.settings.thumbs_size_desktop | default: 84 }}px;
+  }
+
+  /* Swiper applies `spaceBetween` as margin-right on EVERY slide, including the
+     last, which leaves 8px of dead space inside the strip and makes the right
+     chevron sit further out than the left one. */
+  .st_product-info--{{ section.id }} .st_pi-thumbs .swiper-slide:last-child {
+    margin-right: 0 !important;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-thumb {
+    width: 100%;
+    height: 100%;
+    display: block;
+    border-radius: calc({{ section.settings.image_border_radius }}px * 0.6);
+    border: 1.5px solid transparent;
+    padding: 0;
+    background: none;
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
+    transition: border-color 0.2s ease;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-thumbs .swiper-slide-thumb-active .st_pi-thumb {
+    border-color: {{ st_title.settings.title_color | default: '#1A1A1A' }};
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Deferred external video: poster fills the frame, play button overlays it.
+     After the click the wrapper holds the iframe instead. */
+  .st_product-info--{{ section.id }} .st_pi-ext-deferred {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .st_product-info--{{ section.id }} .st_pi-ext-play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 0;
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.62);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 120ms ease, background 120ms ease;
+  }
+  .st_product-info--{{ section.id }} .st_pi-ext-play:hover {
+    background: rgba(0, 0, 0, 0.8);
+    transform: translate(-50%, -50%) scale(1.06);
+  }
+  .st_product-info--{{ section.id }} .st_pi-ext-play svg {
+    width: 26px;
+    height: 26px;
+    fill: currentColor;
+    margin-left: 3px;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-thumb .st_pi-play-badge {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.25);
+    color: #ffffff;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-thumb .st_pi-play-badge svg {
+    width: 22px;
+    height: 22px;
+    fill: currentColor;
+  }
+
+  /* Minimal chevrons outside the strip: no pill, no blur, no shadow. They read as
+     part of the layout rather than buttons floating on the thumbnails. */
+  .st_product-info--{{ section.id }} .st_pi-thumb-arrow {
+    flex: 0 0 auto;
+    width: 20px;
+    height: 32px;
+    border: 0;
+    background: none;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 2;
+    opacity: 0.5;
+    transition: opacity 0.15s ease;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-thumb-arrow:hover {
+    opacity: 1;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-thumb-arrow svg {
+    width: 16px;
+    height: 16px;
+    fill: {{ section.settings.arrow_icon_color }};
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-thumb-arrow--prev {
+    order: 1;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-thumb-arrow--next {
+    order: 3;
+  }
+
+  /* Arrows stay in place at all times and simply dim when there is nothing to
+     scroll to, so the strip does not reflow as the gallery is used. */
+  .st_product-info--{{ section.id }} .st_pi-thumb-arrow.swiper-button-disabled {
+    opacity: 0.22;
+    pointer-events: none;
+  }
+
+  /* Swiper adds `swiper-button-lock` when every slide fits. We deliberately keep
+     the arrows rendered in that case (dimmed via swiper-button-disabled). */
+  .st_product-info--{{ section.id }} .st_pi-thumb-arrow.swiper-button-lock {
+    display: flex;
+  }
+
+  /* Hidden until Swiper has measured the strip. Without this the buttons paint
+     at full opacity on first frame and only disappear once JS adds
+     `swiper-button-lock`, which reads as a flash on every page load. */
+  .st_product-info--{{ section.id }} .st_pi-thumbs-zone:not(.st_pi-thumbs-ready) .st_pi-thumb-arrow {
+    visibility: hidden;
+  }
+
+
+
+  /* Thumbnails left of the main image (desktop only; mobile always bottom) */
+  /* ---------- Cause banner (under the gallery, desktop only) ---------- */
+  .st_product-info--{{ section.id }} .st_pi-cause {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 16px;
+    padding: 16px 20px;
+    border-radius: {{ section.settings.image_border_radius | default: 12 }}px;
+    background: {{ section.settings.cause_bg_color | default: '#F6F6F6' }};
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-cause-icon {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-cause-icon svg {
+    width: 28px;
+    height: 28px;
+    fill: {{ section.settings.cause_icon_color | default: '#E0A264' }};
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-cause-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-cause-text {
+    font-size: {{ section.settings.cause_text_size | default: 15 }}px;
+    line-height: 1.5;
+    color: {{ section.settings.cause_text_color | default: '#1A1A1A' }};
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-cause-text p {
+    margin: 0;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-cause-text strong {
+    font-weight: 700;
+  }
+
+  /* ---------- Details column ---------- */
+  .st_product-info--{{ section.id }} .st_pi-details {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 0;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-title {
+    font-family: {{ heading_font.family }}, {{ heading_font.fallback_families }};
+    font-weight: {{ heading_font.weight }};
+    font-style: {{ heading_font.style }};
+    font-size: {{ st_title.settings.title_size_desktop | default: 32 }}px;
+    line-height: 1.15;
+    margin: 0;
+    {% if st_title.settings.title_uppercase %}
+      text-transform: uppercase;
+    {% endif %}
+    {% if st_title.settings.title_gradient_enable %}
+      background: {{ st_title.settings.title_gradient }};
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+    {% else %}
+      color: {{ st_title.settings.title_color | default: '#1A1A1A' }};
+    {% endif %}
+  }
+
+  /* Highlight ([brackets]): flat color or gradient, per block */
+  .st_product-info--{{ section.id }} .st_pi-title .st_pi-highlight,
+  .st_product-info--{{ section.id }} .st_pi-subtitle .st_pi-highlight {
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    /* st_reset.css sets `.st_wrapper span { font-size: 14px }` on EVERY span,
+       so the highlighted word rendered at 14px inside a 16px subtitle and a
+       34px title: one word visibly smaller than the words around it. The
+       highlight is a span, so it must take its size and weight back from the
+       element it sits in. */
+    font-size: inherit;
+    font-weight: inherit;
+    font-family: inherit;
+    line-height: inherit;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-title .st_pi-highlight {
+    background: {{ st_title.settings.highlight_color | default: '#DBBD21' }};
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-subtitle .st_pi-highlight {
+    background: {{ st_subtitle.settings.highlight_color | default: '#DBBD21' }};
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-subtitle {
+    font-family: {{ body_font.family }}, {{ body_font.fallback_families }};
+    font-size: {{ st_subtitle.settings.subtitle_size | default: 15 }}px;
+    color: {{ st_subtitle.settings.subtitle_color | default: '#616161' }};
+    line-height: 1.45;
+    font-weight: {{ body_font.weight }};
+    font-style: {{ body_font.style }};
+  }
+
+  /* Price */
+  .st_product-info--{{ section.id }} .st_pi-price-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-price {
+    font-family: {{ heading_font.family }}, {{ heading_font.fallback_families }};
+    font-weight: 700;
+    font-size: {{ st_price.settings.price_size | default: 24 }}px;
+    color: {{ st_price.settings.price_color | default: '#1A1A1A' }};
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-compare {
+    font-size: calc({{ st_price.settings.price_size | default: 24 }}px * 0.72);
+    color: {{ st_price.settings.price_color | default: '#1A1A1A' }};
+    opacity: 0.5;
+    text-decoration: line-through;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-sale-badge {
+    {% if st_price.settings.sale_badge_gradient_enable %}
+      background: {{ st_price.settings.sale_badge_gradient }};
+    {% else %}
+      background: {{ st_price.settings.sale_badge_bg_color | default: '#1A1A1A' }};
+    {% endif %}
+    color: {{ st_price.settings.sale_badge_text_color | default: '#FFFFFF' }};
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 6px;
+    display: none;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-sale-badge.is-visible {
+    display: inline-block;
+  }
+
+  /* Price callout: speech bubble with a tail pointing at the price */
+  .st_product-info--{{ section.id }} .st_pi-callout {
+    position: relative;
+    display: inline-block;
+    max-width: 100%;
+    padding: 7px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.3;
+    {% if st_price.settings.callout_gradient_enable %}
+      background: {{ st_price.settings.callout_gradient }};
+    {% else %}
+      background: {{ st_price.settings.callout_bg_color | default: '#3BB77E' }};
+    {% endif %}
+    color: {{ st_price.settings.callout_text_color | default: '#FFFFFF' }};
+  }
+
+  {%- comment -%}
+    Tail colour is derived, never configured: it has to match whatever the bubble
+    is filled with. For a gradient we take the colour nearest the tail edge by
+    pulling the last rgb()/rgba()/hex stop out of the gradient string.
+  {%- endcomment -%}
+  {%- liquid
+    assign st_callout_tail = st_price.settings.callout_bg_color | default: '#3BB77E'
+    if st_price.settings.callout_gradient_enable and st_price.settings.callout_gradient != blank
+      assign st_grad = st_price.settings.callout_gradient
+      assign st_stops = st_grad | split: 'rgba('
+      if st_stops.size > 1
+        assign st_last = st_stops | last | split: ')' | first
+        assign st_callout_tail = 'rgba(' | append: st_last | append: ')'
+      else
+        assign st_stops = st_grad | split: 'rgb('
+        if st_stops.size > 1
+          assign st_last = st_stops | last | split: ')' | first
+          assign st_callout_tail = 'rgb(' | append: st_last | append: ')'
+        else
+          assign st_stops = st_grad | split: '#'
+          if st_stops.size > 1
+            assign st_last = st_stops | last | split: ' ' | first | split: ',' | first | split: ')' | first
+            assign st_callout_tail = '#' | append: st_last
+          endif
+        endif
+      endif
+    endif
+  -%}
+  .st_product-info--{{ section.id }} .st_pi-callout::after {
+    content: '';
+    position: absolute;
+    left: 18px;
+    border: 7px solid transparent;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-callout-wrap--top {
+    margin-bottom: 9px;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-callout-wrap--top .st_pi-callout::after {
+    top: 100%;
+    border-top-color: {{ st_callout_tail }};
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-callout-wrap--below {
+    margin-top: 9px;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-callout-wrap--below .st_pi-callout::after {
+    bottom: 100%;
+    border-bottom-color: {{ st_callout_tail }};
+  }
+
+  /* Description */
+  .st_product-info--{{ section.id }} .st_pi-description {
+    font-size: {{ st_desc.settings.desc_size | default: 14 }}px;
+    color: {{ st_desc.settings.desc_color | default: '#4A4A4A' }};
+    line-height: 1.55;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-description p {
+    margin: 0 0 8px;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-description p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Variant picker */
+  .st_product-info--{{ section.id }} .st_pi-options {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-option {
+    border: 0;
+    padding: 0;
+    margin: 0;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-option-legend {
+    font-size: 13px;
+    font-weight: 600;
+    color: {{ st_vp.settings.pill_text_color | default: '#1A1A1A' }};
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-option-legend span {
+    font-weight: 400;
+    opacity: 0.7;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-option-values {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    padding: 9px 16px;
+    border-radius: 8px;
+    border: 1.5px solid {{ st_vp.settings.pill_border_color | default: '#D9D9D9' }};
+    background: {{ st_vp.settings.pill_bg_color | default: '#FFFFFF' }};
+    color: {{ st_vp.settings.pill_text_color | default: '#1A1A1A' }};
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+
+  .st_product-info--{{ section.id }} input[type="radio"]:checked + .st_pi-pill {
+    border-color: {{ st_vp.settings.pill_selected_border_color | default: '#1A1A1A' }};
+    background: {{ st_vp.settings.pill_selected_bg_color | default: '#FFFFFF' }};
+    color: {{ st_vp.settings.pill_selected_text_color | default: '#1A1A1A' }};
+  }
+
+  .st_product-info--{{ section.id }} input[type="radio"]:focus-visible + .st_pi-pill {
+    outline: 2px solid {{ st_vp.settings.pill_selected_border_color | default: '#1A1A1A' }};
+    outline-offset: 2px;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-pill.is-unavailable {
+    opacity: 0.45;
+    text-decoration: line-through;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-swatch {
+    width: 38px;
+    height: 38px;
+    min-width: 0;
+    padding: 0;
+    border-radius: 50%;
+    overflow: hidden;
+    /* !important: themes commonly style input:checked + label with a
+       background SHORTHAND, which resets size/position to auto/0 0 and
+       out-specifies this class - the SELECTED swatch then showed a zoomed
+       top-left corner of the image (cerolovestudio). Our swatch is a
+       self-contained widget; these three must survive any theme. */
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    text-indent: -9999px;
+    /* A white or near-white swatch is invisible against a light pill
+       background. Every swatch carries a hairline so the shape always reads,
+       the same guard Dawn applies unconditionally. */
+    border-color: rgba(0, 0, 0, 0.15);
+  }
+
+  .st_product-info--{{ section.id }} input[type="radio"]:checked + .st_pi-swatch {
+    box-shadow: 0 0 0 2px {{ section.settings.section_bg_color }}, 0 0 0 3.5px {{ st_vp.settings.pill_selected_border_color | default: '#1A1A1A' }};
+    /* Keep the hairline when selected: transparent here erased the only edge a
+       white swatch had, leaving a blank gap inside the selection ring. */
+    border-color: rgba(0, 0, 0, 0.15);
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-option-select {
+    width: 100%;
+    max-width: 320px;
+    padding: 10px 36px 10px 12px;
+    border-radius: 8px;
+    border: 1.5px solid {{ st_vp.settings.pill_border_color | default: '#D9D9D9' }};
+    background-color: {{ st_vp.settings.pill_bg_color | default: '#FFFFFF' }};
+    color: {{ st_vp.settings.pill_text_color | default: '#1A1A1A' }};
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    /* Self-contained: neutralize theme select styling regardless of the
+       st_wrapper reset being active, and draw our own chevron */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23{{ st_vp.settings.pill_text_color | default: '#1A1A1A' | remove: '#' }}'%3E%3Cpath d='M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    box-shadow: none;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-option-select:focus,
+  .st_product-info--{{ section.id }} .st_pi-option-select:focus-visible {
+    outline: none;
+    box-shadow: none;
+    border-color: {{ st_vp.settings.pill_selected_border_color | default: '#1A1A1A' }};
+  }
+
+  /* Quantity block */
+  .st_product-info--{{ section.id }} .st_pi-qty {
+    display: inline-flex;
+    align-items: center;
+    border: 1.5px solid {{ st_vp.settings.pill_border_color | default: '#D9D9D9' }};
+    border-radius: {{ st_buy.settings.atc_border_radius | default: 8 }}px;
+    width: fit-content;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-qty button {
+    width: 38px;
+    min-height: 44px;
+    background: none;
+    border: 0;
+    font-size: 18px;
+    color: {{ st_vp.settings.pill_text_color | default: '#1A1A1A' }};
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-qty input {
+    width: 34px;
+    border: 0;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: {{ st_vp.settings.pill_text_color | default: '#1A1A1A' }};
+    background: transparent;
+    -moz-appearance: textfield;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-qty input::-webkit-outer-spin-button,
+  .st_product-info--{{ section.id }} .st_pi-qty input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* Buy button block */
+  .st_product-info--{{ section.id }} .st_pi-atc {
+    width: 100%;
+    min-height: 48px;
+    border: 0;
+    border-radius: {{ st_buy.settings.atc_border_radius | default: 8 }}px;
+    {% if st_buy.settings.atc_gradient_enable %}
+      background: {{ st_buy.settings.atc_gradient }};
+    {% else %}
+      background: {{ st_buy.settings.atc_bg_color | default: '#1A1A1A' }};
+    {% endif %}
+    color: {{ st_buy.settings.atc_text_color | default: '#FFFFFF' }} !important;
+    font-family: {{ body_font.family }}, {{ body_font.fallback_families }};
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    position: relative;
+    -webkit-appearance: none;
+    appearance: none;
+    transition: opacity 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  {%- assign st_atc_shadow = st_buy.settings.atc_shadow_color | default: '#1A1A1A' -%}
+  .st_product-info--{{ section.id }} .st_pi-atc--soft {
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.14);
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-atc--glow {
+    box-shadow: 0 8px 26px -4px {{ st_atc_shadow }}AA;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-atc--lift {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.14);
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-atc--lift:hover:not(:disabled) {
+    opacity: 1;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-atc--offset {
+    border: 2px solid #000;
+    box-shadow: 5px 5px 0 {{ st_atc_shadow }};
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-atc--offset:active:not(:disabled) {
+    transform: translate(3px, 3px);
+    box-shadow: 2px 2px 0 {{ st_atc_shadow }};
+  }
+
+  /* Hard 3D edge: solid bottom key, presses down on click */
+  .st_product-info--{{ section.id }} .st_pi-atc--edge {
+    box-shadow: 0 5px 0 0 {{ st_atc_shadow }}, 0 7px 12px -2px rgba(0, 0, 0, 0.4);
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-atc--edge:active:not(:disabled) {
+    transform: translateY(4px);
+    box-shadow: 0 1px 0 0 {{ st_atc_shadow }}, 0 2px 5px -1px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Glass inset: top highlight + inner bottom shadow */
+  .st_product-info--{{ section.id }} .st_pi-atc--glass {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), inset 0 -2px 3px rgba(0, 0, 0, 0.5), 0 4px 12px -3px rgba(0, 0, 0, 0.35);
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-atc--glass:active:not(:disabled) {
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.6), 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+
+  /* 3D color key: colored bottom edge (uses shadow color), deep press */
+  .st_product-info--{{ section.id }} .st_pi-atc--key {
+    box-shadow: 0 5px 0 0 {{ st_atc_shadow }}, 0 8px 14px -3px {{ st_atc_shadow }}88, inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-atc--key:active:not(:disabled) {
+    transform: translateY(4px);
+    box-shadow: 0 1px 0 0 {{ st_atc_shadow }}, 0 2px 5px {{ st_atc_shadow }}66;
+  }
+
+  /* Floating pill: rounded, dual shadow, rises on hover */
+  .st_product-info--{{ section.id }} .st_pi-atc--pill {
+    border-radius: 40px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 12px 28px -8px rgba(0, 0, 0, 0.45);
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-atc--pill:hover:not(:disabled) {
+    opacity: 1;
+    transform: translateY(-2px);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 18px 36px -10px rgba(0, 0, 0, 0.5);
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-atc--pill:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 6px 16px -6px rgba(0, 0, 0, 0.45);
+  }
+
+  /* Glossy sheen: top gloss overlay */
+  .st_product-info--{{ section.id }} .st_pi-atc--gloss {
+    box-shadow: 0 5px 14px -4px rgba(0, 0, 0, 0.45);
+    overflow: hidden;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-atc--gloss::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 50% 0;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0));
+    border-radius: {{ st_buy.settings.atc_border_radius | default: 8 }}px {{ st_buy.settings.atc_border_radius | default: 8 }}px 40% 40%;
+    pointer-events: none;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-atc--gloss:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-atc--pulse {
+    animation: st-pi-atc-pulse-{{ section.id }} 2.2s ease-out infinite;
+  }
+
+  @keyframes st-pi-atc-pulse-{{ section.id }} {
+    0% { box-shadow: 0 0 0 0 {{ st_atc_shadow }}66; }
+    70% { box-shadow: 0 0 0 14px {{ st_atc_shadow }}00; }
+    100% { box-shadow: 0 0 0 0 {{ st_atc_shadow }}00; }
+  }
+
+  /* Loading spinner */
+  .st_product-info--{{ section.id }} .st_pi-atc--loading .st_pi-atc-inner {
+    opacity: 0;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-atc--loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 18px;
+    height: 18px;
+    margin: -9px 0 0 -9px;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    z-index: 2;
+    animation: st-pi-atc-spin-{{ section.id }} 0.7s linear infinite;
+  }
+
+  @keyframes st-pi-atc-spin-{{ section.id }} {
+    to { transform: rotate(360deg); }
+  }
+
+  /* Success state: checkmark + confirmation message */
+  .st_product-info--{{ section.id }} .st_pi-atc--success .st_pi-atc-inner {
+    animation: st-pi-atc-pop-{{ section.id }} 0.3s ease;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-atc-check {
+    width: 17px;
+    height: 17px;
+    flex: 0 0 auto;
+    display: none;
+    /* The st_wrapper reset sets `color:#000` directly on every element, which
+       overrides inheritance — so set the icon color explicitly to the button
+       text color instead of relying on currentColor inheritance. */
+    color: {{ st_buy.settings.atc_text_color | default: '#FFFFFF' }} !important;
+    fill: {{ st_buy.settings.atc_text_color | default: '#FFFFFF' }} !important;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-atc--success .st_pi-atc-check {
+    display: inline-block;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-atc--success .st_pi-atc-icon {
+    display: none;
+  }
+
+  @keyframes st-pi-atc-pop-{{ section.id }} {
+    0% { transform: scale(0.9); opacity: 0.4; }
+    60% { transform: scale(1.04); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  /* Guard against theme-global button color rules bleeding in */
+  .st_product-info--{{ section.id }} .st_pi-atc span {
+    color: inherit !important;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-atc-inner {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-atc-icon {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+    flex: 0 0 auto;
+    /* The icon is an <img>, so it cannot inherit `color` the way an inline SVG
+       would: a dark icon stayed dark on a dark button. Masking paints the
+       button's own text colour through the icon's shape, so the two always
+       match whatever the merchant picks. */
+    background-color: {{ st_buy.settings.atc_text_color | default: '#FFFFFF' }};
+    -webkit-mask-image: var(--st-pi-atc-icon);
+    mask-image: var(--st-pi-atc-icon);
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-atc:hover:not(:disabled) {
+    opacity: 0.88;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-atc:active:not(:disabled) {
+    transform: scale(0.99);
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-atc:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Success confirmation stays at full opacity (not the dimmed disabled look) */
+  .st_product-info--{{ section.id }} .st_pi-atc--success:disabled {
+    opacity: 1;
+    cursor: default;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-cart-note {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    text-align: center;
+    font-size: 12.5px;
+    color: {{ st_buy.settings.cart_note_color | default: '#767676' }};
+    margin-top: 10px;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-cart-note img {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-error {
+    display: none;
+    font-size: 13px;
+    color: #c0392b;
+    text-align: center;
+    margin-top: 8px;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-error.is-visible {
+    display: block;
+  }
+
+  /* Collapsible rows: self-contained bordered cards so they can be freely
+     mixed with app blocks in any order */
+  .st_product-info--{{ section.id }} .st_pi-row {
+    border: 1px solid {{ section.settings.row_border_color }};
+    border-radius: 10px;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-row summary {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px;
+    cursor: pointer;
+    list-style: none;
+    font-size: 14px;
+    font-weight: 650;
+    color: {{ section.settings.row_text_color }};
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-row summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-row summary svg {
+    width: 16px;
+    height: 16px;
+    fill: {{ section.settings.row_icon_color }};
+    flex: 0 0 auto;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-row .st_pi-row-chevron {
+    margin-left: auto;
+    transition: transform 0.2s ease;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-row[open] .st_pi-row-chevron {
+    transform: rotate(180deg);
+  }
+
+  /* <details> cannot animate natively, so the content sits in a grid track that
+     animates from 0fr to 1fr. Height is never hardcoded, so it works for any
+     amount of copy. */
+  .st_product-info--{{ section.id }} .st_pi-row-body {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-row[open] .st_pi-row-body,
+  .st_product-info--{{ section.id }} .st_pi-row.st_pi-row--opening .st_pi-row-body {
+    grid-template-rows: 1fr;
+  }
+
+  /* Must out-specify `[open] .st_pi-row-body` above: while collapsing the row is
+     still `open`, and at equal specificity the earlier rule would win, no
+     transition would fire, and `transitionend` would never close the row. */
+  .st_product-info--{{ section.id }} .st_pi-row[open].st_pi-row--closing .st_pi-row-body {
+    grid-template-rows: 0fr;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-row-content {
+    min-height: 0;
+    overflow: hidden;
+    padding: 0 14px;
+    font-size: 13.5px;
+    /* explicitly lighter than the 650 summary: without a set weight the body
+       inherits from the theme and can render at the same weight as the title */
+    font-weight: 400;
+    line-height: 1.6;
+    color: {{ section.settings.row_text_color }};
+    opacity: 0.78;
+    transition: padding-bottom 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-row[open] .st_pi-row-content,
+  .st_product-info--{{ section.id }} .st_pi-row.st_pi-row--opening .st_pi-row-content {
+    padding-bottom: 14px;
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-row[open].st_pi-row--closing .st_pi-row-content {
+    padding-bottom: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .st_product-info--{{ section.id }} .st_pi-row-body,
+    .st_product-info--{{ section.id }} .st_pi-row-content {
+      transition: none;
+    }
+  }
+
+  .st_product-info--{{ section.id }} .st_pi-row-content p {
+    margin: 0 0 8px;
+  }
+
+  /* Empty state (theme editor, non-product context) */
+  .st_product-info--{{ section.id }} .st_pi-empty {
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+    padding: 60px 20px;
+    text-align: center;
+    border: 1px dashed #c9c9c9;
+    border-radius: 12px;
+    color: #666666;
+    font-size: 15px;
+  }
+
+  /* ---------- Mobile ---------- */
+  @media (max-width: 989px) {
+    .st_product-info--{{ section.id }} .st_pi-container {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    /* Desktop-only: on mobile the buy box already carries the trust messaging
+       and the banner would just add another block to scroll past. */
+    .st_product-info--{{ section.id }} .st_pi-cause {
+      display: none;
+    }
+
+    .st_product-info--{{ section.id }} .st_pi-media-col {
+      order: 0 !important;
+      position: static;
+    }
+
+    .st_product-info--{{ section.id }} .st_pi-details {
+      order: 1 !important;
+    }
+
+    /* Gallery boxes keep the same beside-image layout on mobile, just narrower.
+       The column is only as tall as the image, so the constraint that actually
+       bites is VERTICAL: three boxes sharing ~260px with a wrapped label in each.
+       Padding and gaps stay tight, the text is allowed to breathe by line-height,
+       and the boxes size to content rather than being force-split. */
+    /* On mobile the benefit boxes are HIDDEN by default: they narrow the first
+       image and most templates read better without them on a phone. When
+       `gallery_boxes_show_mobile` is on they belong to the FIRST SLIDE, sitting
+       beside image 1 and swiping away with it so later images get full width. */
+    .st_product-info--{{ section.id }} .st_pi-viewer > .st_pi-gallery-boxes {
+      display: none;
+    }
+
+    {%- unless section.settings.gallery_boxes_show_mobile -%}
+    .st_product-info--{{ section.id }} .swiper-slide .st_pi-gallery-boxes {
+      display: none;
+    }
+    {%- endunless -%}
+
+    {%- if section.settings.gallery_boxes_show_mobile -%}
+
+    /* Slide 1 carries the benefit column beside the image, so it is deliberately
+       SHORTER than the rest: the image keeps its own ratio at the reduced width
+       and the boxes match that height. Swiper autoHeight then grows the carousel
+       when you swipe to the full-width slides.
+       Both of these are required for that to work: the container must drop its
+       fixed ratio, and the slides must size to their CONTENT. `height: 100%`
+       (the desktop rule) resolves against an auto-height parent as zero, so every
+       slide measures the same and autoHeight has nothing to grow into. */
+    .st_product-info--{{ section.id }} .st_pi-swiper {
+      aspect-ratio: auto;
+      height: auto;
+    }
+
+    .st_product-info--{{ section.id }} .st_pi-swiper .swiper-wrapper {
+      align-items: flex-start;
+    }
+
+    .st_product-info--{{ section.id }} .st_pi-swiper .swiper-slide {
+      height: auto;
+    }
+
+    .st_product-info--{{ section.id }} .st_pi-swiper .swiper-slide[data-st-first] {
+      display: flex;
+      flex-direction: {% if section.settings.gallery_boxes_position == 'left' %}row-reverse{% else %}row{% endif %};
+      gap: 8px;
+      align-items: stretch;
+    }
+
+    .st_product-info--{{ section.id }} .st_pi-swiper .swiper-slide[data-st-first] > img,
+    .st_product-info--{{ section.id }} .st_pi-swiper .swiper-slide[data-st-first] > video,
+    .st_product-info--{{ section.id }} .st_pi-swiper .swiper-slide[data-st-first] > iframe,
+    .st_product-info--{{ section.id }} .st_pi-swiper .swiper-slide[data-st-first] > .st_pi-video-wrap {
+      flex: 1 1 auto;
+      min-width: 0;
+      height: auto;
+      align-self: flex-start;
+      {% unless section.settings.image_ratio == 'natural' %}
+        aspect-ratio: var(--st-pi-ratio);
+        object-fit: cover;
+      {% endunless %}
+    }
+
+    /* slides 2+ fill the full width at the configured ratio, so the carousel
+       grows to the taller frame once you swipe past the first slide */
+    .st_product-info--{{ section.id }} .st_pi-swiper .swiper-slide:not([data-st-first]) > img,
+    .st_product-info--{{ section.id }} .st_pi-swiper .swiper-slide:not([data-st-first]) > video,
+    .st_product-info--{{ section.id }} .st_pi-swiper .swiper-slide:not([data-st-first]) > iframe {
+      height: auto;
+      {% unless section.settings.image_ratio == 'natural' %}
+        aspect-ratio: var(--st-pi-ratio);
+        object-fit: cover;
+      {% endunless %}
+    }
+
+    .st_product-info--{{ section.id }} .st_pi-gallery-boxes {
+      flex-basis: clamp(96px, 28vw, 112px);
+      gap: 6px;
+      /* mobile boxes may grow past the image height, so do not clip them */
+      overflow: visible;
+    }
+
+    /* the in-slide copy is a flex child, not the viewer's fixed column, and it
+       matches the image height rather than driving it */
+    .st_product-info--{{ section.id }} .swiper-slide .st_pi-gallery-boxes {
+      display: flex;
+      flex: 0 0 clamp(96px, 28vw, 112px);
+      align-self: stretch;
+    }
+
+    /* With the boxes inside the slide the image no longer fills the frame, so the
+       frame's own grey shows in the gap and its rounding clips the image's right
+       corners. Move both onto the media itself. */
+    .st_product-info--{{ section.id }} .st_pi-swiper {
+      background: none;
+      border-radius: 0;
+    }
+
+    .st_product-info--{{ section.id }} .st_pi-swiper .swiper-slide img,
+    .st_product-info--{{ section.id }} .st_pi-swiper .swiper-slide video,
+    .st_product-info--{{ section.id }} .st_pi-swiper .swiper-slide iframe {
+      border-radius: {{ section.settings.image_border_radius }}px;
+      background: #f6f6f6;
+    }
+
+    .st_product-info--{{ section.id }} .st_pi-gallery-box {
+      /* mobile: the image sets the row height and the boxes share it, but a
+         wrapped label may need more than its third, so allow growth */
+      flex: 1 1 auto;
+      overflow: visible;
+      padding: 8px 7px;
+      gap: 3px;
+    }
+
+    .st_product-info--{{ section.id }} .st_pi-gallery-box svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .st_product-info--{{ section.id }} .st_pi-gallery-box img {
+      width: 18px;
+      height: 18px;
+    }
+
+    .st_product-info--{{ section.id }} .st_pi-gallery-box-heading {
+      font-size: 11px;
+      line-height: 1.2;
+    }
+
+    .st_product-info--{{ section.id }} .st_pi-gallery-box-text {
+      font-size: 9.5px;
+      line-height: 1.3;
+      /* long labels wrap instead of overflowing the narrow column */
+      overflow-wrap: anywhere;
+    }
+
+    {%- endif -%}
+
+    .st_product-info--{{ section.id }} .st_pi-arrow {
+      width: 32px;
+      height: 32px;
+    }
+
+    .st_product-info--{{ section.id }} .st_pi-thumbs-zone {
+      justify-content: {% if section.settings.thumbs_align_mobile == 'center' %}center{% else %}flex-start{% endif %};
+      /* tighter than desktop: at 12px the arrows + strip overflow a phone width
+         by a hair, which would make a strip that fits start scrolling */
+      gap: 8px;
+    }
+
+    .st_product-info--{{ section.id }} .st_pi-thumbs .swiper-slide {
+      width: {{ section.settings.thumbs_size_mobile | default: 72 }}px;
+      height: {{ section.settings.thumbs_size_mobile | default: 72 }}px;
+    }
+
+    .st_product-info--{{ section.id }} .st_pi-title {
+      font-size: {{ st_title.settings.title_size_mobile | default: 24 }}px;
+    }
+
+    .st_product-info--{{ section.id }} .st_pi-subtitle {
+      font-size: {{ st_subtitle.settings.subtitle_size_mobile | default: 14 }}px;
+    }
+
+    .st_product-info--{{ section.id }} {
+      padding: 20px 15px;
+    }
+  }
+</style>
+
+{% if product == blank %}
+  <div class="st_product-info--{{ section.id }} st_wrapper st_check-section--{{ section.id }}">
+    <div class="st_pi-empty">
+      Sternify Product Information. This section shows the live product buy box. Add it to a product template in the theme editor to see it with a real product.
+    </div>
+  </div>
+{% else %}
+
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign featured_media = current_variant.featured_media | default: product.featured_media
+  assign form_id = 'st-pi-form-' | append: section.id
+  assign buy_block = section.blocks | where: 'type', 'buy_buttons' | first
+  assign quantity_blocks = section.blocks | where: 'type', 'quantity'
+  assign gallery_box_blocks = section.blocks | where: 'type', 'gallery_box'
+  assign initial_media_index = 0
+  if featured_media
+    for m in product.media
+      if m.id == featured_media.id
+        assign initial_media_index = forloop.index0
+        break
+      endif
+    endfor
+  endif
+-%}
+
+<div class="st_product-info--{{ section.id }} st_wrapper st_check-section--{{ section.id }}" data-section-id="{{ section.id }}">
+  <div class="st_pi-container">
+
+    <!-- ================= Gallery ================= -->
+    <div class="st_pi-media-col">
+    <div class="st_pi-gallery">
+
+      {%- comment -%}
+        Captured once, emitted twice: as the persistent column beside the gallery
+        (desktop) and again inside the first slide (mobile, where it swipes away
+        with image 1). CSS at each breakpoint hides whichever copy is not in use.
+      {%- endcomment -%}
+      {%- capture st_gallery_boxes_html -%}
+        {% if gallery_box_blocks.size > 0 %}
+          <div class="st_pi-gallery-boxes st_pi-gallery-boxes--{{ section.settings.gallery_boxes_position }}">
+            {%- for block in gallery_box_blocks -%}
+              <div class="st_pi-gallery-box" {{ block.shopify_attributes }}>
+                {%- if block.settings.custom_icon -%}
+                  <img src="{{ block.settings.custom_icon | image_url: width: 80 }}" alt="" loading="lazy" width="24" height="24">
+                {%- elsif block.settings.custom_icon_demo_url != blank -%}
+                  <img src="{{ block.settings.custom_icon_demo_url }}" alt="" loading="lazy" width="24" height="24">
+                {%- else -%}
+                  {%- case block.settings.icon -%}
+                    {%- when 'check' -%}<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                    {%- when 'star' -%}<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                    {%- when 'shield' -%}<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 1 3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+                    {%- when 'truck' -%}<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-9 1.96 2.5H17V9.5h2.5zm-1.5 9c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+                    {%- when 'leaf' -%}<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6.05 8.05a7.001 7.001 0 0 0-.02 9.88c1.47-3.4 4.09-6.24 7.36-7.93A15.95 15.95 0 0 0 7.6 19.32c2.65 1.28 5.92.83 8.12-1.37 3.57-3.57 4.28-14.68 4.28-14.68S8.87 3.86 6.05 8.05z"/></svg>
+                    {%- when 'heart' -%}<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                    {%- when 'lock' -%}<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM9 8V6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9z"/></svg>
+                    {%- when 'gift' -%}<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 6h-2.18c.11-.31.18-.65.18-1a2.996 2.996 0 0 0-5.5-1.65l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-5-2c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM9 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm11 15H4v-2h16v2zm0-5H4V8h5.08L7 10.83 8.62 12 11 8.76l1-1.36 1 1.36L15.38 12 17 10.83 14.92 8H20v6z"/></svg>
+                    {%- when 'clock' -%}<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                    {%- else -%}<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                  {%- endcase -%}
+                {%- endif -%}
+                {%- if block.settings.heading != blank -%}<div class="st_pi-gallery-box-heading">{{ block.settings.heading }}</div>{%- endif -%}
+                {%- if block.settings.text != blank -%}<div class="st_pi-gallery-box-text">{{ block.settings.text }}</div>{%- endif -%}
+              </div>
+            {%- endfor -%}
+          </div>
+        {% endif %}
+      {%- endcapture -%}
+
+      {%- comment -%}
+        Emitted once for the whole section: the boxes markup is rendered twice
+        (column + in-slide copy) and duplicate SVG ids would break the fill.
+      {%- endcomment -%}
+      {% if gallery_box_blocks.size > 0 and section.settings.gallery_box_icon_gradient_enable %}
+        <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+          <defs>
+            <linearGradient id="st-pi-icongrad-{{ section.id }}" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="{{ section.settings.gallery_box_icon_gradient_start }}" />
+              <stop offset="100%" stop-color="{{ section.settings.gallery_box_icon_gradient_end }}" />
+            </linearGradient>
+          </defs>
+        </svg>
+      {% endif %}
+
+      <div class="st_pi-gallery-main">
+        <div class="st_pi-viewer">
+        {{ st_gallery_boxes_html }}
+
+        <div class="st_pi-main">
+          <div class="st_pi-swiper swiper" data-st-gallery>
+            <div class="swiper-wrapper">
+              {% for media in product.media %}
+                <div class="swiper-slide" data-st-slide {% if forloop.first %}data-st-first{% endif %} data-media-id="{{ media.id }}">
+                  {% case media.media_type %}
+                    {% when 'image' %}
+                      <img
+                        src="{{ media | image_url: width: 1200 }}"
+                        srcset="{{ media | image_url: width: 600 }} 600w, {{ media | image_url: width: 900 }} 900w, {{ media | image_url: width: 1200 }} 1200w"
+                        sizes="(max-width: 989px) 100vw, 50vw"
+                        alt="{{ media.alt | escape }}"
+                        {% if forloop.first %}loading="eager"{% else %}loading="lazy"{% endif %}
+                        width="{{ media.width }}"
+                        height="{{ media.height }}"
+                      >
+                    {% when 'video' %}
+                      {{ media | video_tag: controls: true, preload: 'metadata', image_size: '1200x' }}
+                    {% when 'external_video' %}
+                      {%- comment -%}
+                        Deferred: the YouTube/Vimeo iframe is ~500kb+ of player
+                        chrome fetched on page load for a video most shoppers
+                        never play. Render the poster with a play button and
+                        swap the real embed in on click; autoplay in the URL
+                        means that click also starts playback (a user gesture,
+                        so the autoplay policy allows it).
+                      {%- endcomment -%}
+                      <div class="st_pi-video-wrap st_pi-ext-deferred" data-st-deferred-video>
+                        <img
+                          src="{{ media.preview_image | image_url: width: 1200 }}"
+                          alt="{{ media.alt | escape }}"
+                          loading="lazy"
+                          width="{{ media.preview_image.width }}"
+                          height="{{ media.preview_image.height }}"
+                        >
+                        <button type="button" class="st_pi-ext-play" aria-label="{{ media.alt | default: 'Play video' | escape }}">
+                          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M8 5.14v13.72L19 12 8 5.14z"/></svg>
+                        </button>
+                        <template>
+                          {{ media | external_video_url: autoplay: true | external_video_tag }}
+                        </template>
+                      </div>
+                    {% else %}
+                      <img
+                        src="{{ media.preview_image | image_url: width: 1200 }}"
+                        alt="{{ media.alt | escape }}"
+                        loading="lazy"
+                        width="{{ media.preview_image.width }}"
+                        height="{{ media.preview_image.height }}"
+                      >
+                  {% endcase %}
+                  {%- if forloop.first -%}{{ st_gallery_boxes_html }}{%- endif -%}
+                </div>
+              {% else %}
+                <div class="swiper-slide" data-st-slide data-st-first data-media-id="placeholder">
+                  {{ 'product-1' | placeholder_svg_tag }}
+                  {{ st_gallery_boxes_html }}
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          {% if section.settings.show_gallery_arrows and product.media.size > 1 %}
+            <button type="button" class="st_pi-arrow st_pi-arrow--prev" data-st-arrow-prev aria-label="Previous media">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+            </button>
+            <button type="button" class="st_pi-arrow st_pi-arrow--next" data-st-arrow-next aria-label="Next media">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+            </button>
+          {% endif %}
+        </div>
+        </div>
+
+        {% if product.media.size > 1 %}
+          <div class="st_pi-thumbs-zone">
+            <div class="st_pi-thumbs swiper" data-st-thumbs>
+              <div class="swiper-wrapper">
+                {% for media in product.media %}
+                  <div class="swiper-slide">
+                    <button type="button" class="st_pi-thumb" data-media-id="{{ media.id }}" aria-label="View media {{ forloop.index }}">
+                      <img
+                        src="{{ media.preview_image | image_url: width: 150 }}"
+                        alt="{{ media.alt | escape }}"
+                        loading="lazy"
+                        width="64"
+                        height="64"
+                      >
+                      {% if media.media_type == 'video' or media.media_type == 'external_video' %}
+                        <span class="st_pi-play-badge">
+                          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 5.14v13.72L19 12 8 5.14z"/></svg>
+                        </span>
+                      {% endif %}
+                    </button>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+            <button type="button" class="st_pi-thumb-arrow st_pi-thumb-arrow--prev" data-st-thumb-prev aria-label="Previous thumbnails">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+            </button>
+            <button type="button" class="st_pi-thumb-arrow st_pi-thumb-arrow--next" data-st-thumb-next aria-label="Next thumbnails">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+            </button>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    {%- comment -%}
+      Cause banner: sits under the gallery in the media column, desktop only.
+      It belongs to the media side rather than the buy box, so it is rendered
+      here instead of in the block loop below.
+    {%- endcomment -%}
+    {%- assign st_cause = section.blocks | where: 'type', 'cause_banner' | first -%}
+    {%- if st_cause and st_cause.settings.text != blank -%}
+      <div class="st_pi-cause" {{ st_cause.shopify_attributes }}>
+        {%- if st_cause.settings.icon_demo_url != blank or st_cause.settings.icon != blank -%}
+          <span class="st_pi-cause-icon">
+            {%- if st_cause.settings.icon != blank -%}
+              <img src="{{ st_cause.settings.icon | image_url: width: 96 }}" alt="" loading="lazy" width="32" height="32">
+            {%- else -%}
+              <img src="{{ st_cause.settings.icon_demo_url }}" alt="" loading="lazy" width="32" height="32">
+            {%- endif -%}
+          </span>
+        {%- else -%}
+          <span class="st_pi-cause-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+          </span>
+        {%- endif -%}
+        <div class="st_pi-cause-text">{{ st_cause.settings.text }}</div>
+      </div>
+    {%- endif -%}
+    </div>
+
+    <!-- ================= Details: fully block-driven ================= -->
+    <div class="st_pi-details">
+      {% for block in section.blocks %}
+        {% case block.type %}
+
+          {% when '@app' %}
+            {% render block %}
+
+          {% when 'title' %}
+            {%- liquid
+              assign st_title_text = product.title
+              if block.settings.custom_title != blank
+                assign st_title_text = block.settings.custom_title
+              endif
+            -%}
+            <h1 class="st_pi-title" {{ block.shopify_attributes }}>
+              {{- st_title_text | escape | replace: '[', '<span class="st_pi-highlight">' | replace: ']', '</span>' -}}
+            </h1>
+
+          {% when 'subtitle' %}
+            {% if block.settings.text != blank %}
+              <div class="st_pi-subtitle" {{ block.shopify_attributes }}>
+                {{- block.settings.text | escape | replace: '[', '<span class="st_pi-highlight">' | replace: ']', '</span>' -}}
+              </div>
+            {% endif %}
+
+          {% when 'price' %}
+            {%- liquid
+              assign st_on_sale = false
+              assign st_percent_label = ''
+              if current_variant.compare_at_price > current_variant.price
+                assign st_on_sale = true
+                assign st_save_cents = current_variant.compare_at_price | minus: current_variant.price
+                assign st_save_amount = st_save_cents | money | strip_html
+                assign st_save_percent = st_save_cents | times: 100 | divided_by: current_variant.compare_at_price
+                assign st_percent_label = st_save_percent | append: '%'
+              endif
+              assign st_callout_text = block.settings.callout_text
+              assign st_callout_ok = true
+              if st_on_sale
+                assign st_callout_text = st_callout_text | replace: '[amount]', st_save_amount | replace: '[percent]', st_percent_label
+              else
+                # No compare-at price means there is no saving to name. Rather than
+                # printing a literal "[amount]", drop the callout for this variant.
+                if block.settings.callout_text contains '[amount]' or block.settings.callout_text contains '[percent]'
+                  assign st_callout_ok = false
+                endif
+              endif
+            -%}
+            {%- capture st_callout_html -%}
+              {%- if st_callout_ok and block.settings.show_callout and block.settings.callout_text != blank -%}
+                <div class="st_pi-callout-wrap st_pi-callout-wrap--{{ block.settings.callout_position }}">
+                  <span class="st_pi-callout" data-st-callout data-template="{{ block.settings.callout_text | escape }}">{{ st_callout_text }}</span>
+                </div>
+              {%- endif -%}
+            {%- endcapture -%}
+            <div {{ block.shopify_attributes }}>
+              {% if block.settings.callout_position == 'top' %}{{ st_callout_html }}{% endif %}
+              {%- comment -%}
+                strip_html: currency apps wrap shop.money_format in markup
+                (`<span class=money>…`). Their tags carry foreign styling into
+                our price row, and the JS updater writes plain text on the first
+                variant change - so the server paint must match. See
+                stripMoneyMarkup() below.
+              {%- endcomment -%}
+              <div class="st_pi-price-row">
+                <span class="st_pi-price" data-st-price>{{ current_variant.price | money | strip_html }}</span>
+                <span class="st_pi-compare" data-st-compare {% unless current_variant.compare_at_price > current_variant.price %}style="display: none;"{% endunless %}>
+                  {%- if current_variant.compare_at_price -%}{{ current_variant.compare_at_price | money | strip_html }}{%- endif -%}
+                </span>
+                {% if block.settings.show_sale_badge %}
+                  <span class="st_pi-sale-badge{% if st_on_sale %} is-visible{% endif %}" data-st-sale-badge>
+                    {%- if st_on_sale %}-{{ st_percent_label }}{% endif -%}
+                  </span>
+                {% endif %}
+              </div>
+              {% if block.settings.callout_position == 'below' %}{{ st_callout_html }}{% endif %}
+            </div>
+
+          {% when 'description' %}
+            {% if block.settings.desc_source == 'custom' %}
+              {% if block.settings.custom_description != blank %}
+                <div class="st_pi-description" {{ block.shopify_attributes }}>{{ block.settings.custom_description }}</div>
+              {% endif %}
+            {% else %}
+              {% if product.description != blank %}
+                <div class="st_pi-description" {{ block.shopify_attributes }}>{{ product.description }}</div>
+              {% endif %}
+            {% endif %}
+
+          {% when 'variant_picker' %}
+            {% unless product.has_only_default_variant %}
+              <div class="st_pi-options" data-st-options {{ block.shopify_attributes }}>
+                {% for option in product.options_with_values %}
+                  {%- liquid
+                    assign option_index0 = forloop.index0
+                    assign is_color_option = false
+                    if block.settings.enable_color_swatches
+                      assign option_name_down = option.name | downcase
+                      if option_name_down == 'color' or option_name_down == 'colour' or option_name_down == 'farbe' or option_name_down == 'couleur' or option_name_down == 'colore' or option_name_down == 'kleur'
+                        assign is_color_option = true
+                      endif
+                    endif
+                  -%}
+                  <fieldset class="st_pi-option" data-option-index="{{ option_index0 }}">
+                    <legend class="st_pi-option-legend">
+                      {{ option.name }} <span data-st-selected-label>- {{ option.selected_value }}</span>
+                    </legend>
+                    {% if block.settings.picker_type == 'dropdown' %}
+                    <select class="st_pi-option-select" data-st-option-select aria-label="{{ option.name | escape }}">
+                      {% for value in option.values %}
+                        <option value="{{ value | escape }}" {% if value == option.selected_value %}selected{% endif %}>{{ value }}</option>
+                      {% endfor %}
+                    </select>
+                    {% else %}
+                    <div class="st_pi-option-values">
+                      {% for value in option.values %}
+                        {%- assign input_id = 'st-pi-' | append: section.id | append: '-' | append: option_index0 | append: '-' | append: forloop.index0 -%}
+                        <input
+                          type="radio"
+                          id="{{ input_id }}"
+                          name="st-pi-option-{{ section.id }}-{{ option_index0 }}"
+                          value="{{ value | escape }}"
+                          data-st-option-input
+                          {% if value == option.selected_value %}checked{% endif %}
+                        >
+                        {% if is_color_option %}
+                          {%- liquid
+                            # Paint sources, most authoritative first:
+                            #   1. the merchant's admin-defined swatch (value.swatch) - image or color
+                            #   2. the variant's featured image
+                            #   3. the value name as a CSS color ("Red") - tagged with
+                            #      data-st-swatch-name so the runtime can DEMOTE it to a text
+                            #      pill when it is not a real color. An option merely NAMED
+                            #      "Color" whose values are "V Type"/"L Type" painted nothing
+                            #      and rendered as blank circles (barklinee).
+                            #   Native swatches (value.swatch) always win: they are
+                            #   Shopify's own data and a merchant sets them deliberately.
+                            #
+                            #   Below that, the variant image and the merchant's color map
+                            #   are ALTERNATIVE SOURCES, not a priority chain - which is
+                            #   how every premium theme models this (Symmetry "Swatch
+                            #   method", Flex "Color option style", Minimog "Design").
+                            #   Painting a photo over an explicitly typed hex is the one
+                            #   behaviour none of them ship, and it is what made a
+                            #   powder-coat catalogue unable to get flat swatches (met-al).
+                            #   Whichever source is chosen, the other backs it up, so a
+                            #   value the chosen source cannot paint still gets a swatch.
+                            assign swatch_image = blank
+                            assign swatch_color = blank
+                            if value.swatch and value.swatch.image
+                              assign swatch_image = value.swatch.image
+                            elsif value.swatch and value.swatch.color
+                              assign swatch_color = value.swatch.color
+                            else
+                              assign value_down = value | downcase | strip
+                              if st_vp.settings.swatch_color_map != blank
+                                assign map_lines = st_vp.settings.swatch_color_map | newline_to_br | split: '<br />'
+                                for map_line in map_lines
+                                  assign map_pair = map_line | strip | split: ':'
+                                  if map_pair.size > 1
+                                    assign map_name = map_pair[0] | strip | downcase
+                                    if map_name == value_down
+                                      assign map_hex = map_pair[1] | strip
+                                      if map_hex != blank
+                                        assign swatch_color = map_hex
+                                      endif
+                                      break
+                                    endif
+                                  endif
+                                endfor
+                              endif
+                              # Look up the variant image when it is the chosen source, or
+                              # when the color list had nothing for this value.
+                              if st_vp.settings.swatch_method == 'variant_image' or swatch_color == blank
+                                # value.variant is the variant at the intersection of this
+                                # value and the other selected options. Preferred over
+                                # scanning product.variants, which TRUNCATES AT 250 - with
+                                # two option groups (10 colors x 26 sizes) the last colors
+                                # fall past the cutoff and paint nothing.
+                                if value.variant and value.variant.featured_media
+                                  assign swatch_image = value.variant.featured_media.preview_image
+                                else
+                                  # Fallback: this value's image may sit on a variant of a
+                                  # non-selected size. Bounded to stay inside the 250 window.
+                                  for variant in product.variants limit: 250
+                                    if variant.options[option_index0] == value and variant.featured_media
+                                      assign swatch_image = variant.featured_media.preview_image
+                                      break
+                                    endif
+                                  endfor
+                                endif
+                              endif
+                              # Color list is the chosen source, so a mapped hex outranks
+                              # any photo we just found. Cleared so the render picks color.
+                              if st_vp.settings.swatch_method != 'variant_image' and swatch_color != blank
+                                assign swatch_image = blank
+                              endif
+                            endif
+                          -%}
+                          <label
+                            for="{{ input_id }}"
+                            class="st_pi-pill st_pi-swatch"
+                            title="{{ value | escape }}"
+                            {% if swatch_image != blank %}
+                              style="background-image: url('{{ swatch_image | image_url: width: 100 }}');"
+                            {% elsif swatch_color != blank %}
+                              style="background-color: {{ swatch_color | escape }};"
+                            {% else %}
+                              style="background-color: {{ value | downcase | escape }};"
+                              data-st-swatch-name="{{ value | downcase | escape }}"
+                            {% endif %}
+                          >{{ value }}</label>
+                        {% else %}
+                          <label for="{{ input_id }}" class="st_pi-pill">{{ value }}</label>
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                    {% endif %}
+                  </fieldset>
+                {% endfor %}
+              </div>
+            {% endunless %}
+
+          {% when 'quantity' %}
+            <div class="st_pi-qty" {{ block.shopify_attributes }}>
+              <button type="button" data-st-qty-minus aria-label="Decrease quantity">&minus;</button>
+              <input type="number" name="quantity" value="1" min="1" form="{{ form_id }}" data-st-qty-input aria-label="Quantity">
+              <button type="button" data-st-qty-plus aria-label="Increase quantity">+</button>
+            </div>
+
+          {% when 'buy_buttons' %}
+            <div {{ block.shopify_attributes }}>
+              {% form 'product', product, id: form_id, class: 'st_pi-form' %}
+                <input type="hidden" name="id" value="{{ current_variant.id }}" data-st-variant-id>
+                {% if quantity_blocks.size == 0 %}
+                  <input type="hidden" name="quantity" value="1" data-st-qty-input>
+                {% endif %}
+                <button
+                  type="submit"
+                  class="st_pi-atc st_pi-atc--{{ block.settings.atc_style | default: 'soft' }}"
+                  data-st-atc
+                  {% unless current_variant.available %}disabled{% endunless %}
+                >
+                  <span class="st_pi-atc-inner">
+                    <svg class="st_pi-atc-check" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-1.1 14.2-4-4 1.4-1.42 2.6 2.6 5.3-5.3 1.4 1.42-6.7 6.7z"/></svg>
+                    {% if block.settings.atc_icon %}
+                      {%- comment -%}
+                        The src stays for accessibility and as the fallback when
+                        mask-image is unsupported; the CSS masks it with the
+                        button's text colour so the two always agree.
+                      {%- endcomment -%}
+                      <img class="st_pi-atc-icon" src="{{ block.settings.atc_icon | image_url: width: 48 }}" alt="" width="18" height="18" style="--st-pi-atc-icon: url('{{ block.settings.atc_icon | image_url: width: 48 }}');">
+                    {% elsif block.settings.atc_icon_demo_url != blank %}
+                      <img class="st_pi-atc-icon" src="{{ block.settings.atc_icon_demo_url }}" alt="" width="18" height="18" style="--st-pi-atc-icon: url('{{ block.settings.atc_icon_demo_url }}');">
+                    {% endif %}
+                    <span data-st-atc-label>
+                      {%- if current_variant.available -%}
+                        {{ block.settings.atc_text }}{% if block.settings.show_price_in_button %} &bull; {{ current_variant.price | money | strip_html }}{% endif %}
+                      {%- else -%}
+                        {{ block.settings.sold_out_text }}
+                      {%- endif -%}
+                    </span>
+                  </span>
+                </button>
+                <div class="st_pi-error" data-st-error role="alert"></div>
+              {% endform %}
+              {% if block.settings.show_cart_note and block.settings.cart_note != blank %}
+                <div class="st_pi-cart-note">
+                  {% if block.settings.cart_note_icon %}
+                    <img src="{{ block.settings.cart_note_icon | image_url: width: 48 }}" alt="" loading="lazy" width="16" height="16">
+                  {% elsif block.settings.cart_note_icon_demo_url != blank %}
+                    <img src="{{ block.settings.cart_note_icon_demo_url }}" alt="" loading="lazy" width="16" height="16">
+                  {% endif %}
+                  <span>{{ block.settings.cart_note }}</span>
+                </div>
+              {% endif %}
+            </div>
+
+          {% when 'collapsible_row' %}
+            <details class="st_pi-row" {% if block.settings.open_default %}open{% endif %} {{ block.shopify_attributes }}>
+              <summary>
+                {% case block.settings.icon %}
+                  {% when 'truck' %}<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-9 1.96 2.5H17V9.5h2.5zm-1.5 9c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+                  {% when 'box' %}<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m20.54 5.23-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.02 3 6.5V19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.48-.17-.93-.46-1.27zM12 17.5 6.5 12H10v-2h4v2h3.5L12 17.5zM5.12 5l.81-1h12l.94 1H5.12z"/></svg>
+                  {% when 'question' %}<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
+                  {% when 'shield' %}<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 1 3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+                  {% when 'leaf' %}<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6.05 8.05a7.001 7.001 0 0 0-.02 9.88c1.47-3.4 4.09-6.24 7.36-7.93A15.95 15.95 0 0 0 7.6 19.32c2.65 1.28 5.92.83 8.12-1.37 3.57-3.57 4.28-14.68 4.28-14.68S8.87 3.86 6.05 8.05z"/></svg>
+                  {% when 'ruler' %}<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 10H3V8h2v4h2V8h2v4h2V8h2v4h2V8h2v4h2V8h2v8z"/></svg>
+                  {% when 'none' %}
+                  {% else %}<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                {% endcase %}
+                <span>{{ block.settings.heading }}</span>
+                <svg class="st_pi-row-chevron" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+              </summary>
+              <div class="st_pi-row-body"><div class="st_pi-row-content">{{ block.settings.content }}</div></div>
+            </details>
+
+        {% endcase %}
+      {% endfor %}
+    </div>
+  </div>
+
+  <script type="application/json" data-st-variants>
+    [
+      {%- for variant in product.variants -%}
+        {
+          "id": {{ variant.id }},
+          "available": {{ variant.available }},
+          "options": {{ variant.options | json }},
+          "price": {{ variant.price }},
+          "compare_at_price": {{ variant.compare_at_price | default: 0 }},
+          "price_formatted": {{ variant.price | money | json }},
+          "compare_at_formatted": {% if variant.compare_at_price %}{{ variant.compare_at_price | money | json }}{% else %}null{% endif %},
+          "media_id": {% if variant.featured_media %}{{ variant.featured_media.id }}{% else %}null{% endif %}
+        }{% unless forloop.last %},{% endunless %}
+      {%- endfor -%}
+    ]
+  </script>
+</div>
+
+<script>
+  (function () {
+    var SECTION_ID = '{{ section.id }}';
+    var MONEY_FORMAT = {{ shop.money_format | json }};
+    var ATC_TEXT = {{ buy_block.settings.atc_text | default: 'Add to cart' | json }};
+    var SOLD_OUT_TEXT = {{ buy_block.settings.sold_out_text | default: 'Sold out' | json }};
+    var UNAVAILABLE_TEXT = {{ buy_block.settings.unavailable_text | default: 'Unavailable' | json }};
+    var SHOW_PRICE_IN_BUTTON = {{ buy_block.settings.show_price_in_button | default: false | json }};
+    var AFTER_ADD = {{ buy_block.settings.after_add | default: 'stay' | json }};
+    var ADDED_TEXT = {{ buy_block.settings.added_text | default: 'Added to cart' | json }};
+    var INITIAL_SLIDE = {{ initial_media_index | default: 0 }};
+
+    /*
+      After an add we have to tell SOMETHING to show the cart. Order of preference:
+
+        1. Sternify drawer, when the merchant has it enabled.
+        2. The theme's own drawer, for themes we know how to drive.
+        3. The generic `cart:refresh` / `cart:change` events, which several
+           themes and third-party drawers already listen for.
+        4. Nothing. We never force a redirect the merchant did not ask for:
+           `after_add` already has an explicit "go to cart" option, so silently
+           navigating on an unknown theme would override that choice.
+
+      Themes are matched on schema_name first. theme_store_id is only a tiebreak
+      hint, never a sole match: merchants rename themes, and the ids are not
+      unique per theme in practice.
+    */
+    /*
+      Call a theme's drawer open() safely.
+
+      Themes disagree on the signature: Dawn's takes nothing, but Pebble's
+      cart-drawer-component does `open(event){ event.preventDefault(); ... }`
+      and throws on a bare call, which left the merchant's drawer shut after a
+      successful add (somvera.de). Try the no-arg form first, then retry with a
+      cancelable synthetic event, then fall back to any show/showDialog the
+      element exposes.
+    */
+    function stCallOpen(el) {
+      if (!el) return false;
+      if (typeof el.open === 'function') {
+        try {
+          el.open();
+          return true;
+        } catch (e) {
+          try {
+            el.open(new Event('click', { bubbles: true, cancelable: true }));
+            return true;
+          } catch (e2) {
+            /* fall through to the show* variants below */
+          }
+        }
+      }
+      if (typeof el.showDialog === 'function') {
+        try { el.showDialog(); return true; } catch (e) {}
+      }
+      if (typeof el.show === 'function') {
+        try { el.show(); return true; } catch (e) {}
+      }
+      return false;
+    }
+
+    function stThemeDrawer() {
+      var t = (window.Shopify && window.Shopify.theme) || {};
+      var name = String(t.schema_name || t.name || '').toLowerCase();
+
+      // Horizon: cart-drawer-component with a real open() method.
+      if (name.indexOf('horizon') === 0) {
+        return {
+          name: 'Horizon',
+          refresh: function () {
+            document.dispatchEvent(new CustomEvent('cart:update', {
+              bubbles: true,
+              detail: { data: { source: 'product-form-component' } }
+            }));
+          },
+          open: function () {
+            var el = document.querySelector('cart-drawer-component');
+            return stCallOpen(el);
+          }
+        };
+      }
+
+      // Dawn and the other Shopify-authored themes built on it (Refresh, Craft,
+      // Sense, Studio, Taste, Origin, Ride, Colorblock, Publisher).
+      //
+      // Dawn ships TWO cart modes and the merchant picks one in theme settings:
+      // a <cart-drawer>, or a <cart-notification> popup. Both are custom elements
+      // with the same open() contract and the same section-rendering refresh, so
+      // we resolve whichever one the theme actually rendered.
+      var dawn = document.querySelector('cart-drawer') || document.querySelector('cart-notification');
+      if (dawn) {
+        var dawnSection = dawn.tagName.toLowerCase() === 'cart-drawer' ? 'cart-drawer' : 'cart-notification';
+        return {
+          name: 'Dawn (' + dawnSection + ')',
+          // Dawn's own renderContents() fetches the sections, swaps the markup
+          // and calls open() at the end, so it is the whole job in one call. We
+          // let it own the sequence rather than reimplementing the section swap.
+          refresh: function (added) {
+            if (typeof dawn.renderContents !== 'function') return null;
+            // Preferred: the add response already carries the rendered sections,
+            // so the notification can name the item that was just added.
+            if (added && added.sections && added.sections[dawnSection]) {
+              dawn.renderContents(added);
+              return 'rendered';
+            }
+            // Fallback: re-fetch. Shows the cart, but without the added-item row.
+            var url = (window.routes && window.routes.cart_url) || '/cart';
+            return fetch(url + '?sections=' + dawnSection)
+              .then(function (r) { return r.json(); })
+              .then(function (sections) {
+                dawn.renderContents({ sections: sections });
+                return 'rendered';
+              })
+              .catch(function () { return null; });
+          },
+          open: function () {
+            // renderContents() already opened it; only open directly if the
+            // render path was unavailable or failed.
+            var el = document.querySelector(dawnSection);
+            return stCallOpen(el);
+          }
+        };
+      }
+
+      // Impact, Prestige, Focal and friends: an <details>/id="cart-drawer" that
+      // is driven by an `open` attribute, refreshed via cart:refresh.
+      var byId = document.getElementById('cart-drawer');
+      if (byId) {
+        return {
+          name: name || 'generic',
+          refresh: function () {
+            document.documentElement.dispatchEvent(new CustomEvent('cart:refresh', { bubbles: true }));
+          },
+          open: function () {
+            if (stCallOpen(byId)) return true;
+            byId.setAttribute('open', '');
+            return true;
+          }
+        };
+      }
+
+      // Ella / Halo: body-class driven sidebar.
+      if (document.querySelector('#halo-cart-sidebar')) {
+        return {
+          name: 'Ella',
+          refresh: function () {
+            document.dispatchEvent(new CustomEvent('cart-update', { bubbles: true }));
+          },
+          open: function () {
+            document.body.classList.add('cart-sidebar-show');
+            return true;
+          }
+        };
+      }
+
+      return null;
+    }
+
+    /*
+      Section ids the theme's drawer wants back from cart/add.js, or null.
+
+      Dawn renders more than the drawer itself: the header cart-count bubble is
+      its own section, so asking only for the drawer leaves the bubble showing a
+      stale count. We ask for whatever the element's own getSectionsToRender()
+      declares, which is exactly what the theme's native product form requests.
+    */
+    function stThemeDrawerSections() {
+      if (typeof window.SternifyCartOpen === 'function') return null;
+      if (window.SternifyCart && typeof window.SternifyCart.open === 'function') return null;
+
+      var el = document.querySelector('cart-drawer') || document.querySelector('cart-notification');
+      if (!el) return null;
+
+      var ids = [el.tagName.toLowerCase()];
+      try {
+        if (typeof el.getSectionsToRender === 'function') {
+          (el.getSectionsToRender() || []).forEach(function (s) {
+            if (s && s.id && ids.indexOf(s.id) === -1) ids.push(s.id);
+          });
+        }
+      } catch (e) {
+        /* fall back to just the drawer section */
+      }
+      // Belt and braces: the bubble is the one the merchant actually notices.
+      if (ids.indexOf('cart-icon-bubble') === -1) ids.push('cart-icon-bubble');
+      return ids.join(',');
+    }
+
+    /*
+      Apply any sections the add response returned, beyond the drawer itself.
+      Dawn's renderContents() only paints the ids in getSectionsToRender(), and
+      on stores where the drawer is not a real section that call is skipped
+      entirely, so the bubble would never update. This runs either way.
+    */
+    function stApplyCartSections(added) {
+      if (!added || !added.sections) return;
+      Object.keys(added.sections).forEach(function (id) {
+        var html = added.sections[id];
+        if (!html) return;
+
+        var live = document.getElementById(id);
+        if (!live) return;
+
+        var doc = new DOMParser().parseFromString(html, 'text/html');
+        // Section Rendering wraps the markup in #shopify-section-<id>, and the
+        // node we want inside it may use a DIFFERENT tag than the live one
+        // (cart-icon-bubble comes back as a div wrapper around an <a>). Prefer a
+        // same-id match, then fall back to the section wrapper's contents.
+        var next = doc.getElementById(id);
+        if (!next) {
+          var wrap = doc.getElementById('shopify-section-' + id) || doc.body;
+          if (wrap) live.innerHTML = wrap.innerHTML;
+          return;
+        }
+        live.innerHTML = next.innerHTML;
+      });
+    }
+
+    /* Show the cart after a successful add. Never throws: a drawer that fails
+       must not break the success state on the button.
+       `added` is the cart/add.js response, which carries the rendered sections
+       when the theme asked for them. */
+    function stRevealCart(added) {
+      /*
+        The post-add hand-off is the one part of this section that keeps needing
+        per-theme work, so it is served remotely and can be fixed without
+        writing liquid into every merchant theme. Everything else stays inline:
+        if the remote file fails to load we lose the drawer reveal, not the
+        whole product page.
+      */
+      var remote = window.SternifyCartReveal;
+      if (remote && typeof remote.reveal === 'function') {
+        // reveal(added) ignores a context argument. The first version passed
+        // { root: root } here, but root is declared in the init scope below,
+        // not this one - the ReferenceError was swallowed by this catch and
+        // the fallback ran instead, so the drawer silently never opened.
+        try { return remote.reveal(added); }
+        catch (e) { /* fall through to the inline path below */ }
+      }
+      try {
+        // 1. Sternify's own drawer wins when it is on the page.
+        if (typeof window.SternifyCartOpen === 'function') {
+          window.SternifyCartOpen();
+          return;
+        }
+        if (window.SternifyCart && typeof window.SternifyCart.open === 'function') {
+          window.SternifyCart.open();
+          return;
+        }
+
+        // 2. A theme drawer we know how to drive. Paint the cart-count bubble
+        //    and friends first, so it is correct even if the drawer path bails.
+        stApplyCartSections(added);
+        var drawer = stThemeDrawer();
+        if (drawer) {
+          // A refresh that resolves 'rendered' has already opened the cart
+          // (Dawn's renderContents does both), so opening again would re-run
+          // its focus trap and body-click handler.
+          var done = function (result) {
+            if (result === 'rendered') return;
+            try { drawer.open(); } catch (e) {}
+          };
+          var refreshed = drawer.refresh(added);
+          // Dawn needs its markup back before opening; the rest are synchronous.
+          if (refreshed && typeof refreshed.then === 'function') {
+            refreshed.then(done, function () { done(null); });
+          } else {
+            done(null);
+          }
+          return;
+        }
+
+        // 3. Generic events for themes and apps that listen for them.
+        document.dispatchEvent(new CustomEvent('cart:refresh', { bubbles: true }));
+        document.dispatchEvent(new CustomEvent('cart:change', { bubbles: true }));
+      } catch (e) {
+        /* never let cart UI break the add */
+      }
+    }
+
+    /*
+      Currency/translation apps (Transcy, Currency Converter, langify, …) wrap
+      shop.money_format in markup, e.g. `<span class=money>$ {{amount}}</span>`,
+      and sometimes deliver it entity-encoded. Liquid's `| money` output then
+      carries those tags too. In an HTML context that renders fine, but every
+      price we write goes through textContent, which prints the tags literally
+      ("<span class=money>$ 601.35</span>" on the page — useposh.shop report).
+      Decode escaped tags, strip all tags, then decode the entities they leave.
+    */
+    function stripMoneyMarkup(str) {
+      if (typeof str !== 'string') return str;
+      if (str.indexOf('<') === -1 && str.indexOf('&') === -1) return str;
+      // Decode escaped tags first so the strip below catches them, then let the
+      // parser resolve currency entities (&euro;, &nbsp;, &#36;) via textContent.
+      var stripped = str
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/<[^>]*>/g, '');
+      if (stripped.indexOf('&') !== -1) {
+        var d = document.createElement('textarea');
+        d.innerHTML = stripped;
+        stripped = d.value;
+      }
+      // NBSP renders as a stray gap in our layout; normalise to a plain space.
+      return stripped.replace(/ /g, ' ').trim();
+    }
+
+    function formatMoney(cents, format) {
+      format = stripMoneyMarkup(format);
+      if (typeof cents === 'string') cents = cents.replace('.', '');
+      var placeholderRegex = /\{\{\s*(\w+)\s*\}\}/;
+
+      function formatWithDelimiters(number, precision, thousands, decimal) {
+        precision = precision == null ? 2 : precision;
+        thousands = thousands || ',';
+        decimal = decimal || '.';
+        if (isNaN(number) || number == null) return 0;
+        number = (number / 100.0).toFixed(precision);
+        var parts = number.split('.');
+        var dollarsAmount = parts[0].replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1' + thousands);
+        var centsAmount = parts[1] ? decimal + parts[1] : '';
+        return dollarsAmount + centsAmount;
+      }
+
+      var match = format.match(placeholderRegex);
+      if (!match) return format;
+
+      var value = '';
+      switch (match[1]) {
+        case 'amount':
+          value = formatWithDelimiters(cents, 2);
+          break;
+        case 'amount_no_decimals':
+          value = formatWithDelimiters(cents, 0);
+          break;
+        case 'amount_with_comma_separator':
+          value = formatWithDelimiters(cents, 2, '.', ',');
+          break;
+        case 'amount_no_decimals_with_comma_separator':
+          value = formatWithDelimiters(cents, 0, '.', ',');
+          break;
+        case 'amount_with_apostrophe_separator':
+          value = formatWithDelimiters(cents, 2, "'", '.');
+          break;
+        default:
+          value = formatWithDelimiters(cents, 2);
+      }
+      return format.replace(placeholderRegex, value);
+    }
+
+    function init() {
+      var root = document.querySelector('.st_product-info--' + SECTION_ID);
+      if (!root) return;
+
+      var variantsScript = root.querySelector('[data-st-variants]');
+      var variants = [];
+      try {
+        variants = JSON.parse(variantsScript ? variantsScript.textContent : '[]');
+      } catch (e) {
+        variants = [];
+      }
+
+      var form = root.querySelector('.st_pi-form');
+      var variantIdInput = root.querySelector('[data-st-variant-id]');
+      var priceEl = root.querySelector('[data-st-price]');
+      var compareEl = root.querySelector('[data-st-compare]');
+      var saleBadgeEl = root.querySelector('[data-st-sale-badge]');
+      var atcBtn = root.querySelector('[data-st-atc]');
+      var atcLabel = root.querySelector('[data-st-atc-label]');
+      var errorEl = root.querySelector('[data-st-error]');
+      var qtyInput = root.querySelector('[data-st-qty-input]');
+      var optionFieldsets = root.querySelectorAll('.st_pi-option');
+
+      /*
+        Demote unpaintable swatches to text pills. A swatch that fell through
+        to the value-name paint only works when the name IS a CSS color;
+        CSS.supports('color', name) is the exact test the browser applies, so
+        "red" stays a circle and "v type" becomes a readable pill instead of
+        an empty ring.
+      */
+      root.querySelectorAll('[data-st-swatch-name]').forEach(function (el) {
+        var name = el.getAttribute('data-st-swatch-name') || '';
+        var paintable = false;
+        try {
+          paintable = !!(window.CSS && CSS.supports && CSS.supports('color', name));
+        } catch (e) { /* treat as unpaintable */ }
+        if (!paintable) {
+          el.classList.remove('st_pi-swatch');
+          el.removeAttribute('style');
+          el.removeAttribute('data-st-swatch-name');
+        }
+      });
+      var slides = root.querySelectorAll('[data-st-slide]');
+      var mediaIds = Array.prototype.map.call(slides, function (s) {
+        return s.dataset.mediaId;
+      });
+
+      function selectedOptions() {
+        var selected = [];
+        optionFieldsets.forEach(function (fs) {
+          var idx = parseInt(fs.dataset.optionIndex, 10);
+          var dropdown = fs.querySelector('select[data-st-option-select]');
+          if (dropdown) {
+            selected[idx] = dropdown.value;
+            return;
+          }
+          var checked = fs.querySelector('input:checked');
+          selected[idx] = checked ? checked.value : null;
+        });
+        return selected;
+      }
+
+      function findVariant(selected) {
+        /*
+          A product with only the default variant renders no option fieldsets
+          (`unless product.has_only_default_variant` above), so selectedOptions()
+          returns []. Matching that against the variant's ["Default Title"]
+          compares "Default Title" to undefined and fails, which showed every
+          single-variant product as "Unavailable" with a dead add-to-cart.
+          With nothing to choose, the only variant IS the selection.
+        */
+        if (!optionFieldsets.length) return variants[0];
+        return variants.find(function (v) {
+          return v.options.every(function (opt, i) {
+            return opt === selected[i];
+          });
+        });
+      }
+
+      function currentQty() {
+        var q = parseInt(qtyInput ? qtyInput.value : '1', 10);
+        return isNaN(q) || q < 1 ? 1 : q;
+      }
+
+      function activateMedia(mediaId) {
+        if (!mediaId || !mainSwiper) return;
+        var idx = mediaIds.indexOf(String(mediaId));
+        if (idx >= 0) mainSwiper.slideTo(idx);
+      }
+
+      function valueIsAvailable(optIndex, value, selected) {
+        return variants.some(function (v) {
+          if (!v.available) return false;
+          if (v.options[optIndex] !== value) return false;
+          return selected.every(function (s, i) {
+            return i === optIndex || v.options[i] === s;
+          });
+        });
+      }
+
+      function markAvailability(selected) {
+        optionFieldsets.forEach(function (fs) {
+          var optIndex = parseInt(fs.dataset.optionIndex, 10);
+          var dropdown = fs.querySelector('select[data-st-option-select]');
+          if (dropdown) {
+            Array.prototype.forEach.call(dropdown.options, function (opt) {
+              opt.disabled = !valueIsAvailable(optIndex, opt.value, selected) && opt.value !== dropdown.value;
+            });
+            return;
+          }
+          fs.querySelectorAll('input[data-st-option-input]').forEach(function (input) {
+            var available = valueIsAvailable(optIndex, input.value, selected);
+            var label = input.nextElementSibling;
+            if (label) label.classList.toggle('is-unavailable', !available);
+          });
+        });
+      }
+
+      /*
+        All of OUR disabled-state writes go through here so they carry a marker.
+
+        Why: subscription/bundle apps commonly disable the product form's
+        add-to-cart while their widget boots, then re-enable it, but their
+        re-enable step only matches THEME buttons (.product-form__submit and
+        friends). Ours matched their disable selector and not their re-enable
+        list, leaving the button dead forever on a live store (somvera.de,
+        Avada subscription widget). The guardian below reverts any disable that
+        did not come from us; our own states (sold out, unavailable, loading)
+        are stamped and respected.
+      */
+      function setAtcDisabled(disabled) {
+        if (!atcBtn) return;
+        if (disabled) {
+          atcBtn.setAttribute('data-st-disabled', '1');
+          atcBtn.disabled = true;
+        } else {
+          atcBtn.removeAttribute('data-st-disabled');
+          atcBtn.disabled = false;
+        }
+      }
+      if (atcBtn && 'MutationObserver' in window) {
+        new MutationObserver(function () {
+          // Foreign disable -> revert.
+          if (atcBtn.disabled && !atcBtn.hasAttribute('data-st-disabled')) {
+            atcBtn.disabled = false;
+            return;
+          }
+          // Foreign ENABLE while one of our states is active -> re-assert it,
+          // or a widget could make a sold-out / mid-request button clickable.
+          if (!atcBtn.disabled && atcBtn.hasAttribute('data-st-disabled')) {
+            atcBtn.disabled = true;
+          }
+        }).observe(atcBtn, { attributes: true, attributeFilter: ['disabled'] });
+      }
+      /*
+        The liquid renders `disabled` for a sold-out variant, and a
+        MutationObserver never fires for state that predates it. Stamp that
+        server-rendered disable so the guardian treats it as ours; the first
+        updateAtcButton() below clears it when the variant is purchasable.
+      */
+      if (atcBtn && atcBtn.disabled) atcBtn.setAttribute('data-st-disabled', '1');
+
+      function updateAtcButton(variant) {
+        if (!atcBtn || !atcLabel) return;
+        if (!variant) {
+          setAtcDisabled(true);
+          atcLabel.textContent = UNAVAILABLE_TEXT;
+          return;
+        }
+        if (!variant.available) {
+          setAtcDisabled(true);
+          atcLabel.textContent = SOLD_OUT_TEXT;
+          return;
+        }
+        setAtcDisabled(false);
+        if (SHOW_PRICE_IN_BUTTON) {
+          /*
+            An offer widget (bundle, …) on this page sets the real price, and
+            `variant.price * qty` is then the PRE-discount total — the figure
+            the widget shows struck through. Prefer whatever the widget last
+            published; fall back to our own maths when no widget is present.
+
+            Quantity is deliberately not applied to the offer total: the widget
+            already priced the whole bundle, and the buy box's qty field does
+            not control how many units it adds.
+          */
+          var total = offerTotalCents == null
+            ? variant.price * currentQty()
+            : offerTotalCents;
+          atcLabel.textContent = ATC_TEXT + ' • ' + formatMoney(total, MONEY_FORMAT);
+        } else {
+          atcLabel.textContent = ATC_TEXT;
+        }
+      }
+
+      /*
+        Effective total published by an offer widget, in cents; null while none
+        has spoken. Widgets render into this section, so their event bubbles up
+        to `root` — no ordering dependency between the two scripts, and a
+        widget that loads late simply corrects the button when it arrives.
+      */
+      var offerTotalCents = null;
+      root.addEventListener('sternify:price-changed', function (e) {
+        var cents = e && e.detail && e.detail.totalCents;
+        if (typeof cents !== 'number' || !isFinite(cents) || cents <= 0) return;
+        offerTotalCents = cents;
+        updateAtcButton(findVariant(selectedOptions()));
+      });
+
+      function updateSelectedLabels() {
+        optionFieldsets.forEach(function (fs) {
+          var labelSpan = fs.querySelector('[data-st-selected-label]');
+          if (!labelSpan) return;
+          var dropdown = fs.querySelector('select[data-st-option-select]');
+          if (dropdown) {
+            labelSpan.textContent = '- ' + dropdown.value;
+            return;
+          }
+          var checked = fs.querySelector('input:checked');
+          if (checked) labelSpan.textContent = '- ' + checked.value;
+        });
+      }
+
+      function updateUrl(variant) {
+        if (!variant || !window.history || !window.history.replaceState) return;
+        try {
+          var url = new URL(window.location.href);
+          url.searchParams.set('variant', variant.id);
+          window.history.replaceState(null, '', url.toString());
+        } catch (e) {
+          /* URL API unavailable, skip */
+        }
+      }
+
+      function onVariantChange() {
+        var selected = selectedOptions();
+        var variant = findVariant(selected);
+
+        markAvailability(selected);
+        updateSelectedLabels();
+        updateAtcButton(variant);
+
+        if (!variant) return;
+
+        if (variantIdInput) variantIdInput.value = variant.id;
+        if (priceEl) priceEl.textContent = stripMoneyMarkup(variant.price_formatted);
+        if (compareEl) {
+          if (variant.compare_at_price > variant.price && variant.compare_at_formatted) {
+            compareEl.textContent = stripMoneyMarkup(variant.compare_at_formatted);
+            compareEl.style.display = '';
+          } else {
+            compareEl.style.display = 'none';
+          }
+        }
+        if (saleBadgeEl) {
+          if (variant.compare_at_price > variant.price) {
+            var pct = Math.round(((variant.compare_at_price - variant.price) / variant.compare_at_price) * 100);
+            saleBadgeEl.textContent = '-' + pct + '%';
+            saleBadgeEl.classList.add('is-visible');
+          } else {
+            saleBadgeEl.classList.remove('is-visible');
+          }
+        }
+        root.querySelectorAll('[data-st-callout]').forEach(function (calloutEl) {
+          var template = calloutEl.getAttribute('data-template') || '';
+          var wrap = calloutEl.closest('.st_pi-callout-wrap') || calloutEl;
+          var needsDiscount = template.indexOf('[amount]') !== -1 || template.indexOf('[percent]') !== -1;
+          if (variant.compare_at_price > variant.price) {
+            var saveCents = variant.compare_at_price - variant.price;
+            var savePct = Math.round((saveCents / variant.compare_at_price) * 100);
+            calloutEl.textContent = template
+              .split('[amount]').join(formatMoney(saveCents, MONEY_FORMAT))
+              .split('[percent]').join(savePct + '%');
+            wrap.style.display = '';
+          } else if (needsDiscount) {
+            // No saving to name: hide the bubble rather than render "You save today"
+            wrap.style.display = 'none';
+          } else {
+            calloutEl.textContent = template;
+            wrap.style.display = '';
+          }
+        });
+        if (variant.media_id) activateMedia(variant.media_id);
+        updateUrl(variant);
+      }
+
+      // Gallery: Swiper main carousel (desktop drag + mobile swipe) with a
+      // synced thumbs carousel and minimal nav arrows
+      var mainSwiper = null;
+      var galleryEl = root.querySelector('[data-st-gallery]');
+      if (galleryEl && typeof Swiper !== 'undefined') {
+        var thumbsEl = root.querySelector('[data-st-thumbs]');
+        var thumbsSwiper = null;
+        if (thumbsEl) {
+          if (thumbsEl.swiper) thumbsEl.swiper.destroy(true, true);
+          var thumbParams = {
+            slidesPerView: 'auto',
+            spaceBetween: 8,
+            freeMode: true,
+            watchSlidesProgress: true,
+            watchOverflow: true,
+            // Never centre inside the Swiper: it pads the wrapper, which pushes
+            // the first/last slide away from the element edge and leaves the
+            // chevrons stranded. Centring is done by the flex row instead, so the
+            // arrows always sit directly beside the thumbnails.
+            centerInsufficientSlides: false
+          };
+          // The arrows step the MAIN gallery, not the thumb strip. Binding them to
+          // the thumbs Swiper's `navigation` made them permanently inert whenever
+          // the thumbs all fit (Swiper marks them disabled, so nothing to scroll),
+          // which is the common case. Stepping the gallery is what a shopper
+          // expects from arrows beside the thumbnails anyway, and the linked
+          // thumbs strip follows the active slide on its own.
+          thumbsSwiper = new Swiper(thumbsEl, thumbParams);
+          // Reveal the arrows only once Swiper has decided whether they are
+          // needed, so `swiper-button-lock` is already applied on first paint.
+          var thumbsZoneEl = thumbsEl.closest('.st_pi-thumbs-zone');
+          if (thumbsZoneEl) thumbsZoneEl.classList.add('st_pi-thumbs-ready');
+
+        }
+
+        if (galleryEl.swiper) galleryEl.swiper.destroy(true, true);
+        var mainParams = {
+          initialSlide: INITIAL_SLIDE,
+          grabCursor: true,
+          spaceBetween: 10,
+          watchOverflow: true,
+          // `natural` varies per image at every breakpoint. The fixed ratios vary
+          // only on mobile, where slide 1 is shorter because the benefit column
+          // narrows its image; the carousel grows on swipe to the full-width slides.
+          autoHeight: {% if section.settings.image_ratio == 'natural' %}true{% elsif section.settings.gallery_boxes_show_mobile %}window.matchMedia('(max-width: 989px)').matches{% else %}false{% endif %}
+        };
+        var prevArrow = root.querySelector('[data-st-arrow-prev]');
+        var nextArrow = root.querySelector('[data-st-arrow-next]');
+        if (prevArrow && nextArrow) {
+          mainParams.navigation = { prevEl: prevArrow, nextEl: nextArrow };
+        }
+        if (thumbsSwiper) {
+          mainParams.thumbs = { swiper: thumbsSwiper };
+        }
+        mainSwiper = new Swiper(galleryEl, mainParams);
+
+        // <details> flips `open` instantly, so closing would snap shut. Defer the
+        // attribute removal until the collapse transition has finished.
+        root.querySelectorAll('.st_pi-row').forEach(function (row) {
+          var summary = row.querySelector('summary');
+          var body = row.querySelector('.st_pi-row-body');
+          if (!summary || !body) return;
+          summary.addEventListener('click', function (e) {
+            e.preventDefault();
+            if (row.classList.contains('st_pi-row--animating')) return;
+            row.classList.add('st_pi-row--animating');
+            var settled = false;
+            var done = function () {
+              if (settled) return;
+              settled = true;
+              body.removeEventListener('transitionend', done);
+              row.classList.remove('st_pi-row--animating', 'st_pi-row--opening', 'st_pi-row--closing');
+            };
+            if (row.open) {
+              // keep it rendered while it collapses, then close for real
+              row.classList.add('st_pi-row--closing');
+              var closed = false;
+              var finishClose = function () {
+                if (closed) return;
+                closed = true;
+                body.removeEventListener('transitionend', onEnd);
+                row.open = false;
+                row.classList.remove('st_pi-row--animating', 'st_pi-row--closing');
+              };
+              var onEnd = function (ev) {
+                if (ev.propertyName !== 'grid-template-rows') return;
+                finishClose();
+              };
+              body.addEventListener('transitionend', onEnd);
+              // Safety net: if the transition never fires (reduced motion, the
+              // row hidden mid-animation, a browser that skips it) the row would
+              // stay permanently open. Force it closed just past the duration.
+              setTimeout(finishClose, 400);
+            } else {
+              row.open = true;
+              // next frame so the 0fr start state is committed before animating
+              requestAnimationFrame(function () {
+                row.classList.add('st_pi-row--opening');
+                body.addEventListener('transitionend', done);
+                // Same safety net as the close path: if the transition never
+                // fires, `--animating` would stick and the guard above would
+                // ignore every future click, leaving the row permanently open.
+                setTimeout(done, 400);
+              });
+            }
+          });
+        });
+
+        // Thumb arrows step the main gallery, with their own disabled state at the
+        // first/last slide. They are NOT Swiper `navigation` targets, so Swiper
+        // never marks them disabled for "nothing to scroll" in the thumb strip.
+        (function () {
+          var tPrev = root.querySelector('[data-st-thumb-prev]');
+          var tNext = root.querySelector('[data-st-thumb-next]');
+          if (!tPrev || !tNext || !mainSwiper) return;
+          tPrev.addEventListener('click', function (e) {
+            e.preventDefault();
+            mainSwiper.slidePrev();
+          });
+          tNext.addEventListener('click', function (e) {
+            e.preventDefault();
+            mainSwiper.slideNext();
+          });
+          var syncEnds = function () {
+            if (!mainSwiper || mainSwiper.destroyed) return;
+            tPrev.classList.toggle('swiper-button-disabled', !mainSwiper.params.loop && mainSwiper.isBeginning);
+            tNext.classList.toggle('swiper-button-disabled', !mainSwiper.params.loop && mainSwiper.isEnd);
+          };
+          mainSwiper.on('slideChange', syncEnds);
+          mainSwiper.on('reachBeginning', syncEnds);
+          mainSwiper.on('reachEnd', syncEnds);
+          syncEnds();
+        })();
+
+        // Explicit thumb -> main wiring. Swiper's own `slideToClickedSlide` is
+        // unreliable here: it is per-swiper, freeMode suppresses `clickedIndex`,
+        // and the alignment `breakpoints` override resets the flag at 990px.
+        root.querySelectorAll('[data-st-thumbs] .st_pi-thumb').forEach(function (btn, i) {
+          btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            if (!mainSwiper || mainSwiper.destroyed) return;
+            if (mainSwiper.params.loop) mainSwiper.slideToLoop(i);
+            else mainSwiper.slideTo(i);
+          });
+        });
+        {%- if section.settings.image_ratio != 'natural' and section.settings.gallery_boxes_show_mobile -%}
+        // autoHeight is a mobile-only behaviour here (slide 1 is shorter because
+        // the benefit column narrows its image). Swiper reads it once at init, and
+        // the measured height depends on the element's width, so it has to be
+        // re-applied on ANY resize, not just at the breakpoint: a ResizeObserver on
+        // the gallery covers window resizes, rotation, and the theme editor
+        // re-laying out the section.
+        (function () {
+          var mq = window.matchMedia('(max-width: 989px)');
+          var raf = null;
+          var apply = function () {
+            if (!mainSwiper || mainSwiper.destroyed) return;
+            mainSwiper.params.autoHeight = mq.matches;
+            mainSwiper.update();
+            if (mq.matches) mainSwiper.updateAutoHeight(0);
+            else galleryEl.style.height = '';
+            if (thumbsSwiper && !thumbsSwiper.destroyed) thumbsSwiper.update();
+          };
+          var schedule = function () {
+            if (raf) cancelAnimationFrame(raf);
+            raf = requestAnimationFrame(apply);
+          };
+          if (window.ResizeObserver) {
+            new ResizeObserver(schedule).observe(galleryEl);
+          } else {
+            window.addEventListener('resize', schedule);
+          }
+          if (mq.addEventListener) mq.addEventListener('change', schedule);
+          else if (mq.addListener) mq.addListener(schedule);
+          // a late-decoding image changes the measured height after layout
+          root.querySelectorAll('.st_pi-swiper img').forEach(function (img) {
+            if (!img.complete) img.addEventListener('load', schedule, { once: true });
+          });
+          window.addEventListener('load', schedule);
+          schedule();
+        })();
+        {%- endif -%}
+        // Deferred external videos: swap the poster for the real embed on the
+        // play tap. autoplay is in the embed URL, and the tap is the user
+        // gesture that lets it start immediately.
+        function stActivateDeferredVideo(target) {
+          var wrap = target && target.closest && target.closest('[data-st-deferred-video]');
+          if (!wrap) return false;
+          var tpl = wrap.querySelector('template');
+          if (!tpl) return false;
+          var frag = document.importNode(tpl.content, true);
+          wrap.innerHTML = '';
+          wrap.appendChild(frag);
+          return true;
+        }
+        /*
+          Two bindings on purpose. Swiper's drag detection suppresses native
+          clicks it attributes to a swipe (preventClicks), which can eat a
+          perfectly good tap on the play button; Swiper's own 'tap' event fires
+          for exactly those. The native listener stays for keyboard activation
+          and anything that bypasses Swiper.
+        */
+        mainSwiper.on('tap', function (sw, e) {
+          if (e && e.target) stActivateDeferredVideo(e.target);
+        });
+        root.querySelectorAll('[data-st-deferred-video] .st_pi-ext-play').forEach(function (btn) {
+          btn.addEventListener('click', function () { stActivateDeferredVideo(btn); });
+        });
+
+        mainSwiper.on('slideChange', function () {
+          slides.forEach(function (slide, i) {
+            if (i === mainSwiper.activeIndex) return;
+            var video = slide.querySelector('video');
+            if (video) video.pause();
+            /*
+              External videos too: Shopify's external_video_tag embeds carry
+              enablejsapi, so YouTube honours the JSON command channel and
+              Vimeo the player.js one. Without this, a playing YouTube embed
+              kept its audio running after the shopper swiped to another slide
+              (hosted <video> was paused, iframes were not).
+            */
+            var frame = slide.querySelector('iframe');
+            if (frame && frame.contentWindow) {
+              try {
+                frame.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'pauseVideo', args: [] }), '*');
+                frame.contentWindow.postMessage(JSON.stringify({ method: 'pause' }), '*');
+              } catch (e) { /* cross-origin messaging noise, never break the swipe */ }
+            }
+          });
+        });
+      }
+
+      // Option change listeners
+      optionFieldsets.forEach(function (fs) {
+        fs.addEventListener('change', onVariantChange);
+      });
+
+      // Quantity controls
+      var minusBtn = root.querySelector('[data-st-qty-minus]');
+      var plusBtn = root.querySelector('[data-st-qty-plus]');
+      if (minusBtn && qtyInput) {
+        minusBtn.addEventListener('click', function () {
+          qtyInput.value = Math.max(1, currentQty() - 1);
+          onVariantChange();
+        });
+      }
+      if (plusBtn && qtyInput) {
+        plusBtn.addEventListener('click', function () {
+          qtyInput.value = currentQty() + 1;
+          onVariantChange();
+        });
+      }
+      if (qtyInput) {
+        qtyInput.addEventListener('change', onVariantChange);
+      }
+
+      // Add to cart
+      if (form) {
+        form.addEventListener('submit', function (e) {
+          e.preventDefault();
+          // Check the stamp too: a third-party script can flip `disabled` off
+          // between our state change and this handler.
+          if (atcBtn && (atcBtn.disabled || atcBtn.hasAttribute('data-st-disabled'))) return;
+
+          var routesRoot = (window.Shopify && window.Shopify.routes && window.Shopify.routes.root) || '/';
+          var originalLabel = atcLabel ? atcLabel.textContent : '';
+
+          if (errorEl) {
+            errorEl.classList.remove('is-visible');
+            errorEl.textContent = '';
+          }
+          if (atcBtn) {
+            setAtcDisabled(true);
+            atcBtn.classList.add('st_pi-atc--loading');
+          }
+
+          // Ask for the theme's cart sections in the add itself. Dawn's own
+          // product form does this, and its renderContents() needs the returned
+          // `sections` to draw the added item rather than a bare "item added".
+          // Themes that do not use them simply ignore the extra params.
+          var addBody = new FormData(form);
+          // Prefer the remote runtime's resolver: it knows about theme families
+          // added after this liquid shipped (Horizon's per-shop section ids), and
+          // the sections it names are what lets us re-emit the theme's own
+          // post-add event instead of guessing how to open its drawer.
+          var remoteReveal = window.SternifyCartReveal;
+          var wantSections = (remoteReveal && typeof remoteReveal._sections === 'function')
+            ? remoteReveal._sections()
+            : stThemeDrawerSections();
+          if (wantSections) {
+            addBody.append('sections', wantSections);
+            addBody.append('sections_url', window.location.pathname);
+          }
+
+          fetch(routesRoot + 'cart/add.js', {
+            method: 'POST',
+            body: addBody,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+          })
+            .then(function (response) {
+              if (!response.ok) {
+                return response
+                  .json()
+                  .catch(function () {
+                    return {};
+                  })
+                  .then(function (data) {
+                    throw new Error(data.description || data.message || 'Could not add to cart.');
+                  });
+              }
+              return response.json();
+            })
+            .then(function (added) {
+              if (AFTER_ADD === 'cart') {
+                window.location.href = routesRoot + 'cart';
+                return;
+              }
+              // Stay on page: show the Sternify drawer, the theme's drawer, or
+              // fall back to the generic events. See stRevealCart().
+              stRevealCart(added);
+              if (atcBtn) {
+                atcBtn.classList.remove('st_pi-atc--loading');
+                atcBtn.classList.add('st_pi-atc--success');
+              }
+              if (atcLabel) atcLabel.textContent = ADDED_TEXT;
+              setTimeout(function () {
+                if (atcBtn) {
+                  atcBtn.classList.remove('st_pi-atc--success');
+                  setAtcDisabled(false);
+                }
+                if (atcLabel) atcLabel.textContent = originalLabel;
+              }, 1800);
+            })
+            .catch(function (err) {
+              if (errorEl) {
+                errorEl.textContent = err.message;
+                errorEl.classList.add('is-visible');
+              }
+              if (atcLabel) atcLabel.textContent = originalLabel;
+              if (atcBtn) {
+                setAtcDisabled(false);
+                atcBtn.classList.remove('st_pi-atc--loading');
+              }
+            });
+        });
+      }
+
+      // Initial paint (availability marks, button price with qty)
+      onVariantChange();
+    }
+
+    document.addEventListener('shopify:section:load', function (event) {
+      if (event.detail.sectionId === SECTION_ID) {
+        setTimeout(init, 100);
+      }
+    });
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+</script>
+<script src="https://app.sternify.com/storefront/st-product-information.js" defer></script>
+
+{% endif %}
+
+{% schema %}
+{
+  "name": "💫: Product Information",
+  "class": "st-product-information-section",
+  "tag": "section",
+  "enabled_on": {
+    "templates": ["product"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Important",
+      "info": "Please ensure that Sternify [App Extensions](https://www.sternify.com/app-extentions) are activated. Add this section to a product template. Every element of the buy box is a block, reorder or remove them freely and mix in Sternify app blocks."
+    },
+    {
+      "type": "header",
+      "content": "Section Layout"
+    },
+    {
+      "type": "range",
+      "id": "margin_top",
+      "label": "Top Margin",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "default": 50,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "label": "Bottom Margin",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "default": 50,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Section Max Width",
+      "min": 1000,
+      "max": 1600,
+      "step": 50,
+      "default": 1400,
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "section_bg_color",
+      "label": "Section Background Color",
+      "default": "#FFFFFF",
+      "info": "Fills the full section including the top and bottom margins"
+    },
+    {
+      "type": "checkbox",
+      "id": "section_bg_gradient_enable",
+      "label": "Enable Background Gradient",
+      "default": false
+    },
+    {
+      "type": "color_background",
+      "id": "section_bg_gradient",
+      "label": "Background Gradient",
+      "default": "linear-gradient(180deg, rgba(255, 255, 255, 1) 0%, rgba(246, 246, 246, 1) 100%)",
+      "visible_if": "{{ section.settings.section_bg_gradient_enable }}"
+    },
+    {
+      "type": "select",
+      "id": "media_position",
+      "label": "Media Position (Desktop)",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "font_picker",
+      "id": "heading_font",
+      "label": "Heading Font",
+      "default": "poppins_n6"
+    },
+    {
+      "type": "font_picker",
+      "id": "body_font",
+      "label": "Body Font",
+      "default": "poppins_n4"
+    },
+    {
+      "type": "header",
+      "content": "Media Gallery"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image Ratio",
+      "options": [
+        { "value": "square", "label": "Square (1:1)" },
+        { "value": "portrait", "label": "Portrait (4:5)" },
+        { "value": "natural", "label": "Natural" }
+      ],
+      "default": "square"
+    },
+    {
+      "type": "header",
+      "content": "Cause Banner"
+    },
+    {
+      "type": "color",
+      "id": "cause_bg_color",
+      "label": "Banner Background",
+      "default": "#F6F6F6"
+    },
+    {
+      "type": "color",
+      "id": "cause_text_color",
+      "label": "Banner Text",
+      "default": "#1A1A1A"
+    },
+    {
+      "type": "color",
+      "id": "cause_icon_color",
+      "label": "Banner Icon",
+      "default": "#E0A264"
+    },
+    {
+      "type": "range",
+      "id": "cause_text_size",
+      "label": "Banner Text Size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "select",
+      "id": "thumbs_align_desktop",
+      "label": "Thumbnails Alignment (Desktop)",
+      "options": [
+        { "value": "start", "label": "Left" },
+        { "value": "center", "label": "Centered" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "thumbs_align_mobile",
+      "label": "Thumbnails Alignment (Mobile)",
+      "options": [
+        { "value": "start", "label": "Left" },
+        { "value": "center", "label": "Centered" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "thumbs_size_desktop",
+      "label": "Thumbnail Size (Desktop)",
+      "min": 56,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 84
+    },
+    {
+      "type": "range",
+      "id": "thumbs_size_mobile",
+      "label": "Thumbnail Size (Mobile)",
+      "min": 48,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 72
+    },
+    {
+      "type": "checkbox",
+      "id": "show_gallery_arrows",
+      "label": "Show Navigation Arrows",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "arrow_bg_color",
+      "label": "Arrow Background",
+      "default": "#FFFFFF",
+      "visible_if": "{{ section.settings.show_gallery_arrows }}"
+    },
+    {
+      "type": "color",
+      "id": "arrow_icon_color",
+      "label": "Arrow Icon Color",
+      "default": "#1A1A1A",
+      "visible_if": "{{ section.settings.show_gallery_arrows }}"
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "label": "Image Border Radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "default": 12,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Gallery Boxes",
+      "info": "Highlight boxes shown next to the main image. Add them via the Gallery Box blocks of this section."
+    },
+    {
+      "type": "select",
+      "id": "gallery_boxes_position",
+      "label": "Boxes Position",
+      "options": [
+        { "value": "left", "label": "Left of Main Image" },
+        { "value": "right", "label": "Right of Main Image" }
+      ],
+      "default": "right"
+    },
+    {
+      "type": "checkbox",
+      "id": "gallery_boxes_show_mobile",
+      "label": "Show Benefit Boxes on Mobile",
+      "info": "Off by default: the boxes narrow the first image on small screens. Turn on to keep them beside image 1.",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "gallery_boxes_width",
+      "label": "Boxes Width",
+      "min": 90,
+      "max": 180,
+      "step": 5,
+      "default": 120,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "gallery_boxes_gap",
+      "label": "Gap Between Boxes",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "default": 8,
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "gallery_box_bg_color",
+      "label": "Box Background",
+      "default": "#F6F6F6"
+    },
+    {
+      "type": "checkbox",
+      "id": "gallery_box_gradient_enable",
+      "label": "Enable Box Gradient",
+      "default": false
+    },
+    {
+      "type": "color_background",
+      "id": "gallery_box_gradient",
+      "label": "Box Gradient",
+      "default": "linear-gradient(180deg, rgba(250, 250, 250, 1) 0%, rgba(240, 240, 240, 1) 100%)",
+      "visible_if": "{{ section.settings.gallery_box_gradient_enable }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "gallery_box_border_enable",
+      "label": "Enable Box Border",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "gallery_box_border_color",
+      "label": "Box Border Color",
+      "default": "#E4E2E2",
+      "visible_if": "{{ section.settings.gallery_box_border_enable }}"
+    },
+    {
+      "type": "range",
+      "id": "gallery_box_border_width",
+      "label": "Box Border Width",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 1,
+      "unit": "px",
+      "visible_if": "{{ section.settings.gallery_box_border_enable }}"
+    },
+    {
+      "type": "color",
+      "id": "gallery_box_text_color",
+      "label": "Box Text Color",
+      "default": "#1A1A1A"
+    },
+    {
+      "type": "color",
+      "id": "gallery_box_icon_color",
+      "visible_if": "{{ section.settings.gallery_box_icon_gradient_enable == false }}",
+      "label": "Box Icon Color",
+      "default": "#1A1A1A"
+    },
+    {
+      "type": "checkbox",
+      "id": "gallery_box_icon_gradient_enable",
+      "label": "Enable Icon Gradient",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "gallery_box_icon_gradient_start",
+      "label": "Icon Gradient Start",
+      "default": "#DBBD21",
+      "visible_if": "{{ section.settings.gallery_box_icon_gradient_enable }}"
+    },
+    {
+      "type": "color",
+      "id": "gallery_box_icon_gradient_end",
+      "label": "Icon Gradient End",
+      "default": "#F0D65C",
+      "visible_if": "{{ section.settings.gallery_box_icon_gradient_enable }}"
+    },
+    {
+      "type": "range",
+      "id": "gallery_box_radius",
+      "label": "Box Border Radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "default": 10,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Collapsible Rows Style"
+    },
+    {
+      "type": "color",
+      "id": "row_border_color",
+      "label": "Row Border Color",
+      "default": "#E4E2E2"
+    },
+    {
+      "type": "color",
+      "id": "row_text_color",
+      "label": "Row Heading Color",
+      "default": "#1A1A1A"
+    },
+    {
+      "type": "color",
+      "id": "row_icon_color",
+      "label": "Row Icon Color",
+      "default": "#1A1A1A"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "@app"
+    },
+    {
+      "type": "title",
+      "name": "Product Title",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "custom_title",
+          "label": "Custom Title",
+          "info": "Leave empty to use the product title. Highlight text by wrapping it in [brackets]"
+        },
+        {
+          "type": "checkbox",
+          "id": "title_uppercase",
+          "label": "Uppercase",
+          "default": false
+        },
+        {
+          "type": "color",
+          "id": "title_color",
+          "label": "Color",
+          "default": "#1A1A1A"
+        },
+        {
+          "type": "checkbox",
+          "id": "title_gradient_enable",
+          "label": "Enable Gradient",
+          "default": false
+        },
+        {
+          "type": "color_background",
+          "id": "title_gradient",
+          "label": "Gradient",
+          "default": "linear-gradient(99deg, rgba(26, 26, 26, 1) 0%, rgba(90, 90, 90, 1) 100%)",
+          "visible_if": "{{ block.settings.title_gradient_enable }}"
+        },
+        {
+          "type": "color_background",
+          "id": "highlight_color",
+          "label": "Highlight Color",
+          "info": "For text wrapped in [brackets]. Supports gradients.",
+          "default": "linear-gradient(0deg, rgba(247, 222, 94, 1), rgba(219, 189, 33, 1) 100%)"
+        },
+        {
+          "type": "range",
+          "id": "title_size_desktop",
+          "label": "Size (Desktop)",
+          "min": 28,
+          "max": 45,
+          "step": 1,
+          "default": 34,
+          "unit": "px"
+        },
+        {
+          "type": "range",
+          "id": "title_size_mobile",
+          "label": "Size (Mobile)",
+          "min": 20,
+          "max": 40,
+          "step": 1,
+          "default": 24,
+          "unit": "px"
+        }
+      ]
+    },
+    {
+      "type": "subtitle",
+      "name": "Subtitle",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "info": "Shown under the title. You can highlight text by wrapping it in [brackets]",
+          "default": "The [one-line benefit] your customer cares about most"
+        },
+        {
+          "type": "color",
+          "id": "subtitle_color",
+          "label": "Color",
+          "default": "#616161"
+        },
+        {
+          "type": "color_background",
+          "id": "highlight_color",
+          "label": "Highlight Color",
+          "info": "For text wrapped in [brackets]. Supports gradients.",
+          "default": "linear-gradient(0deg, rgba(247, 222, 94, 1), rgba(219, 189, 33, 1) 100%)"
+        },
+        {
+          "type": "range",
+          "id": "subtitle_size",
+          "label": "Size (Desktop)",
+          "min": 15,
+          "max": 30,
+          "step": 1,
+          "default": 16,
+          "unit": "px"
+        },
+        {
+          "type": "range",
+          "id": "subtitle_size_mobile",
+          "label": "Size (Mobile)",
+          "min": 12,
+          "max": 24,
+          "step": 1,
+          "default": 14,
+          "unit": "px"
+        }
+      ]
+    },
+    {
+      "type": "price",
+      "name": "Price",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_sale_badge",
+          "label": "Show Savings",
+          "default": true,
+          "info": "Shows the discount when a compare-at price is set"
+        },
+        {
+          "type": "header",
+          "content": "Callout Bubble"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_callout",
+          "label": "Show Callout",
+          "default": false,
+          "info": "A speech bubble that points at the price. Great for marketing text like 'Only 0.19€ per use'"
+        },
+        {
+          "type": "text",
+          "id": "callout_text",
+          "label": "Callout Text",
+          "info": "Use [amount] or [percent] to show the saving. The bubble hides itself automatically when the product has no compare-at price.",
+          "default": "Free shipping on this order",
+          "visible_if": "{{ block.settings.show_callout }}"
+        },
+        {
+          "type": "select",
+          "id": "callout_position",
+          "label": "Position",
+          "options": [
+            { "value": "top", "label": "Above Price" },
+            { "value": "below", "label": "Below Price" }
+          ],
+          "default": "top",
+          "visible_if": "{{ block.settings.show_callout }}"
+        },
+        {
+          "type": "color",
+          "id": "callout_bg_color",
+          "label": "Bubble Background",
+          "default": "#3BB77E",
+          "visible_if": "{{ block.settings.show_callout }}"
+        },
+        {
+          "type": "checkbox",
+          "id": "callout_gradient_enable",
+          "label": "Enable Bubble Gradient",
+          "default": true,
+          "visible_if": "{{ block.settings.show_callout }}"
+        },
+        {
+          "type": "color_background",
+          "id": "callout_gradient",
+          "label": "Bubble Gradient",
+          "default": "linear-gradient(99deg, rgba(59, 183, 126, 1) 0%, rgba(45, 160, 108, 1) 100%)",
+          "visible_if": "{{ block.settings.show_callout and block.settings.callout_gradient_enable }}"
+        },
+        {
+          "type": "color",
+          "id": "callout_text_color",
+          "label": "Bubble Text Color",
+          "default": "#FFFFFF",
+          "visible_if": "{{ block.settings.show_callout }}"
+        },
+        {
+          "type": "header",
+          "content": "Style"
+        },
+        {
+          "type": "color",
+          "id": "price_color",
+          "label": "Price Color",
+          "default": "#1A1A1A"
+        },
+        {
+          "type": "range",
+          "id": "price_size",
+          "label": "Price Size",
+          "min": 16,
+          "max": 36,
+          "step": 1,
+          "default": 24,
+          "unit": "px"
+        },
+        {
+          "type": "color",
+          "id": "sale_badge_bg_color",
+          "label": "Badge Background",
+          "default": "#1A1A1A",
+          "visible_if": "{{ block.settings.show_sale_badge }}"
+        },
+        {
+          "type": "checkbox",
+          "id": "sale_badge_gradient_enable",
+          "label": "Enable Badge Gradient",
+          "default": false,
+          "visible_if": "{{ block.settings.show_sale_badge }}"
+        },
+        {
+          "type": "color_background",
+          "id": "sale_badge_gradient",
+          "label": "Badge Gradient",
+          "default": "linear-gradient(99deg, rgba(26, 26, 26, 1) 0%, rgba(70, 70, 70, 1) 100%)",
+          "visible_if": "{{ block.settings.show_sale_badge and block.settings.sale_badge_gradient_enable }}"
+        },
+        {
+          "type": "color",
+          "id": "sale_badge_text_color",
+          "label": "Badge Text Color",
+          "default": "#FFFFFF",
+          "visible_if": "{{ block.settings.show_sale_badge }}"
+        }
+      ]
+    },
+    {
+      "type": "description",
+      "name": "Description",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "desc_source",
+          "label": "Description Source",
+          "options": [
+            { "value": "product", "label": "Product Description" },
+            { "value": "custom", "label": "Custom Text" }
+          ],
+          "default": "product"
+        },
+        {
+          "type": "richtext",
+          "id": "custom_description",
+          "label": "Custom Description",
+          "default": "<p>Describe the main benefit of your product in one or two short sentences. Focus on the outcome your customer gets.</p>",
+          "visible_if": "{{ block.settings.desc_source == 'custom' }}"
+        },
+        {
+          "type": "color",
+          "id": "desc_color",
+          "label": "Color",
+          "default": "#4A4A4A"
+        },
+        {
+          "type": "range",
+          "id": "desc_size",
+          "label": "Size",
+          "min": 12,
+          "max": 20,
+          "step": 1,
+          "default": 14,
+          "unit": "px"
+        }
+      ]
+    },
+    {
+      "type": "variant_picker",
+      "name": "Variant Picker",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "picker_type",
+          "label": "Picker Type",
+          "options": [
+            { "value": "pills", "label": "Buttons" },
+            { "value": "dropdown", "label": "Dropdown" }
+          ],
+          "default": "pills"
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_color_swatches",
+          "label": "Enable Color Swatches",
+          "default": true,
+          "info": "Shows round swatches instead of text for color options"
+        },
+        {
+          "type": "select",
+          "id": "swatch_method",
+          "label": "Swatch Method",
+          "options": [
+            { "value": "color_list", "label": "Color list" },
+            { "value": "variant_image", "label": "Variant image" }
+          ],
+          "default": "color_list",
+          "info": "Color list paints from the colors below. Variant image uses each color's product photo instead, falling back to the color list where a photo is missing."
+        },
+        {
+          "type": "textarea",
+          "id": "swatch_color_map",
+          "label": "Custom Swatch Colors",
+          "info": "One per line, e.g. Ocean Blue: #1B4F72. Needed for color names a browser does not recognise. Applies to every product using this template. Unmapped values stay as text labels."
+        },
+        {
+          "type": "header",
+          "content": "Style"
+        },
+        {
+          "type": "color",
+          "id": "pill_bg_color",
+          "label": "Option Background",
+          "default": "#FFFFFF"
+        },
+        {
+          "type": "color",
+          "id": "pill_text_color",
+          "label": "Option Text Color",
+          "default": "#1A1A1A"
+        },
+        {
+          "type": "color",
+          "id": "pill_border_color",
+          "label": "Option Border Color",
+          "default": "#D9D9D9"
+        },
+        {
+          "type": "color",
+          "id": "pill_selected_bg_color",
+          "label": "Selected Background",
+          "default": "#FFFFFF"
+        },
+        {
+          "type": "color",
+          "id": "pill_selected_text_color",
+          "label": "Selected Text Color",
+          "default": "#1A1A1A"
+        },
+        {
+          "type": "color",
+          "id": "pill_selected_border_color",
+          "label": "Selected Border Color",
+          "default": "#1A1A1A"
+        }
+      ]
+    },
+    {
+      "type": "quantity",
+      "name": "Quantity Selector",
+      "limit": 1
+    },
+    {
+      "type": "buy_buttons",
+      "name": "Buy Button",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "atc_text",
+          "label": "Button Text",
+          "default": "Add to cart"
+        },
+        {
+          "type": "image_picker",
+          "id": "atc_icon",
+          "label": "Button Icon",
+          "info": "Optional icon shown before the button text (e.g. a cart or lock icon)"
+        },
+        {
+          "type": "text",
+          "id": "atc_icon_demo_url",
+          "label": "Demo Add-to-Cart Icon URL",
+          "visible_if": "{{ block.settings.atc_icon_demo_url == 'st-internal' }}"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_price_in_button",
+          "label": "Show Price in Button",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "sold_out_text",
+          "label": "Sold Out Text",
+          "default": "Sold out"
+        },
+        {
+          "type": "text",
+          "id": "added_text",
+          "label": "Added Confirmation Text",
+          "info": "Shown briefly after adding to cart",
+          "default": "Added to cart"
+        },
+        {
+          "type": "text",
+          "id": "unavailable_text",
+          "label": "Unavailable Text",
+          "default": "Unavailable"
+        },
+        {
+          "type": "select",
+          "id": "after_add",
+          "label": "After Adding to Cart",
+          "options": [
+            { "value": "stay", "label": "Stay on page" },
+            { "value": "cart", "label": "Go to cart page" }
+          ],
+          "default": "stay",
+          "info": "With the Sternify Cart Drawer enabled, the drawer opens automatically. Choose Stay on page in that case."
+        },
+        {
+          "type": "header",
+          "content": "Button Style"
+        },
+        {
+          "type": "color",
+          "id": "atc_bg_color",
+          "label": "Button Background",
+          "default": "#1A1A1A"
+        },
+        {
+          "type": "checkbox",
+          "id": "atc_gradient_enable",
+          "label": "Enable Gradient Background",
+          "default": false
+        },
+        {
+          "type": "color_background",
+          "id": "atc_gradient",
+          "label": "Button Gradient",
+          "default": "linear-gradient(99deg, rgba(26, 26, 26, 1) 0%, rgba(70, 70, 70, 1) 100%)",
+          "visible_if": "{{ block.settings.atc_gradient_enable }}"
+        },
+        {
+          "type": "color",
+          "id": "atc_text_color",
+          "label": "Button Text Color",
+          "default": "#FFFFFF"
+        },
+        {
+          "type": "range",
+          "id": "atc_border_radius",
+          "label": "Button Border Radius",
+          "min": 0,
+          "max": 30,
+          "step": 2,
+          "default": 8,
+          "unit": "px"
+        },
+        {
+          "type": "select",
+          "id": "atc_style",
+          "label": "Button Design",
+          "options": [
+            { "value": "flat", "label": "Flat" },
+            { "value": "soft", "label": "Soft Shadow" },
+            { "value": "glow", "label": "Color Glow" },
+            { "value": "lift", "label": "Hover Lift" },
+            { "value": "offset", "label": "Hard Offset" },
+            { "value": "edge", "label": "Hard 3D Edge" },
+            { "value": "key", "label": "3D Color Key" },
+            { "value": "glass", "label": "Glass Inset" },
+            { "value": "gloss", "label": "Glossy Sheen" },
+            { "value": "pill", "label": "Floating Pill" },
+            { "value": "pulse", "label": "Pulsing Glow" }
+          ],
+          "default": "soft"
+        },
+        {
+          "type": "color",
+          "id": "atc_shadow_color",
+          "label": "Shadow / Glow Color",
+          "default": "#1A1A1A",
+          "info": "Used by Hard Offset, Hard 3D Edge, 3D Color Key, Color Glow and Pulsing Glow designs",
+          "visible_if": "{{ block.settings.atc_style == 'glow' or block.settings.atc_style == 'offset' or block.settings.atc_style == 'edge' or block.settings.atc_style == 'key' or block.settings.atc_style == 'pulse' }}"
+        },
+        {
+          "type": "header",
+          "content": "Note Below Button"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_cart_note",
+          "label": "Show Note",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "cart_note",
+          "label": "Note Text",
+          "default": "Free shipping on orders over $50",
+          "visible_if": "{{ block.settings.show_cart_note }}"
+        },
+        {
+          "type": "image_picker",
+          "id": "cart_note_icon",
+          "label": "Note Icon",
+          "visible_if": "{{ block.settings.show_cart_note }}"
+        },
+        {
+          "type": "text",
+          "id": "cart_note_icon_demo_url",
+          "label": "Demo Cart Note Icon URL",
+          "visible_if": "{{ block.settings.cart_note_icon_demo_url == 'st-internal' }}"
+        },
+        {
+          "type": "color",
+          "id": "cart_note_color",
+          "label": "Note Color",
+          "default": "#767676",
+          "visible_if": "{{ block.settings.show_cart_note }}"
+        }
+      ]
+    },
+    {
+      "type": "cause_banner",
+      "name": "Cause Banner",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Shows under the gallery on desktop only. Use bold for the cause name."
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>A portion of every order is <strong>donated to a cause we believe in</strong> to support the work behind it.</p>"
+        },
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "Icon"
+        },
+        {
+          "type": "text",
+          "id": "icon_demo_url",
+          "label": "Demo Image URL",
+          "visible_if": "{{ block.settings.icon_demo_url == 'st-internal' }}"
+        }
+      ]
+    },
+    {
+      "type": "gallery_box",
+      "name": "Gallery Box",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "check", "label": "Checkmark" },
+            { "value": "star", "label": "Star" },
+            { "value": "shield", "label": "Shield" },
+            { "value": "truck", "label": "Delivery Truck" },
+            { "value": "leaf", "label": "Leaf" },
+            { "value": "heart", "label": "Heart" },
+            { "value": "lock", "label": "Lock" },
+            { "value": "gift", "label": "Gift" },
+            { "value": "clock", "label": "Clock" }
+          ],
+          "default": "check"
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_icon",
+          "label": "Custom Icon Image",
+          "info": "Overrides the icon above"
+        },
+        {
+          "type": "text",
+          "id": "custom_icon_demo_url",
+          "label": "Demo Gallery Icon URL",
+          "visible_if": "{{ block.settings.custom_icon_demo_url == 'st-internal' }}"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Fast Delivery"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Ships within 24 hours"
+        }
+      ]
+    },
+    {
+      "type": "collapsible_row",
+      "name": "Collapsible Row",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "none", "label": "None" },
+            { "value": "check", "label": "Checkmark" },
+            { "value": "truck", "label": "Delivery Truck" },
+            { "value": "box", "label": "Package" },
+            { "value": "question", "label": "Question Mark" },
+            { "value": "shield", "label": "Shield" },
+            { "value": "leaf", "label": "Leaf" },
+            { "value": "ruler", "label": "Ruler" }
+          ],
+          "default": "truck"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Shipping & Returns"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Content",
+          "default": "<p>Orders are processed within 24 hours and typically arrive in 3 to 5 business days. Not happy? Return it within 30 days for a full refund.</p>"
+        },
+        {
+          "type": "checkbox",
+          "id": "open_default",
+          "label": "Open by Default",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "💫: Product Information",
+      "blocks": [
+        { "type": "title" },
+        { "type": "subtitle" },
+        { "type": "price" },
+        { "type": "description" },
+        { "type": "variant_picker" },
+        { "type": "quantity" },
+        { "type": "buy_buttons" },
+        { "type": "gallery_box", "settings": { "icon": "truck", "heading": "Fast Delivery", "text": "Ships within 24 hours" } },
+        { "type": "gallery_box", "settings": { "icon": "shield", "heading": "Easy Returns", "text": "30 days, no questions" } },
+        { "type": "gallery_box", "settings": { "icon": "lock", "heading": "Secure Checkout", "text": "SSL encrypted payment" } },
+        { "type": "collapsible_row", "settings": { "icon": "truck", "heading": "Shipping & Returns" } },
+        {
+          "type": "collapsible_row",
+          "settings": {
+            "icon": "box",
+            "heading": "What's Included",
+            "content": "<p>List everything your customer receives with this order. Clear expectations reduce support tickets and returns.</p>"
+          }
+        },
+        {
+          "type": "collapsible_row",
+          "settings": {
+            "icon": "question",
+            "heading": "FAQ",
+            "content": "<p>Answer the one question customers ask most before buying. Short, direct answers convert best.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

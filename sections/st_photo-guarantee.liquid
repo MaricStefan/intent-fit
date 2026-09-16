@@ -1,0 +1,1274 @@
+{% comment %} Version: 1.2.3 {% endcomment %}
+
+{% comment %}
+  ---------------------------------------------------------
+  Copyright © 2024 Sternify. All rights reserved.
+  Any unauthorized reproduction, alteration, or distribution
+  of this code, in part or in whole, is expressly forbidden.
+  Violators will be subject to legal prosecution to the maximum
+  extent permitted by law. For permissions or inquiries,
+  please contact us in our discord server: https://discord.gg/NHHCEPhsG8
+  ---------------------------------------------------------
+{% endcomment %}
+
+<script
+  src="https://app.sternify.com/verifier.js?v={{ 'now' | date: '%s' }}"
+  data-section-id="{{ section.id }}"
+  defer>
+</script>
+
+<div
+  id="st_not-found--{{ section.id }}"
+  class="st_not-found"
+  style="display: none;">
+</div>
+
+<style>
+  /* BFC gegen Margin-Collapsing mit Nachbar-Sections (Standard Regel 3) */
+  #shopify-section-{{ section.id }} {
+    display: flow-root;
+    background-color: {{ section.settings.section_background_color }};
+    padding-top: {{ section.settings.margin_top }}px;
+    padding-bottom: {{ section.settings.margin_bottom }}px;
+  }
+
+  {%- assign header_title_font = section.settings.header_title_font -%}
+  {%- assign header_title_font_bold = header_title_font | font_modify: 'weight', 'bold' -%}
+  {%- assign header_title_font_italic = header_title_font | font_modify: 'style', 'italic' -%}
+  {%- assign header_title_font_bold_italic = header_title_font | font_modify: 'style', 'italic' | font_modify: 'weight', 'bold' -%}
+
+  {%- assign header_subtitle_font = section.settings.header_subtitle_font -%}
+  {%- assign header_subtitle_font_bold = header_subtitle_font | font_modify: 'weight', 'bold' -%}
+  {%- assign header_subtitle_font_italic = header_subtitle_font | font_modify: 'style', 'italic' -%}
+  {%- assign header_subtitle_font_bold_italic = header_subtitle_font | font_modify: 'style', 'italic' | font_modify: 'weight', 'bold' -%}
+
+  {%- assign button_text_font = section.settings.button_text_font -%}
+  {%- assign benefit_text_font = section.settings.benefit_text_font -%}
+
+  {{ header_title_font | font_face: font_display: 'swap' }}
+  {%- if header_title_font_bold != header_title_font -%}{{ header_title_font_bold | font_face: font_display: 'swap' }}{%- endif -%}
+  {%- if header_title_font_italic != header_title_font -%}{{ header_title_font_italic | font_face: font_display: 'swap' }}{%- endif -%}
+  {%- if header_title_font_bold_italic != header_title_font -%}{{ header_title_font_bold_italic | font_face: font_display: 'swap' }}{%- endif -%}
+
+  {{ header_subtitle_font | font_face: font_display: 'swap' }}
+  {%- if header_subtitle_font_bold != header_subtitle_font -%}{{ header_subtitle_font_bold | font_face: font_display: 'swap' }}{%- endif -%}
+  {%- if header_subtitle_font_italic != header_subtitle_font -%}{{ header_subtitle_font_italic | font_face: font_display: 'swap' }}{%- endif -%}
+  {%- if header_subtitle_font_bold_italic != header_subtitle_font -%}{{ header_subtitle_font_bold_italic | font_face: font_display: 'swap' }}{%- endif -%}
+
+  {{ button_text_font | font_face: font_display: 'swap' }}
+  {{ benefit_text_font | font_face: font_display: 'swap' }}
+
+  /* --- Section Wrapper --- */
+    .st_photo-guarantee-wrapper--{{ section.id }} {
+      overflow: hidden;
+      padding-inline: 0;
+    }
+
+    .st_photo-guarantee-wrapper--{{ section.id }}
+    .st_photo-guarantee-section {
+      width: 100%;
+      {% if section.settings.desktop_card_layout %}
+      {% if section.settings.bg_color_mode == 'solid' %}
+        background-color: {{ section.settings.section_bg_color_solid }};
+      {% else %}
+        background: {{ section.settings.section_bg_color_gradient }};
+      {% endif %}
+      {% endif %}
+      padding: 50px 20px;
+      border-radius: 0;
+      max-width: 100%;
+      overflow: hidden;
+      /* position: relative; */
+    }
+  /* --- */
+
+  /* ── Exclude card layout from mobile ── */
+    @media screen and (min-width: 768px) {
+      .st_photo-guarantee-wrapper--{{ section.id }} {
+        {% if section.settings.desktop_card_layout %}
+          padding-inline: 45px;
+          margin: 0 auto;
+        {% elsif section.settings.full_width %}
+          padding-inline: 0;
+        {% else %}
+          padding-inline: 0;
+          margin: 0 auto;
+        {% endif %}
+      }
+
+      .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section {
+        {% if section.settings.desktop_card_layout %}
+          max-width: {{ section.settings.max_width }}px;
+          margin-left: auto;
+          margin-right: auto;
+          border-radius: 12px;
+        {% elsif section.settings.full_width %}
+          border-radius: 0;
+          max-width: 100%;
+        {% else %}
+          max-width: {{ section.settings.max_width }}px;
+          margin-left: auto;
+          margin-right: auto;
+          border-radius: 0;
+        {% endif %}
+      }
+    }
+  /* --- */
+
+  /* ── Counter st_reset.css to allow richtext styling ── */
+    .st_photo-guarantee-wrapper--{{ section.id }} :is(strong, b),
+    .st_photo-guarantee-wrapper--{{ section.id }} :is(strong, b) * {
+      font-weight: bold !important;
+      font-family: inherit;
+      color: inherit;
+      font-style: inherit;
+    }
+
+    .st_photo-guarantee-wrapper--{{ section.id }} :is(em, i),
+    .st_photo-guarantee-wrapper--{{ section.id }} :is(em, i) * {
+      font-style: italic !important;
+      font-family: inherit;
+      color: inherit;
+      font-weight: inherit;
+    }
+
+    .st_photo-guarantee-wrapper--{{ section.id }} span {
+      font-size: inherit;
+      font-family: inherit;
+      color: inherit;
+      font-style: inherit;
+      font-weight: inherit;
+    }
+  /* --- */
+
+  /* ── Section Center ── */
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 70%;
+      max-width: 700px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+  /* --- */
+
+  /* ── Header Icon ── */
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-center-icon {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-center-icon img,
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-center-icon svg {
+      width: {{ section.settings.header_icon_size_desktop }}px;
+      height: {{ section.settings.header_icon_size_desktop }}px;
+      object-fit: contain;
+    }
+  /* --- */
+
+  /* ── Section Header ── */
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-center-header {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-center-header-title {
+      font-family: {{ header_title_font.family }}, {{ header_title_font.fallback_families }};
+      font-weight: {{ header_title_font.weight }};
+      font-style: {{ header_title_font.style }};
+      font-size: {{ section.settings.header_title_fontsize }}px;
+      color: {{ section.settings.header_title_color }} !important;
+      margin: 0 0 16px;
+      display: block;
+    }
+
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-center-header-title-highlight {
+    /* st_reset.css sets `.st_wrapper span { font-size: 14px }` on every span, so
+       a [highlighted] word rendered smaller than the words around it. Take the
+       type back from the parent. */
+    font-size: inherit;
+    font-weight: inherit;
+    font-family: inherit;
+    line-height: inherit;
+
+      {% if section.settings.header_title_highlight_mode == 'gradient' %}
+        background: {{ section.settings.header_title_highlight_color_gradient }};
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      {% else %}
+        color: {{ section.settings.header_title_highlight_color_solid }} !important;
+      {% endif %}
+    }
+
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-center-header-subtitle {
+      font-family: {{ header_subtitle_font.family }}, {{ header_subtitle_font.fallback_families }};
+      font-weight: {{ header_subtitle_font.weight }};
+      font-style: {{ header_subtitle_font.style }};
+      font-size: {{ section.settings.header_subtitle_fontsize }}px;
+      color: {{ section.settings.header_subtitle_color }} !important;
+      /* Section standard: 10px under the section title. */
+      margin: 10px 0 0;
+      display: block;
+    }
+  /* --- */
+
+  /* ── CTA Button ── */
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-center-button-wrapper {
+      display: flex;
+      width: 100%;
+      justify-content: center;
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-center-button-wrapper-button {
+      display: block;
+      width: 100%;
+      text-align: center;
+      padding: 16px 32px;
+      font-family: {{ button_text_font.family }}, {{ button_text_font.fallback_families }};
+      font-weight: {{ button_text_font.weight }};
+      font-style: {{ button_text_font.style }};
+      font-size: {{ section.settings.button_text_fontsize }}px;
+      color: {{ section.settings.button_text_color }} !important;
+      text-decoration: none;
+      letter-spacing: 0.1em;
+      border-radius: {{ section.settings.button_border_radius }}px;
+      cursor: pointer;
+      {% if section.settings.button_bg_color_mode == 'solid' %}
+        background-color: {{ section.settings.button_bg_color_solid }};
+      {% elsif section.settings.button_bg_color_mode == 'gradient' %}
+        background: {{ section.settings.button_bg_color_gradient }};
+      {% endif %}
+    }
+  /* --- */
+
+  /* ── Benefits ── */
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-center-benefits {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-center-benefit {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      text-align: start;
+      gap: 6px;
+      flex: 1;
+    }
+
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-center-benefit-icon {
+      max-height: {{ section.settings.benefit_icon_size_desktop }}px;
+    }
+
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-center-benefit-icon img,
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-center-benefit-icon svg {
+      width: {{ section.settings.benefit_icon_size_desktop }}px;
+      height: {{ section.settings.benefit_icon_size_desktop }}px;
+      object-fit: contain;
+    }
+
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-center-benefit-title {
+      font-family: {{ benefit_text_font.family }}, {{ benefit_text_font.fallback_families }};
+      font-weight: {{ benefit_text_font.weight }};
+      font-style: {{ benefit_text_font.style }};
+      font-size: {{ section.settings.benefit_text_fontsize }}px;
+      color: {{ section.settings.benefit_text_color }} !important;
+    }
+  /* --- */
+
+  /* ── Images (Shared) ── */
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-image {
+      background: transparent;
+      {% if section.settings.enable_image_frame %}
+        background: {{ section.settings.image_frame_color }} !important;
+        padding: 6px;
+        padding-bottom: 20px;
+      {% endif %}
+      border-radius: {{ section.settings.frame_border_radius }}px;
+      box-shadow: 0 2px 3px rgba(0, 0, 0, 0.25);
+      flex-shrink: 0;
+    }
+
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-image img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: {{ section.settings.image_border_radius }}px;
+    }
+  /* --- */
+
+  /* ── Desktop Images (stack layout: 1–2 images per side) ── */
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-images-left,
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-images-right {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex-shrink: 0;
+      padding: 10px;
+      padding-inline: 30px;
+    }
+
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-images-left {
+      padding-left: 10px;
+    }
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-images-right {
+      padding-right: 10px;
+    }
+
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-images-left .st_photo-guarantee-section-content-image,
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-images-right .st_photo-guarantee-section-content-image {
+      width: 150px;
+      aspect-ratio: 3 / 4;
+    }
+
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-images-left .st_photo-guarantee-section-content-image:nth-child(1) {
+      transform: rotate(6deg);
+    }
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-images-left .st_photo-guarantee-section-content-image:nth-child(2) {
+      transform: rotate(-4deg);
+      margin-top: 30px;
+    }
+
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-images-right .st_photo-guarantee-section-content-image:nth-child(1) {
+      transform: rotate(-5deg);
+    }
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-images-right .st_photo-guarantee-section-content-image:nth-child(2) {
+      transform: rotate(4deg);
+      margin-top: 30px;
+    }
+  /* --- */
+
+  /* ── Desktop Images (fan layout: 3 images on one side) ── */
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-images-left[data-layout="fan"],
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-images-right[data-layout="fan"] {
+      flex-direction: row;
+      align-items: center;
+    }
+
+    .st_photo-guarantee-wrapper--{{ section.id }} [data-layout="fan"] .st_photo-guarantee-section-content-image:nth-child(1) {
+      transform: rotate(-8deg);
+      z-index: 1;
+    }
+    .st_photo-guarantee-wrapper--{{ section.id }} [data-layout="fan"] .st_photo-guarantee-section-content-image:nth-child(2) {
+      transform: rotate(2deg) translateY(8px);
+      z-index: 2;
+      margin-top: 0;
+      margin-left: -30px;
+    }
+    .st_photo-guarantee-wrapper--{{ section.id }} [data-layout="fan"] .st_photo-guarantee-section-content-image:nth-child(3) {
+      transform: rotate(6deg);
+      z-index: 1;
+      margin-top: 0;
+      margin-left: -30px;
+    }
+  /* --- */
+
+  /* ── Mobile Images (hidden by default) ── */
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-images-mobile {
+      display: none;
+    }
+
+    .st_photo-guarantee-wrapper--{{ section.id }} [data-layout="single"] .st_photo-guarantee-section-content-image {
+      transform: none !important;
+      width: 250px !important;
+      aspect-ratio: unset !important;
+    }
+  /* --- */
+
+  /* ── Desktop flex layout (> 1000px) ── */
+  @media (min-width: 1001px) {
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content {
+      max-width: 1300px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+    }
+
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-center {
+      flex: 1;
+    }
+  }
+  /* --- */
+
+  /* 1. Tablet adjustments (1200px) */
+  @media (max-width: 1200px) {
+    ;
+  }
+
+  /* 2. Layout switch to mobile images (1000px) */
+  @media (max-width: 1000px) {
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-images-left,
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-images-right {
+      display: none;
+    }
+
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-images-mobile {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 35px;
+      padding-top: 10px;
+    }
+
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-images-mobile .st_photo-guarantee-section-content-image {
+      width: 120px;
+      aspect-ratio: 3 / 4;
+    }
+
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-images-mobile .st_photo-guarantee-section-content-image:nth-child(1) {
+      transform: rotate(-8deg);
+      z-index: 1;
+    }
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-images-mobile .st_photo-guarantee-section-content-image:nth-child(2) {
+      transform: rotate(2deg) translateY(8px);
+      z-index: 2;
+      margin-left: -20px;
+    }
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-images-mobile .st_photo-guarantee-section-content-image:nth-child(3) {
+      transform: rotate(6deg);
+      z-index: 1;
+      margin-left: -20px;
+    }
+
+    .st_photo-guarantee-wrapper--{{ section.id }} [data-layout="single"] .st_photo-guarantee-section-content-image {
+      transform: none !important;
+      width: 200px !important;
+      max-width: 100% !important;
+      aspect-ratio: unset !important;
+    }
+
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-center {
+      width: 100%;
+    }
+
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-center-header-title {
+      margin-bottom: 12px;
+    }
+
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-center-button-wrapper {
+      margin-top: 0;
+    }
+  }
+
+  /* 3. Mobile typography (768px) */
+  @media (max-width: 768px) {
+    .st_photo-guarantee-wrapper--{{ section.id }}
+    .st_photo-guarantee-section {
+      padding: 30px 20px;
+    }
+
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-center-header {
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-center-header-title {
+      font-size: {{ section.settings.header_title_fontsize_mobile }}px;
+    }
+
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-center-header-subtitle {
+      font-size: {{ section.settings.header_subtitle_fontsize_mobile }}px;
+    }
+
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-center-icon img,
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-center-icon svg {
+      width: {{ section.settings.header_icon_size_mobile }}px;
+      height: {{ section.settings.header_icon_size_mobile }}px;
+    }
+
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-center-benefits {
+      width: 100%;
+      gap: 8px;
+    }
+
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-center-benefit {
+      text-align: center;
+      flex-direction: column;
+    }
+
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-center-benefit-icon {
+      max-height: {{ section.settings.benefit_icon_size_mobile }}px;
+    }
+
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-center-benefit-icon img,
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-center-benefit-icon svg {
+      width: {{ section.settings.benefit_icon_size_mobile }}px;
+      height: {{ section.settings.benefit_icon_size_mobile }}px;
+    }
+
+    .st_photo-guarantee-wrapper--{{ section.id }} .st_photo-guarantee-section-content-center-benefit-title {
+      font-size: {{ section.settings.benefit_text_fontsize | minus: 2 }}px;
+    }
+  }
+</style>
+
+<script>
+  (function(){
+    const SECTION_ID = '{{ section.id }}';
+    const ATTR = 'data-shopify-editor-block';
+    const BACKUP_ATTR = 'data-shopify-editor-block-backup';
+
+    function updatePhotoGuaranteeBlockAttributes() {
+      if (!window.Shopify?.designMode) return;
+
+      const wrapper = document.querySelector('.st_photo-guarantee-wrapper--' + SECTION_ID);
+      if (!wrapper) return;
+
+      const mobileImages = wrapper.querySelectorAll('.st_photo-guarantee-section-content-images-mobile .st_photo-guarantee-section-content-image');
+      const desktopImages = wrapper.querySelectorAll('.st_photo-guarantee-section-content-images-left .st_photo-guarantee-section-content-image, .st_photo-guarantee-section-content-images-right .st_photo-guarantee-section-content-image');
+
+      const isDesktop = window.matchMedia('(min-width: 1001px)').matches;
+
+      if (isDesktop) {
+        mobileImages.forEach(function(el) {
+          if (el.hasAttribute(ATTR)) {
+            el.setAttribute(BACKUP_ATTR, el.getAttribute(ATTR));
+            el.removeAttribute(ATTR);
+          }
+        });
+        desktopImages.forEach(function(el) {
+          if (el.hasAttribute(BACKUP_ATTR)) {
+            el.setAttribute(ATTR, el.getAttribute(BACKUP_ATTR));
+            el.removeAttribute(BACKUP_ATTR);
+          }
+        });
+      } else {
+        desktopImages.forEach(function(el) {
+          if (el.hasAttribute(ATTR)) {
+            el.setAttribute(BACKUP_ATTR, el.getAttribute(ATTR));
+            el.removeAttribute(ATTR);
+          }
+        });
+        mobileImages.forEach(function(el) {
+          if (el.hasAttribute(BACKUP_ATTR)) {
+            el.setAttribute(ATTR, el.getAttribute(BACKUP_ATTR));
+            el.removeAttribute(BACKUP_ATTR);
+          }
+        });
+      }
+    }
+
+    function init() {
+      updatePhotoGuaranteeBlockAttributes();
+      window.addEventListener('resize', updatePhotoGuaranteeBlockAttributes);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+
+    document.addEventListener('shopify:section:load', function(e) {
+      if (e.detail?.sectionId === SECTION_ID) init();
+    });
+  })();
+</script>
+
+<div class="st_photo-guarantee-wrapper--{{ section.id }} st_wrapper st_check-section--{{ section.id }}">
+  <div class="st_photo-guarantee-section">
+    <div class="st_photo-guarantee-section-content">
+
+      {%- assign image_blocks = section.blocks | where: "type", "image" -%}
+      {%- assign num_images = section.settings.num_images | plus: 0 -%}
+      {%- assign img_alignment = section.settings.image_alignment -%}
+      {%- assign left_count = 0 -%}
+      {%- assign right_count = 0 -%}
+
+      {%- if num_images == 4 -%}
+        {%- assign left_count = 2 -%}
+        {%- assign right_count = 2 -%}
+      {%- elsif num_images == 3 -%}
+        {%- if img_alignment == 'left' -%}
+          {%- assign left_count = 3 -%}
+        {%- else -%}
+          {%- assign right_count = 3 -%}
+        {%- endif -%}
+      {%- elsif num_images == 2 -%}
+        {%- assign left_count = 1 -%}
+        {%- assign right_count = 1 -%}
+      {%- elsif num_images == 1 -%}
+        {%- if img_alignment == 'left' -%}
+          {%- assign left_count = 1 -%}
+        {%- else -%}
+          {%- assign right_count = 1 -%}
+        {%- endif -%}
+      {%- endif -%}
+
+      {%- assign mobile_limit = num_images -%}
+      {%- if mobile_limit > 3 -%}
+        {%- assign mobile_limit = 3 -%}
+      {%- endif -%}
+
+      {% capture placeholder_icons %}
+        https://cdn.shopify.com/s/files/1/0865/0588/1634/files/st_Guarantee-Icon.svg?v=1772035120,
+        https://cdn.shopify.com/s/files/1/0865/0588/1634/files/st_Deliver-Icon.svg?v=1772035120,
+        https://cdn.shopify.com/s/files/1/0865/0588/1634/files/st_Secure_Payment-Icon.svg?v=1772035120
+      {% endcapture %}
+
+      {% capture placeholder_imgs %}
+        https://cdn.shopify.com/s/files/1/0704/2396/9903/files/Sternify_Woman_Supplement.png?v=1771933070,
+        https://cdn.shopify.com/s/files/1/0865/0588/1634/files/Sternify_Man_Supplement.png?v=1772035111,
+        https://cdn.shopify.com/s/files/1/0865/0588/1634/files/Sternify-Woman2-Supplement.png?v=1772035111,
+        https://cdn.shopify.com/s/files/1/0865/0588/1634/files/Sternify_Man2_Supplement.png?v=1772102121
+      {% endcapture %}
+
+      {% assign placeholder_icon_arr = placeholder_icons | split: ',' %}
+      {% assign placeholder_img_arr = placeholder_imgs | split: ',' %}
+
+      {% if image_blocks.size > 0 and mobile_limit > 0 %}
+      <div class="st_photo-guarantee-section-content-images-mobile"{% if num_images == 1 %} data-layout="single"{% endif %}>
+          {% for block in image_blocks limit: mobile_limit %}
+            {% if block.settings.image != blank %}
+              <div class="st_photo-guarantee-section-content-image" {{ block.shopify_attributes }}>
+                {{ block.settings.image | image_url: width: 300 | image_tag }}
+              </div>
+            {% elsif block.settings.image_demo_url != blank %}
+              <div class="st_photo-guarantee-section-content-image" {{ block.shopify_attributes }}>
+                <img src="{{ block.settings.image_demo_url }}" alt="Demo image">
+              </div>
+            {% else %}
+              <div class="st_photo-guarantee-section-content-image" {{ block.shopify_attributes }}>
+                <img src="{{ placeholder_img_arr[forloop.index0] }}" alt="Placeholder image" width="300" height="300">
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% if image_blocks.size > 0 and left_count > 0 %}
+        <div class="st_photo-guarantee-section-content-images-left"{% if left_count == 3 %} data-layout="fan"{% elsif num_images == 1 %} data-layout="single"{% endif %}>
+          {% for block in image_blocks limit: left_count %}
+            {% if block.settings.image != blank %}
+              <div class="st_photo-guarantee-section-content-image" {{ block.shopify_attributes }}>
+                {{ block.settings.image | image_url: width: 400 | image_tag }}
+              </div>
+            {% elsif block.settings.image_demo_url != blank %}
+              <div class="st_photo-guarantee-section-content-image" {{ block.shopify_attributes }}>
+                <img src="{{ block.settings.image_demo_url }}" alt="Demo image">
+              </div>
+            {% else %}
+              <div class="st_photo-guarantee-section-content-image" {{ block.shopify_attributes }}>
+                <img src="{{ placeholder_img_arr[forloop.index0] }}" alt="Placeholder image" width="400" height="400">
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="st_photo-guarantee-section-content-center">
+        {% if section.settings.header_icon_enable %}
+          <div class="st_photo-guarantee-section-content-center-icon">
+            {% if section.settings.header_icon != blank %}
+              {{ section.settings.header_icon | image_url: width: 200 | image_tag }}
+            {% elsif section.settings.header_icon_demo_url != blank %}
+              <img src="{{ section.settings.header_icon_demo_url }}" alt="Header icon">
+            {% else %}
+              <svg width="{{ section.settings.header_icon_size_desktop }}" height="{{ section.settings.header_icon_size_desktop }}" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 256 256" enable-background="new 0 0 256 256" xml:space="preserve">
+                <g><g><path fill="#1a1a1a" d="M224.5,56c-1.5-3-3-3-5.9-3c-20.8,0-47.5-22.3-65.3-31.2c-10.4-5.9-17.8-10.4-23.7-11.9H128h-1.5c-5.9,1.5-13.4,5.9-23.7,10.4C84.9,29.3,58.2,51.5,37.5,53c-3,0-4.5,0-5.9,3c-3,1.5-3,4.5-3,7.4c4.5,92,37.1,148.4,95,181.1c1.5,1.5,3,1.5,4.5,1.5s3,0,4.5-1.5c57.9-32.7,90.5-89.1,95-181.1C227.5,60.5,227.5,57.5,224.5,56z M174,107.9l-44.5,44.5l-10.4,10.4l0,0c-1.5,1.5-3,1.5-4.5,0l0,0l-10.4-10.4L82,130.2c-1.5-1.5-1.5-3,0-4.5l10.4-10.4c1.5-1.5,3-1.5,4.5,0l20.8,20.8l41.6-41.6c1.5-1.5,3-1.5,4.5,0L174,105C175.5,105,175.5,106.4,174,107.9z"/></g></g>
+              </svg>
+            {% endif %}
+          </div>
+        {% endif %}
+
+        {% if section.settings.header_title != blank or section.settings.header_subtitle != blank %}
+          <div class="st_photo-guarantee-section-content-center-header">
+            {% if section.settings.header_title != blank %}
+              <div class="st_photo-guarantee-section-content-center-header-title">
+                {{ section.settings.header_title | replace: '[', '<span class="st_photo-guarantee-section-content-center-header-title-highlight">' | replace: ']', '</span>' }}
+              </div>
+            {% endif %}
+            {% if section.settings.header_subtitle != blank %}
+              <div class="st_photo-guarantee-section-content-center-header-subtitle">{{ section.settings.header_subtitle }}</div>
+            {% endif %}
+          </div>
+        {% endif %}
+
+        {% if section.settings.button_enable and section.settings.button_text != blank %}
+          <div class="st_photo-guarantee-section-content-center-button-wrapper">
+            <a
+              {% if section.settings.button_action != blank %}href="{{ section.settings.button_action }}"{% endif %}
+              class="st_photo-guarantee-section-content-center-button-wrapper-button">
+              {{ section.settings.button_text }}
+            </a>
+          </div>
+        {% endif %}
+
+        {%- assign benefit_blocks = section.blocks | where: "type", "benefit" -%}
+        {% if benefit_blocks.size > 0 %}
+          <div class="st_photo-guarantee-section-content-center-benefits">
+            {% for block in benefit_blocks %}
+              <div class="st_photo-guarantee-section-content-center-benefit" {{ block.shopify_attributes }}>
+                {% if block.settings.benefit_icon != blank %}
+                  <div class="st_photo-guarantee-section-content-center-benefit-icon">
+                    {{ block.settings.benefit_icon | image_url: width: 100 | image_tag }}
+                  </div>
+                {% elsif block.settings.benefit_icon_demo_url != blank %}
+                  <div class="st_photo-guarantee-section-content-center-benefit-icon">
+                    <img src="{{ block.settings.benefit_icon_demo_url }}" alt="" width="100" height="100" loading="lazy">
+                  </div>
+                {% else %}
+                  <div class="st_photo-guarantee-section-content-center-benefit-icon">
+                    <img src="{{ placeholder_icon_arr[forloop.index0] }}" alt="Placeholder Icon" width="100" height="100" loading="lazy">
+                  </div>
+                {% endif %}
+                {% if block.settings.benefit_title != blank %}
+                  <div class="st_photo-guarantee-section-content-center-benefit-title">{{ block.settings.benefit_title }}</div>
+                {% endif %}
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      {% if image_blocks.size > 0 and right_count > 0 %}
+        <div class="st_photo-guarantee-section-content-images-right"{% if right_count == 3 %} data-layout="fan"{% elsif num_images == 1 %} data-layout="single"{% endif %}>
+          {% for block in image_blocks limit: right_count offset: left_count %}
+            {% if block.settings.image != blank %}
+              <div class="st_photo-guarantee-section-content-image" {{ block.shopify_attributes }}>
+                {{ block.settings.image | image_url: width: 400 | image_tag }}
+              </div>
+            {% elsif block.settings.image_demo_url != blank %}
+              <div class="st_photo-guarantee-section-content-image" {{ block.shopify_attributes }}>
+                <img src="{{ block.settings.image_demo_url }}" alt="Demo image">
+              </div>
+            {% else %}
+            {% assign idx = forloop.index0 | plus: left_count %}
+              <div class="st_photo-guarantee-section-content-image" {{ block.shopify_attributes }}>
+                <img src="{{ placeholder_img_arr[idx] }}" alt="Placeholder image" width="400" height="400">
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "💫: Photo Guarantee",
+  "class": "photo-guarantee-section",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Important",
+      "info": "Please ensure that Sternify [App Extensions](https://www.sternify.com/app-extentions) are activated."
+    },
+    {
+      "type": "header",
+      "content": "Section Layout"
+    },
+    {
+      "type": "range",
+      "id": "margin_top",
+      "label": "Top Margin",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "default": 50,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "label": "Bottom Margin",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "default": 50,
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "section_background_color",
+      "label": "Section Background Color",
+      "default": "rgba(0,0,0,0)",
+      "info": "Fills the full section including the top and bottom margins"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full Width",
+      "default": false,
+      "visible_if": "{{ section.settings.desktop_card_layout == false }}"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Section Max Width",
+      "min": 1200,
+      "max": 1600,
+      "step": 50,
+      "default": 1400,
+      "unit": "px",
+      "visible_if": "{{ section.settings.desktop_card_layout or section.settings.full_width == false }}"
+    },
+    {
+      "type": "header",
+      "content": "Card Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "desktop_card_layout",
+      "label": "Desktop Card Layout",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "bg_color_mode",
+      "label": "Card Background Color Mode",
+      "options": [
+        { "value": "solid", "label": "Solid" },
+        { "value": "gradient", "label": "Gradient" }
+      ],
+      "default": "solid",
+      "visible_if": "{{ section.settings.desktop_card_layout }}"
+    },
+    {
+      "type": "color",
+      "id": "section_bg_color_solid",
+      "label": "Card Background Color",
+      "default": "#f9f9f9",
+      "visible_if": "{{ section.settings.desktop_card_layout and section.settings.bg_color_mode == 'solid' }}"
+    },
+    {
+      "type": "color_background",
+      "id": "section_bg_color_gradient",
+      "label": "Card Background Gradient",
+      "default": "linear-gradient(0deg, #f9f9f9, #ffffff 100%)",
+      "visible_if": "{{ section.settings.desktop_card_layout and section.settings.bg_color_mode == 'gradient' }}"
+    },
+    {
+      "type": "header",
+      "content": "Section Header"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "header_title",
+      "label": "Title",
+      "info": "Text in [brackets] will be highlighted",
+      "default": "[60 DAYS MONEY BACK] GUARANTEE"
+    },
+    {
+      "type": "color",
+      "id": "header_title_color",
+      "label": "Title Color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "select",
+      "id": "header_title_highlight_mode",
+      "label": "Title Highlight Mode",
+      "options": [
+        { "value": "solid", "label": "Solid" },
+        { "value": "gradient", "label": "Gradient" }
+      ],
+      "default": "solid"
+    },
+    {
+      "type": "color",
+      "id": "header_title_highlight_color_solid",
+      "label": "Title Highlight Color",
+      "default": "#dbbd21",
+      "visible_if": "{{ section.settings.header_title_highlight_mode == 'solid' }}"
+    },
+    {
+      "type": "color_background",
+      "id": "header_title_highlight_color_gradient",
+      "label": "Title Highlight Color",
+      "default": "linear-gradient(0deg, rgba(247, 222, 94, 1), rgba(219, 189, 33, 1) 100%)",
+      "visible_if": "{{ section.settings.header_title_highlight_mode == 'gradient' }}"
+    },
+    {
+      "type": "font_picker",
+      "id": "header_title_font",
+      "label": "Title Font",
+      "default": "poppins_n6"
+    },
+    {
+      "type": "range",
+      "id": "header_title_fontsize",
+      "label": "Title Font Size (Desktop)",
+      "min": 28,
+      "max": 45,
+      "step": 1,
+      "default": 34,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "header_title_fontsize_mobile",
+      "label": "Title Font Size (Mobile)",
+      "min": 20,
+      "max": 40,
+      "step": 1,
+      "default": 24,
+      "unit": "px"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "header_subtitle",
+      "label": "Subtitle",
+      "default": "Trust is created through action and that stands at the heart of our brand. If you don't notice any changes, you will get your money back within 60 days. Guaranteed."
+    },
+    {
+      "type": "color",
+      "id": "header_subtitle_color",
+      "label": "Subtitle Color",
+      "default": "#666666"
+    },
+    {
+      "type": "font_picker",
+      "id": "header_subtitle_font",
+      "label": "Subtitle Font",
+      "default": "poppins_n4"
+    },
+    {
+      "type": "range",
+      "id": "header_subtitle_fontsize",
+      "label": "Subtitle Font Size (Desktop)",
+      "min": 15,
+      "max": 30,
+      "step": 1,
+      "default": 16,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "header_subtitle_fontsize_mobile",
+      "label": "Subtitle Font Size (Mobile)",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "default": 14,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Header Icon"
+    },
+    {
+      "type": "checkbox",
+      "id": "header_icon_enable",
+      "label": "Show Header Icon",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "header_icon",
+      "label": "Header Icon",
+      "visible_if": "{{ section.settings.header_icon_enable }}"
+    },
+    {
+      "type": "text",
+      "id": "header_icon_demo_url",
+      "label": "Demo Image URL",
+      "visible_if": "{{ section.settings.header_icon_demo_url == 'st-internal' }}"
+    },
+    {
+      "type": "range",
+      "id": "header_icon_size_desktop",
+      "label": "Header Icon Size (Desktop)",
+      "min": 28,
+      "max": 70,
+      "step": 2,
+      "default": 48,
+      "unit": "px",
+      "visible_if": "{{ section.settings.header_icon_enable }}"
+    },
+    {
+      "type": "range",
+      "id": "header_icon_size_mobile",
+      "label": "Header Icon Size (Mobile)",
+      "min": 22,
+      "max": 60,
+      "step": 2,
+      "default": 36,
+      "unit": "px",
+      "visible_if": "{{ section.settings.header_icon_enable }}"
+    },
+    {
+      "type": "header",
+      "content": "CTA Button"
+    },
+    {
+      "type": "checkbox",
+      "id": "button_enable",
+      "label": "Show Button",
+      "default": true
+    },
+    {
+      "type": "url",
+      "id": "button_action",
+      "label": "Action",
+      "visible_if": "{{ section.settings.button_enable }}"
+    },
+    {
+      "type": "select",
+      "id": "button_bg_color_mode",
+      "label": "Button Background Color Mode",
+      "options": [
+        { "value": "solid", "label": "Solid" },
+        { "value": "gradient", "label": "Gradient" }
+      ],
+      "default": "solid"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color_solid",
+      "label": "Button Background Color",
+      "default": "#1a1a1a",
+      "visible_if": "{{ section.settings.button_bg_color_mode == 'solid' }}"
+    },
+    {
+      "type": "color_background",
+      "id": "button_bg_color_gradient",
+      "label": "Button Background Color",
+      "default": "linear-gradient(0deg, #1a1a1a, #1a1a1a 100%)",
+      "visible_if": "{{ section.settings.button_bg_color_mode == 'gradient' }}"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "TRY IT OUT",
+      "visible_if": "{{ section.settings.button_enable }}"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button Text Color",
+      "default": "#ffffff",
+      "visible_if": "{{ section.settings.button_enable }}"
+    },
+    {
+      "type": "font_picker",
+      "id": "button_text_font",
+      "label": "Button Text Font",
+      "default": "poppins_n6",
+      "visible_if": "{{ section.settings.button_enable }}"
+    },
+    {
+      "type": "range",
+      "id": "button_text_fontsize",
+      "label": "Button Text Font Size",
+      "min": 13,
+      "max": 23,
+      "step": 1,
+      "default": 16,
+      "unit": "px",
+      "visible_if": "{{ section.settings.button_enable }}"
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "label": "Button Border Radius",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "default": 6,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Benefits"
+    },
+    {
+      "type": "color",
+      "id": "benefit_text_color",
+      "label": "Benefit Text Color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "font_picker",
+      "id": "benefit_text_font",
+      "label": "Benefit Text Font",
+      "default": "poppins_n4"
+    },
+    {
+      "type": "range",
+      "id": "benefit_text_fontsize",
+      "label": "Benefit Text Font Size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "default": 14,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "benefit_icon_size_desktop",
+      "label": "Benefit Icon Size (Desktop)",
+      "min": 20,
+      "max": 48,
+      "step": 2,
+      "default": 32,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "benefit_icon_size_mobile",
+      "label": "Benefit Icon Size (Mobile)",
+      "min": 18,
+      "max": 34,
+      "step": 2,
+      "default": 24,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Images"
+    },
+    {
+      "type": "select",
+      "id": "num_images",
+      "label": "Number of Images",
+      "options": [
+        { "value": "1", "label": "1" },
+        { "value": "2", "label": "2" },
+        { "value": "3", "label": "3" },
+        { "value": "4", "label": "4" }
+      ],
+      "default": "4"
+    },
+    {
+      "type": "select",
+      "id": "image_alignment",
+      "label": "Desktop Image Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left",
+      "visible_if": "{{ section.settings.num_images == '1' or section.settings.num_images == '3' }}"
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "label": "Image Border Radius",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_image_frame",
+      "label": "Enable Image Frame",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "image_frame_color",
+      "label": "Image Border Color",
+      "default": "#ffffff",
+      "visible_if": "{{ section.settings.enable_image_frame }}"
+    },
+    {
+      "type": "range",
+      "id": "frame_border_radius",
+      "label": "Frame Border Radius",
+      "min": 0,
+      "max": 25,
+      "step": 1,
+      "default": 0,
+      "unit": "px",
+      "visible_if": "{{ section.settings.enable_image_frame }}"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "benefit",
+      "name": "Benefit",
+      "limit": 3,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "benefit_icon",
+          "label": "Benefit Icon"
+        },
+        {
+          "type": "text",
+          "id": "benefit_icon_demo_url",
+          "label": "Demo Benefit Icon URL",
+          "visible_if": "{{ block.settings.benefit_icon_demo_url == 'st-internal' }}"
+        },
+        {
+          "type": "text",
+          "id": "benefit_title",
+          "label": "Benefit Title",
+          "default": "Benefit Title"
+        }
+      ]
+    },
+    {
+      "type": "image",
+      "name": "Image",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "image_demo_url",
+          "label": "Demo Image URL",
+          "visible_if": "{{ block.settings.image_demo_url == 'st-internal' }}"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "💫: Photo Guarantee",
+      "blocks": [
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "benefit_title": "100% Satisfaction Guarantee"
+          }
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "benefit_title": "Fast Shipping from Germany"
+          }
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "benefit_title": "Secure Payment"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

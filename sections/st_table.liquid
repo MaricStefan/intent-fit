@@ -1,0 +1,991 @@
+{% comment %} Version: 2.2.3 {% endcomment %}
+
+{% comment %}
+  ---------------------------------------------------------
+  Copyright © 2024 Sternify. All rights reserved.
+  Any unauthorized reproduction, alteration, or distribution
+  of this code, in part or in whole, is expressly forbidden.
+  Violators will be subject to legal prosecution to the maximum
+  extent permitted by law. For permissions or inquiries,
+  please contact us in our discord server: https://discord.gg/NHHCEPhsG8
+  ---------------------------------------------------------
+{% endcomment %}
+
+<script
+  src="https://app.sternify.com/verifier.js?v={{ 'now' | date: '%s' }}"
+  data-section-id="{{ section.id }}"
+  defer
+></script>
+
+<div class="st_not-found"></div>
+
+{%- assign font_picker = section.settings.font_picker -%}
+{%- assign header_title_font = section.settings.header_title_font -%}
+{%- assign header_title_font_bold = header_title_font | font_modify: 'weight', 'bold' -%}
+{%- assign header_title_font_italic = header_title_font | font_modify: 'style', 'italic' -%}
+{% style %}
+  /* BFC gegen Margin-Collapsing mit Nachbar-Sections (Standard Regel 3).
+     Der Wrapper traegt Section-BG und die Abstaende als Padding, damit die
+     Hintergrundfarbe die gesamte Section inklusive Abstaende fuellt. */
+  #shopify-section-{{ section.id }} {
+    display: flow-root;
+    background-color: {{ section.settings.section_background_color }};
+    padding-top: {{ section.settings.margin_top }}px;
+    padding-bottom: {{ section.settings.margin_bottom }}px;
+  }
+
+  {{ font_picker | font_face }}
+  {{ header_title_font | font_face: font_display: 'swap' }}
+  {%- if header_title_font_bold != header_title_font -%}{{ header_title_font_bold | font_face: font_display: 'swap' }}{%- endif -%}
+  {%- if header_title_font_italic != header_title_font -%}{{ header_title_font_italic | font_face: font_display: 'swap' }}{%- endif -%}
+
+  .st_table-wrapper * {
+    font-family: {{ font_picker.family }}, {{ font_picker.fallback_families }};
+  }
+{% endstyle %}
+
+<style>
+  .st_table-wrapper div:empty {
+    display: unset;
+  }
+
+  /* ── Counter st_reset.css to allow richtext styling ── */
+  .st_check-section--{{ section.id }} :is(strong, b),
+  .st_check-section--{{ section.id }} :is(strong, b) * {
+    font-weight: bold !important;
+    font-family: inherit;
+    color: inherit;
+    font-style: inherit;
+  }
+
+  .st_check-section--{{ section.id }} :is(em, i),
+  .st_check-section--{{ section.id }} :is(em, i) * {
+    font-style: italic !important;
+    font-family: inherit;
+    color: inherit;
+    font-weight: inherit;
+  }
+
+  .st_check-section--{{ section.id }} span {
+    font-size: inherit;
+    font-family: inherit;
+    color: inherit;
+    font-style: inherit;
+    font-weight: inherit;
+  }
+  /* --- */
+
+  /*-_- -_- -_- Desktop -_- -_- -_- */
+  .st_check-section--{{ section.id }} .st_Table-TopTitle {
+    position: relative;
+    width: 100%;
+    display: block;
+    color: {{ section.settings.header_title_color }};
+    font-family: {{ header_title_font.family }}, {{ header_title_font.fallback_families }};
+    font-weight: {{ header_title_font.weight }};
+    font-style: {{ section.settings.header_style }};
+    font-size: {{ section.settings.header_size }}px;
+    line-height: normal;
+    text-align: center;
+    word-break: break-word;
+  }
+
+  .st_check-section--{{ section.id }} .st_Table-TopTitle-highlight {
+    {% if section.settings.header_title_highlight_mode == 'gradient' %}
+      background: {{ section.settings.header_title_highlight_gradient }};
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    {% else %}
+      color: {{ section.settings.header_title_highlight_color }};
+    {% endif %}
+    display: inline;
+  }
+
+  /* ── Section wrapper: mobile is always full width ── */
+  .st_table-wrapper.st_check-section--{{ section.id }} {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    margin-inline: auto;
+    padding: 20px;
+    border-radius: 0;
+    {% if section.settings.desktop_card_layout %}
+    background-color: {{ section.settings.section_bg_color }};
+    {% endif %}
+  }
+
+  /* ── Exclude card layout from mobile ── */
+  @media screen and (min-width: 768px) {
+    .st_table-wrapper.st_check-section--{{ section.id }} {
+      {% if section.settings.desktop_card_layout %}
+        padding: 40px 60px;
+        width: calc(100% - 90px);
+        max-width: {{ section.settings.max_width }}px;
+        border-radius: 12px;
+      {% elsif section.settings.full_width %}
+        padding: 0;
+        width: 100%;
+        max-width: 100%;
+        border-radius: 0;
+      {% else %}
+        width: 100%;
+        max-width: {{ section.settings.max_width }}px;
+        border-radius: 0;
+      {% endif %}
+    }
+  }
+  /* --- */
+  .st_Table {
+    --Padding-bottom: 15px;
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding-bottom: var(--Padding-bottom);
+    padding-top: 35px;
+  }
+  .st_Table-Row {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: stretch;
+  }
+  .st_Table-Box {
+    --Back-Color: {{ section.settings.table_color }};
+    --Border-Color: {{ section.settings.border_color }};
+    --Border-Size: {{ section.settings.border_thickness }}px;
+    --Border-Style: solid;
+    --Border-Radius: {{ section.settings.border_radius }}px;
+    --Padding: 20px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: var(--Padding);
+    background: var(--Back-Color);
+    font-family: Poppins;
+    font-weight: 600;
+    font-style: normal;
+    font-size: 20px;
+    line-height: normal;
+    text-align: center;
+    word-break: break-word;
+  }
+  .st_Table-Box:nth-child(1) {
+    width: 30%;
+    flex-grow: 1;
+  }
+  .st_Table-Box:nth-child(2) {
+    width: 22%;
+    flex-grow: 1;
+    max-width: 28%;
+  }
+  .st_Table-Box:nth-child(3) {
+    width: 24%;
+  }
+  .st_Table-Box:nth-child(4) {
+    width: 24%;
+  }
+  .st_Table-Icon {
+    position: relative;
+    height: 32px;
+    aspect-ratio: 1;
+    object-fit: contain;
+  }
+  .st_Table-Title {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: unset;
+  }
+
+  /*._. top-Row ._.*/
+  .st_Table-Row:nth-child(1) .st_Table-Box:nth-child(1) {
+    pointer-events: none;
+    opacity: 0;
+  }
+  .st_Table-Row:nth-child(1) .st_Table-Box:nth-child(2) {
+    --Back-Color: {{ section.settings.highlighted_color }};
+  }
+  .st_Table-Row:nth-child(1) .st_Table-Box:nth-child(3) {
+    --Back-Color: transparent;
+  }
+  .st_Table-Row:nth-child(1) .st_Table-Box:nth-child(4) {
+    --Back-Color: transparent;
+  }
+
+  /*._. Active-Column ._.*/
+  .st_Table-Row .st_Table-Box:nth-child(2) {
+    --Back-Color: {{ section.settings.highlighted_color }};
+    padding-top: calc(var(--Padding) + 1px);
+    margin-top: -1px;
+    {% comment %} z-index: 10; {% endcomment %}
+    {% comment %} animation: Active-Column-Animation 1s linear 0s infinite alternate forwards; {% endcomment %}
+  }
+  .st_Table-Row .st_Table-Box:nth-child(2) > .st_Table-Icon,
+  .st_Table-Row .st_Table-Box:nth-child(2) > .st_Table-Title {
+    animation: Active-ColumnInside-Animation 1s linear 0s infinite alternate forwards;
+  }
+  .st_Table-Row:last-child .st_Table-Box:nth-child(2)::after {
+    content: '';
+    position: absolute;
+    transform: translate(-0%, -0%);
+    width: 100%;
+    height: calc(var(--Padding-bottom) + 1px);
+    left: 0%;
+    top: calc(100% - 1px);
+    background: inherit;
+
+    border-bottom-left-radius: var(--Border-Radius);
+    border-bottom-right-radius: var(--Border-Radius);
+  }
+  @keyframes Active-Column-Animation {
+    100% {
+      transform: scale(1.05);
+    }
+  }
+  @keyframes Active-ColumnInside-Animation {
+    100% {
+      transform: scale(0.95);
+    }
+  }
+
+  /*._. Border-Color ._.*/
+  .st_Table-Row .st_Table-Box {
+    border-left: var(--Border-Style) var(--Border-Size) var(--Border-Color);
+    border-top: var(--Border-Style) var(--Border-Size) var(--Border-Color);
+  }
+  .st_Table-Row:last-child .st_Table-Box {
+    border-bottom: var(--Border-Style) var(--Border-Size) var(--Border-Color);
+  }
+  .st_Table-Row .st_Table-Box:nth-child(3) {
+    border-left: none;
+  }
+  .st_Table-Row .st_Table-Box:last-child {
+    border-right: var(--Border-Style) var(--Border-Size) var(--Border-Color);
+  }
+  .st_Table-Row .st_Table-Box:nth-child(2) {
+    border: none !important;
+    border-top: var(--Border-Style) var(--Border-Size) hsl(0deg 0% 0%);
+  }
+  .st_Table-Row:nth-child(1) .st_Table-Box {
+    border: none;
+  }
+
+  /*._. Border-Radius ._.*/
+  .st_Table-Row:first-child .st_Table-Box:nth-child(2) {
+    border-top-left-radius: var(--Border-Radius);
+    border-top-right-radius: var(--Border-Radius);
+  }
+  .st_Table-Row:nth-child(2) .st_Table-Box:first-child {
+    border-top-left-radius: var(--Border-Radius);
+  }
+  .st_Table-Row:nth-child(2) .st_Table-Box:last-child {
+    border-top-right-radius: var(--Border-Radius);
+  }
+  .st_Table-Row:last-child .st_Table-Box:first-child {
+    border-bottom-left-radius: var(--Border-Radius);
+  }
+  .st_Table-Row:last-child .st_Table-Box:last-child {
+    border-bottom-right-radius: var(--Border-Radius);
+  }
+
+  /*._. Colors ._.*/
+  .st_Table-Row:first-child .st_Table-Box:nth-child(2) .st_Table-Title {
+    color: {{ section.settings.highlighted_text_color }};
+  }
+
+  .st_Table-Row:nth-child(1) .st_Table-Box:nth-child(n+3) .st_Table-Title {
+    color: {{ section.settings.others_text_color }};
+  }
+
+  .st_Table-Row:nth-child(n+2) .st_Table-Box:nth-child(1) {
+    color: {{  section.settings.benefit_color }}
+  }
+
+  .st_Table-Row:nth-child(n+2) .st_Table-Box:nth-child(2) svg * {
+    fill: {{  section.settings.highlighted_icon_color }}
+  }
+
+  .st_Table-Row:nth-child(n+2) .st_Table-Box:nth-child(n+3) svg * {
+    fill: {{  section.settings.others_icon_color }}
+  }
+
+  .st_Table-Text {
+    font-size: 16px;
+    font-weight: 600;
+    font-style: normal;
+    line-height: normal;
+  }
+
+  .st_Table-Row:nth-child(n+2) .st_Table-Box:nth-child(2) .st_Table-Text {
+    color: {{ section.settings.highlighted_text_color }} !important;
+  }
+
+  .st_Table-Row:nth-child(n+2) .st_Table-Box:nth-child(n+3) .st_Table-Text {
+    color: {{ section.settings.others_text_color }} !important;
+  }
+
+  /*-_- -_- -_- Tablet -_- -_- -_-*/
+  @media (max-width: 650px) {
+    .st_check-section--{{ section.id }} .st_Table-TopTitle {
+      font-size: {{ section.settings.mobile_header_size }}px;
+    }
+    .st_Table-Box {
+      --Padding: 10px;
+      font-size: 10px;
+    }
+    .st_Table-Icon {
+      height: 20px;
+    }
+
+    .st_Table-Text {
+      font-size: 10px;
+    }
+  }
+
+  .st_Table-Column-Image {
+    aspect-ratio: 2/1;
+    width: 180px;
+  }
+
+  .st_Table-Column-Image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+</style>
+
+{% assign number_of_columns = section.settings.columns_number %}
+
+<div class="st_wrapper st_table-wrapper st_check-section--{{ section.id }}">
+  <div class="st_Table-TopTitle">
+    {{-
+      section.settings.header_text
+      | replace: '[', '<span class="st_Table-TopTitle-highlight">'
+      | replace: ']', '</span>'
+    -}}
+  </div>
+  <div class="st_Table">
+    <div class="st_Table-Row">
+      <div class="st_Table-Box"></div>
+      <div class="st_Table-Box">
+        {% if section.settings.column_1_image -%}
+          <div class="st_Table-Column-Image">
+            <img src="{{ section.settings.column_1_image | image_url: width: "200" }}">
+          </div>
+        {% elsif section.settings.column_1_image_demo_url != blank %}
+          <div class="st_Table-Column-Image">
+            <img src="{{ section.settings.column_1_image_demo_url }}">
+          </div>
+        {% else %}
+          <div class="st_Table-Title">{{ section.settings.column_1_text }}</div>
+        {% endif %}
+      </div>
+      <div class="st_Table-Box">
+        <div class="st_Table-Title">{{ section.settings.column_2_text }}</div>
+      </div>
+      {% if number_of_columns == '3' %}
+        <div class="st_Table-Box">
+          <div class="st_Table-Title">{{ section.settings.column_3_text }}</div>
+        </div>
+      {% endif %}
+    </div>
+    {%- for block in section.blocks -%}
+      {%- case block.type -%}
+        {%- when 'Reihe' -%}
+          <div class="st_Table-Row">
+            <div class="st_Table-Box">
+              <div class="st_Table-Title">{{ block.settings.reihe_text }}</div>
+            </div>
+            <div class="st_Table-Box">
+              {% if block.settings.compare_1_mode == 'text' %}
+                <div class="st_Table-Text">{{ block.settings.compare_1_text }}</div>
+              {% elsif block.settings.compare_1 == 'check' %}
+                <svg
+                  class="st_Table-Icon"
+                  width="32"
+                  height="32"
+                  viewBox="0 0 32 32"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M16 0C7.163 0 0 7.163 0 16C0 24.837 7.163 32 16 32C24.836 32 32 24.836 32 16C32 7.163 24.836 0 16 0ZM16 30C8.268 30 2 23.732 2 16C2 8.268 8.268 2 16 2C23.732 2 30 8.268 30 16C30 23.732 23.732 30 16 30Z"
+                       />
+                  <path
+                      d="M23.3 10.393L13.012 20.589L8.731 16.393C8.337 16.002 7.697 16.002 7.303 16.393C6.908 16.784 6.908 17.417 7.303 17.807L12.302 22.706C12.712 23.067 13.325 23.107 13.73 22.706L24.729 11.807C25.123 11.417 25.123 10.783 24.729 10.393C24.334 10.003 23.695 10.003 23.3 10.393Z"
+                       />
+                </svg>
+              {% else %}
+                <svg
+                  class="st_Table-Icon"
+                  width="32"
+                  height="32"
+                  viewBox="0 0 32 32"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                      d="M8.70703 7.29297L7.29297 8.70703L14.5859 16L7.29297 23.293L8.70703 24.707L16 17.4141L23.293 24.707L24.707 23.293L17.4141 16L24.707 8.70703L23.293 7.29297L16 14.5859L8.70703 7.29297Z" />
+                </svg>
+              {% endif %}
+            </div>
+            <div class="st_Table-Box">
+              {% if block.settings.compare_2_mode == 'text' %}
+                <div class="st_Table-Text">{{ block.settings.compare_2_text }}</div>
+              {% elsif block.settings.compare_2 == 'check' %}
+                <svg
+                  class="st_Table-Icon"
+                  width="32"
+                  height="32"
+                  viewBox="0 0 32 32"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M16 0C7.163 0 0 7.163 0 16C0 24.837 7.163 32 16 32C24.836 32 32 24.836 32 16C32 7.163 24.836 0 16 0ZM16 30C8.268 30 2 23.732 2 16C2 8.268 8.268 2 16 2C23.732 2 30 8.268 30 16C30 23.732 23.732 30 16 30Z"
+                      />
+                  <path
+                      d="M23.3 10.393L13.012 20.589L8.731 16.393C8.337 16.002 7.697 16.002 7.303 16.393C6.908 16.784 6.908 17.417 7.303 17.807L12.302 22.706C12.712 23.067 13.325 23.107 13.73 22.706L24.729 11.807C25.123 11.417 25.123 10.783 24.729 10.393C24.334 10.003 23.695 10.003 23.3 10.393Z"
+                      />
+                </svg>
+              {% else %}
+                <svg
+                  class="st_Table-Icon"
+                  width="32"
+                  height="32"
+                  viewBox="0 0 32 32"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                      d="M8.70703 7.29297L7.29297 8.70703L14.5859 16L7.29297 23.293L8.70703 24.707L16 17.4141L23.293 24.707L24.707 23.293L17.4141 16L24.707 8.70703L23.293 7.29297L16 14.5859L8.70703 7.29297Z" />
+                </svg>
+              {% endif %}
+            </div>
+            {% if number_of_columns == '3' %}
+              <div class="st_Table-Box">
+                {% if block.settings.compare_3_mode == 'text' %}
+                  <div class="st_Table-Text">{{ block.settings.compare_3_text }}</div>
+                {% elsif block.settings.compare_3 == 'check' %}
+                  <svg
+                    class="st_Table-Icon"
+                    width="32"
+                    height="32"
+                    viewBox="0 0 32 32"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d="M16 0C7.163 0 0 7.163 0 16C0 24.837 7.163 32 16 32C24.836 32 32 24.836 32 16C32 7.163 24.836 0 16 0ZM16 30C8.268 30 2 23.732 2 16C2 8.268 8.268 2 16 2C23.732 2 30 8.268 30 16C30 23.732 23.732 30 16 30Z"
+                      />
+                    <path
+                        d="M23.3 10.393L13.012 20.589L8.731 16.393C8.337 16.002 7.697 16.002 7.303 16.393C6.908 16.784 6.908 17.417 7.303 17.807L12.302 22.706C12.712 23.067 13.325 23.107 13.73 22.706L24.729 11.807C25.123 11.417 25.123 10.783 24.729 10.393C24.334 10.003 23.695 10.003 23.3 10.393Z"
+                      />
+                  </svg>
+                {% else %}
+                  <svg
+                    class="st_Table-Icon"
+                    width="32"
+                    height="32"
+                    viewBox="0 0 32 32"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path fill="var(--Main-Color)"
+                        d="M8.70703 7.29297L7.29297 8.70703L14.5859 16L7.29297 23.293L8.70703 24.707L16 17.4141L23.293 24.707L24.707 23.293L17.4141 16L24.707 8.70703L23.293 7.29297L16 14.5859L8.70703 7.29297Z" />
+                  </svg>
+                {% endif %}
+              </div>
+            {% endif %}
+          </div>
+      {% endcase %}
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "💫: Table",
+  "class": "section",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "⚠️ Important ⚠️",
+      "info": "Please ensure that Sternify [App Extensions](https://www.sternify.com/app-extentions) are activated."
+    },
+    {
+      "type": "select",
+      "id": "columns_number",
+      "label": "Number of Columns",
+      "options": [
+        {
+          "value": "2",
+          "label": "2 Columns"
+        },
+        {
+          "value": "3",
+          "label": "3 Columns"
+        }
+      ],
+      "default": "3",
+      "info": "Select number of columns"
+    },
+    {
+      "type": "header",
+      "content": "Section Layout"
+    },
+    {
+      "type": "range",
+      "id": "margin_top",
+      "label": "Top Margin",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "default": 50,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "label": "Bottom Margin",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "default": 50,
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "section_background_color",
+      "label": "Section Background Color",
+      "default": "rgba(0,0,0,0)"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full Width",
+      "default": false,
+      "visible_if": "{{ section.settings.desktop_card_layout == false }}"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Section Max Width",
+      "min": 1200,
+      "max": 1600,
+      "step": 50,
+      "default": 1400,
+      "unit": "px",
+      "visible_if": "{{ section.settings.desktop_card_layout or section.settings.full_width == false }}"
+    },
+    {
+      "type": "header",
+      "content": "Card Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "desktop_card_layout",
+      "label": "Desktop Card Layout",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "section_bg_color",
+      "label": "Card Background Color",
+      "default": "#f9f9f9",
+      "visible_if": "{{ section.settings.desktop_card_layout }}"
+    },
+    {
+      "type": "header",
+      "content": "Section Header"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "header_text",
+      "label": "Title",
+      "info": "Text in [brackets] will be highlighted",
+      "default": "[Sternify] vs. Standard"
+    },
+    {
+      "type": "color",
+      "id": "header_title_color",
+      "label": "Title Color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "select",
+      "id": "header_title_highlight_mode",
+      "label": "Title Highlight Mode",
+      "options": [
+        {
+          "value": "solid",
+          "label": "Solid"
+        },
+        {
+          "value": "gradient",
+          "label": "Gradient"
+        }
+      ],
+      "default": "solid"
+    },
+    {
+      "type": "color",
+      "id": "header_title_highlight_color",
+      "label": "Title Highlight Color",
+      "default": "#dbbd21",
+      "visible_if": "{{ section.settings.header_title_highlight_mode == 'solid' }}"
+    },
+    {
+      "type": "color_background",
+      "id": "header_title_highlight_gradient",
+      "label": "Title Highlight Gradient",
+      "default": "linear-gradient(0deg, rgba(247, 222, 94, 1), rgba(219, 189, 33, 1) 100%)",
+      "visible_if": "{{ section.settings.header_title_highlight_mode == 'gradient' }}"
+    },
+    {
+      "type": "font_picker",
+      "id": "header_title_font",
+      "label": "Title Font",
+      "default": "poppins_n6"
+    },
+    {
+      "type": "range",
+      "id": "header_size",
+      "label": "Title Font Size (Desktop)",
+      "min": 28,
+      "max": 45,
+      "step": 1,
+      "default": 34,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mobile_header_size",
+      "label": "Title Font Size (Mobile)",
+      "min": 20,
+      "max": 40,
+      "step": 1,
+      "default": 24,
+      "unit": "px"
+    },
+    {
+      "type": "select",
+      "id": "header_style",
+      "label": "Title Font Style",
+      "options": [
+        {
+          "value": "normal",
+          "label": "Normal"
+        },
+        {
+          "value": "italic",
+          "label": "Cursive"
+        }
+      ],
+      "default": "normal"
+    },
+    {
+      "type": "header",
+      "content": "General Settings"
+    },
+    {
+      "type": "font_picker",
+      "id": "font_picker",
+      "label": "Text Font",
+      "default": "poppins_n4"
+    },
+    {
+      "type": "header",
+      "content": "Column Settings"
+    },
+    {
+      "type": "text",
+      "id": "column_1_text",
+      "label": "Column 1 Text",
+      "default": "Sternify Hairstyler 2.0",
+      "placeholder": "Column 1 text"
+    },
+    {
+      "type": "image_picker",
+      "id": "column_1_image",
+      "label": "Logo (Optional)",
+      "info": "We recommend using a transparent logo here."
+    },
+    {
+      "type": "text",
+      "id": "column_1_image_demo_url",
+      "label": "Demo Image URL",
+      "visible_if": "{{ section.settings.column_1_image_demo_url == 'st-internal' }}"
+    },
+    {
+      "type": "text",
+      "id": "column_2_text",
+      "label": "Column 2 Text",
+      "default": "Original Hairstyler",
+      "placeholder": "Column 2 text"
+    },
+    {
+      "type": "text",
+      "id": "column_3_text",
+      "label": "Column 3 Text",
+      "default": "Standard Hairstyler",
+      "placeholder": "Column 3 text",
+      "info": "This setting is only available with 3 columns"
+    },
+    {
+      "type": "header",
+      "content": "Color Settings 🎨"
+    },
+    {
+      "type": "color",
+      "id": "highlighted_color",
+      "label": "Highlighted Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "highlighted_text_color",
+      "label": "Highlighted Text Color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "highlighted_icon_color",
+      "label": "Highlighted Icon Color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "others_text_color",
+      "label": "Others Text Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "others_icon_color",
+      "label": "Others Icon Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "benefit_color",
+      "label": "Benefits Text Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "table_color",
+      "label": "Table Color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border Color",
+      "default": "#D7D8D5"
+    },
+    {
+      "type": "range",
+      "id": "border_thickness",
+      "label": "Border Thickness",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Corner Radius",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "default": 10
+    }
+  ],
+  "blocks": [
+    {
+      "name": "Row",
+      "type": "Reihe",
+      "settings": [
+        {
+          "type": "text",
+          "id": "reihe_text",
+          "label": "Header",
+          "default": "Feature 1",
+          "placeholder": "Enter text"
+        },
+        {
+          "type": "header",
+          "content": "Column 1 Settings"
+        },
+        {
+          "type": "select",
+          "id": "compare_1_mode",
+          "label": "Column 1 Display Mode",
+          "options": [
+            {
+              "value": "icon",
+              "label": "Icon (Checkmark/Cross)"
+            },
+            {
+              "value": "text",
+              "label": "Custom Text"
+            }
+          ],
+          "default": "icon",
+          "info": "Choose between icon or custom text display"
+        },
+        {
+          "type": "select",
+          "id": "compare_1",
+          "label": "Column 1 Icon Type",
+          "options": [
+            {
+              "value": "check",
+              "label": "Checkmark"
+            },
+            {
+              "value": "cross",
+              "label": "Cross"
+            }
+          ],
+          "default": "check",
+          "info": "Only applies when Display Mode is set to Icon",
+          "visible_if": "{{ block.settings.compare_1_mode == 'icon' }}"
+        },
+        {
+          "type": "text",
+          "id": "compare_1_text",
+          "label": "Column 1 Custom Text",
+          "placeholder": "Enter custom text",
+          "info": "Only applies when Display Mode is set to Custom Text",
+          "visible_if": "{{ block.settings.compare_1_mode == 'text' }}"
+        },
+        {
+          "type": "header",
+          "content": "Column 2 Settings"
+        },
+        {
+          "type": "select",
+          "id": "compare_2_mode",
+          "label": "Column 2 Display Mode",
+          "options": [
+            {
+              "value": "icon",
+              "label": "Icon (Checkmark/Cross)"
+            },
+            {
+              "value": "text",
+              "label": "Custom Text"
+            }
+          ],
+          "default": "icon",
+          "info": "Choose between icon or custom text display"
+        },
+        {
+          "type": "select",
+          "id": "compare_2",
+          "label": "Column 2 Icon Type",
+          "options": [
+            {
+              "value": "check",
+              "label": "Checkmark"
+            },
+            {
+              "value": "cross",
+              "label": "Cross"
+            }
+          ],
+          "default": "check",
+          "info": "Only applies when Display Mode is set to Icon",
+          "visible_if": "{{ block.settings.compare_2_mode == 'icon' }}"
+        },
+        {
+          "type": "text",
+          "id": "compare_2_text",
+          "label": "Column 2 Custom Text",
+          "placeholder": "Enter custom text",
+          "info": "Only applies when Display Mode is set to Custom Text",
+          "visible_if": "{{ block.settings.compare_2_mode == 'text' }}"
+        },
+        {
+          "type": "header",
+          "content": "Column 3 Settings",
+          "visible_if": "{{ section.settings.columns_number == '3' }}"
+        },
+        {
+          "type": "select",
+          "id": "compare_3_mode",
+          "label": "Column 3 Display Mode",
+          "options": [
+            {
+              "value": "icon",
+              "label": "Icon (Checkmark/Cross)"
+            },
+            {
+              "value": "text",
+              "label": "Custom Text"
+            }
+          ],
+          "default": "icon",
+          "info": "Choose between icon or custom text display",
+          "visible_if": "{{ section.settings.columns_number == '3' }}"
+        },
+        {
+          "type": "select",
+          "id": "compare_3",
+          "label": "Column 3 Icon Type",
+          "options": [
+            {
+              "value": "check",
+              "label": "Checkmark"
+            },
+            {
+              "value": "cross",
+              "label": "Cross"
+            }
+          ],
+          "default": "cross",
+          "info": "Only applies when Display Mode is set to Icon",
+          "visible_if": "{{ section.settings.columns_number == '3' and block.settings.compare_3_mode == 'icon' }}"
+        },
+        {
+          "type": "text",
+          "id": "compare_3_text",
+          "label": "Column 3 Custom Text",
+          "placeholder": "Enter custom text",
+          "info": "Only applies when Display Mode is set to Custom Text",
+          "visible_if": "{{ section.settings.columns_number == '3' and block.settings.compare_3_mode == 'text' }}"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "💫: Table",
+      "blocks": [
+        {
+          "type": "Reihe"
+        },
+        {
+          "type": "Reihe"
+        },
+        {
+          "type": "Reihe"
+        },
+        {
+          "type": "Reihe"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

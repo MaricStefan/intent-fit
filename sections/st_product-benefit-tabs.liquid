@@ -1,0 +1,905 @@
+{% comment %} Version: 2.5.5 {% endcomment %}
+
+{% comment %}
+  ---------------------------------------------------------
+  Copyright © 2024 Sternify. All rights reserved.
+  Any unauthorized reproduction, alteration, or distribution
+  of this code, in part or in whole, is expressly forbidden.
+  Violators will be subject to legal prosecution to the maximum
+  extent permitted by law. For permissions or inquiries,
+  please contact us in our discord server: https://discord.gg/NHHCEPhsG8
+  ---------------------------------------------------------
+{% endcomment %}
+
+{% assign subtitle_font = section.settings.subtitle_font %}
+{% assign title_font = section.settings.title_font %}
+{% assign text_font = section.settings.text_font %}
+{% assign max_width = section.settings.max_width %}
+{% assign max_height = section.settings.max_height | default: 400 %}
+
+<script
+  src="https://app.sternify.com/verifier.js?v={{ 'now' | date: '%s' }}"
+  data-section-id="{{ section.id }}"
+></script>
+
+<div class="st_not-found"></div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8.4.7/swiper-bundle.min.css">
+
+<style>
+  /* BFC gegen Margin-Collapsing mit Nachbar-Sections (Standard Regel 3) */
+  #shopify-section-{{ section.id }} {
+    display: flow-root;
+    background-color: {{ section.settings.section_background_color }};
+    padding-top: {{ section.settings.margin_top }}px;
+    padding-bottom: {{ section.settings.margin_bottom }}px;
+  }
+
+  {{ subtitle_font | font_face }}
+  {{ title_font | font_face }}
+  {{ text_font | font_face }}
+
+  {% unless section.settings.show_tabs %}
+    .st-product-benefit-tabs-section .swiper-pagination-benefit-tabs,
+    .st-product-benefit-tabs-section .st-product-benefit-tabs-section-dropdown {
+      display: none !important;
+    }
+  {% endunless %}
+
+  .st-product-benefit-tabs-section div:empty {
+    display: flex !important ;
+  }
+
+  .st_check-section--{{ section.id }} .st-product-benefit-tabs-section {
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    {% if section.settings.desktop_card_layout %}
+    background-color: {{ section.settings.section_bg_color }};
+    max-width: {{ max_width }}px;
+    {% elsif section.settings.full_width %}
+    max-width: 100%;
+    {% else %}
+    max-width: {{ max_width }}px;
+    {% endif %}
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-inline: 20px;
+    {% if section.settings.desktop_card_layout and section.settings.section_bg_color.alpha != 0.0 %}
+    /* Nur wenn der Hintergrund sichtbar ist, braucht der Inhalt Abstand zur Kante */
+    padding-block: 40px;
+    {% endif %}
+  }
+
+  /* Card layout is excluded from mobile */
+  @media screen and (min-width: 768px) {
+    /* Der Abstand zum Viewport-Rand gehoert AUSSEN an den Wrapper, nicht an die
+       Card selbst. Lag er auf der Card, wurde er zu Innenabstand und die Card
+       lag mit ihren runden Ecken buendig an der Bildschirmkante, sobald das
+       Fenster schmaler als max_width war. Alle anderen Card-Sections
+       (st_photo-guarantee, st_stats-with-image, ...) trennen das genauso. */
+    .st_check-section--{{ section.id }} {
+      padding-inline: 45px;
+    }
+
+    .st_check-section--{{ section.id }} .st-product-benefit-tabs-section {
+      padding-inline: 45px;
+      border-radius: {% if section.settings.desktop_card_layout %}12px{% else %}0{% endif %};
+    }
+  }
+
+  /* ── Counter st_reset.css to allow richtext styling ── */
+  .st_check-section--{{ section.id }} .st-product-benefit-tabs-section :is(strong, b),
+  .st_check-section--{{ section.id }} .st-product-benefit-tabs-section :is(strong, b) * {
+    font-weight: bold !important;
+    font-family: inherit;
+    color: inherit;
+    font-style: inherit;
+  }
+
+  .st_check-section--{{ section.id }} .st-product-benefit-tabs-section :is(em, i),
+  .st_check-section--{{ section.id }} .st-product-benefit-tabs-section :is(em, i) * {
+    font-style: italic !important;
+    font-family: inherit;
+    color: inherit;
+    font-weight: inherit;
+  }
+
+  .st_check-section--{{ section.id }} .st-product-benefit-tabs-section span {
+    font-size: inherit;
+    font-family: inherit;
+    color: inherit;
+    font-style: inherit;
+    font-weight: inherit;
+  }
+  /* --- */
+
+  .st-product-benefit-tabs-section-heading {
+    margin-bottom: 20px;
+  }
+
+  .st-product-benefit-tabs-section-heading * {
+    font-size: {{ section.settings.title_fontsize_desktop }}px;
+    font-family: {{ title_font.family }}, {{ title_font.fallback_families }};
+    font-weight: {{ title_font.weight }};
+    line-height: 1.2;
+    color: {{ section.settings.title_color }};
+  }
+
+  .st-product-benefit-tabs-section-heading .highlight {
+    {% if section.settings.header_title_highlight_mode == 'gradient' %}
+      background: {{ section.settings.header_title_highlight_gradient }};
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    {% else %}
+      color: {{ section.settings.header_title_highlight_color }} !important;
+    {% endif %}
+    display: inline;
+  }
+
+  .st-product-benefit-tabs-section .swiper {
+    width: 80%;
+    height: 100%;
+    max-width: {{ max_width }}px;
+  }
+
+  .st-product-benefit-tabs-section .swiper-slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 7%;
+  }
+
+  .st-product-benefit-tabs-section-text-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 45%;
+    max-width: 45%;
+  }
+
+  .st-product-benefit-tabs-section-text-content-subheading {
+    /* Section standard: 10px under the section title. */
+    margin: 10px 0 0;
+    font-size: {{ section.settings.subtitle_fontsize_desktop }}px;
+    font-family: {{ subtitle_font.family }}, {{ subtitle_font.fallback_families }};
+    font-weight: {{ subtitle_font.weight }};
+    line-height: 1.2;
+    margin-bottom: 5px;
+    color: {{ section.settings.subtitle_color }};
+  }
+
+  .st-product-benefit-tabs-section-text-content-description {
+    font-size: {{ section.settings.text_fontsize }}px;
+    font-family: {{ text_font.family }}, {{ text_font.fallback_families }};
+    font-weight: {{ text_font.weight }};
+    color: {{ section.settings.description_color }} !important;
+  }
+
+  .st-product-benefit-tabs-section-text-content-description p {
+    font-size: {{ section.settings.text_fontsize }}px;
+    font-family: {{ text_font.family }}, {{ text_font.fallback_families }};
+    font-weight: {{ text_font.weight }};
+    color: {{ section.settings.description_color }} !important;
+  }
+
+  .st-product-benefit-tabs-section-image-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-height: {{max_height}}px;
+    border-radius: 15px;
+    overflow: hidden;
+    width: 100%;
+    height: {{max_height}}px;
+  }
+
+  .st-product-benefit-tabs-section-image-content img {
+    border-radius: 15px;
+    width: auto;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  .st-product-benefit-tabs-section .swiper-button-next,
+  .st-product-benefit-tabs-section .swiper-button-prev {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    position: absolute;
+    text-rendering: auto;
+    top: 58%;
+    z-index: 1;
+    background-color: {{ section.settings.nav_button_background }};
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 50px;
+  }
+
+  .st-product-benefit-tabs-section .swiper-button-next::after,
+  .st-product-benefit-tabs-section .swiper-button-prev::after {
+    font-size: 15px;
+    font-weight: bolder;
+    color: {{ section.settings.nav_button_arrow }};
+  }
+
+  .st-product-benefit-tabs-section .swiper-pagination-benefit-tabs {
+    bottom: unset !important;
+    margin-bottom: 35px !important;
+    position: relative;
+    text-align: center;
+    transform: translate3d(0, 0, 0);
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    height: fit-content;
+    width: fit-content !important;
+    background-color: {{ section.settings.tab_background }};
+    border-radius: 10px;
+    margin-inline: 20px;
+  }
+
+  .st-product-benefit-tabs-section .swiper-pagination-bullet {
+    margin: 0px !important;
+    border-radius: 10px !important;
+    width: fit-content !important ;
+    padding: 10px 20px !important;
+    height: 50px !important;
+    text-align: center !important;
+    font-size: 15px !important;
+    font-family: {{ section.settings.tab_font.family }}, {{ section.settings.tab_font.fallback_families }} !important;
+    font-weight: {{ section.settings.tab_font.weight }} !important;
+    font-size: {{ section.settings.tab_fontsize }}px !important;
+    color: {{ section.settings.tab_text }} !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 10px !important;
+    opacity: 1 !important;
+    background-color: {{ section.settings.tab_background }} !important;
+    transition: scale 0.5s ease-in-out !important;
+  }
+
+  .st-product-benefit-tabs-section .swiper-pagination-bullet h1 {
+    font-size: {{ section.settings.tab_fontsize }}px !important;
+    font-family: {{ section.settings.tab_font.family }}, {{ section.settings.tab_font.fallback_families }} !important;
+    font-weight: {{ section.settings.tab_font.weight }} !important;
+    color: {{ section.settings.tab_text }} !important;
+  }
+
+  .st-product-benefit-tabs-section .swiper-pagination-bullet:hover {
+    scale: 1.05 !important;
+  }
+
+  .st-product-benefit-tabs-section .swiper-pagination-bullet img {
+    width: 20px !important;
+    height: 20px !important;
+    min-height: 20px !important;
+    min-width: 20px !important;
+    object-fit: contain !important;
+    position: relative !important;
+    border-radius: 5px !important;
+  }
+
+  .st-product-benefit-tabs-section .swiper-pagination-bullet-active {
+    background-color: {{ section.settings.active_tab_background }} !important;
+    border: {{ section.settings.active_tab_border_thickness }}px solid {{ section.settings.active_tab_border }} !important;
+  }
+
+  .st-product-benefit-tabs-section .swiper-pagination-bullet-active h1 {
+    color: {{ section.settings.active_tab_text }} !important;
+  }
+
+  .st-product-benefit-tabs-section .swiper-button-next {
+    right: 5% !important;
+  }
+
+  .st-product-benefit-tabs-section .swiper-button-prev {
+    left: 5% !important;
+  }
+
+  .st-product-benefit-tabs-section-dropdown {
+    position: relative;
+    display: none;
+    padding-bottom: 20px;
+    font-family: {{ section.settings.tab_font.family }} !important, {{ section.settings.tab_font.fallback_families }} !important;
+    font-weight: {{ section.settings.tab_font.weight }} !important;
+  }
+
+  .st-product-benefit-tabs-section-dropdown::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    height: 10px;
+    background-color: transparent;
+  }
+
+  .st-product-benefit-tabs-section-dropdown button {
+    min-width: 180px;
+    width: fit-content;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 14px;
+    color: {{ section.settings.tab_text }};
+    background-color: {{ section.settings.tab_background }};
+    font-family: {{ section.settings.tab_font.family }}, {{ section.settings.tab_font.fallback_families }};
+    font-weight: {{ section.settings.tab_font.weight }};
+    font-size: {{ section.settings.tab_fontsize }}px;
+    cursor: pointer;
+  }
+
+  .st-product-benefit-tabs-section-dropdown-button img {
+    width: 20px;
+    height: 20px;
+    min-height: 20px;
+    min-width: 20px;
+    object-fit: contain;
+    position: relative;
+    border-radius: 5px;
+  }
+
+  .st-product-benefit-tabs-section-dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: {{ section.settings.tab_background }};
+    transform: translate(-50%, 0);
+    top: 80%;
+    left: 50%;
+    min-width: 100%;
+    z-index: 2 !important;
+    border-radius: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    font-family: {{ section.settings.tab_font.family }}, {{ section.settings.tab_font.fallback_families }};
+    font-weight: {{ section.settings.tab_font.weight }};
+    font-size: {{ section.settings.tab_fontsize }}px;
+  }
+
+  .st-product-benefit-tabs-section-dropdown-content * {
+    font-family: {{ section.settings.tab_font.family }}, {{ section.settings.tab_font.fallback_families }};
+    font-weight: {{ section.settings.tab_font.weight }};
+    font-size: {{ section.settings.tab_fontsize }}px;
+  }
+
+  .st-product-benefit-tabs-section-dropdown-content div {
+    color: {{ section.settings.tab_text }};
+    padding: 12px 16px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    white-space: nowrap;
+  }
+
+  .st-product-benefit-tabs-section-dropdown-content div img {
+    width: 20px;
+    height: 20px;
+    min-height: 20px;
+    min-width: 20px;
+    object-fit: contain;
+    position: relative;
+  }
+
+  .st-product-benefit-tabs-section-dropdown-content div.active {
+    color: {{ section.settings.active_tab_text }};
+    background-color: {{ section.settings.active_tab_background }};
+    font-weight: bold;
+    border: {{ section.settings.active_tab_border_thickness }}px solid {{ section.settings.active_tab_border }};
+    border-radius: 10px;
+  }
+
+  .st-product-benefit-tabs-section-text-content-icon {
+    width: 50px;
+    height: 50px;
+    min-height: 50px;
+    min-width: 50px;
+    border-radius: 5px;
+    overflow: hidden;
+    object-fit: contain;
+    position: relative;
+    margin-bottom: 10px;
+  }
+
+  @media (max-width: 1024px) {
+    .st-product-benefit-tabs-section .swiper-button-next,
+    .st-product-benefit-tabs-section.swiper-button-prev {
+      top: 45%;
+    }
+
+    .st-product-benefit-tabs-section .swiper-pagination-benefit-tabs {
+      display: none;
+    }
+
+    .st-product-benefit-tabs-section-dropdown {
+      display: inline-block;
+    }
+
+    .st-product-benefit-tabs-section .swiper-slide {
+      gap: 20px;
+      flex-direction: column-reverse;
+      align-items: stretch;
+    }
+
+    .st-product-benefit-tabs-section-text-content {
+      max-width: 100%;
+      align-items: {% if section.settings.text_alignment == "center" %}center{% elsif section.settings.text_alignment == "left" %}flex-start{% else %}flex-end{% endif %};
+      text-align: {{ section.settings.text_alignment }};
+    }
+
+    .st-product-benefit-tabs-section-heading * {
+      font-size: {{ section.settings.title_fontsize_mobile | plus: 10 }}px;
+      text-align: center;
+    }
+
+    .st-product-benefit-tabs-section-image-content {
+      width: 90%;
+      margin: 0 auto;
+    }
+
+    .st-product-benefit-tabs-section .swiper {
+      width: 100%;
+    }
+
+    .st-product-benefit-tabs-section-text-content-description {
+      text-align: {{ section.settings.text_alignment }};
+    }
+
+    .st-product-benefit-tabs-section-text-content-subheading {
+      text-align: {{ section.settings.text_alignment }};
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 700px) {
+    .st-product-benefit-tabs-section .swiper-button-next,
+    .st-product-benefit-tabs-section .swiper-button-prev {
+      top: 35%;
+    }
+
+    .st-product-benefit-tabs-section-heading * {
+      font-size: {{ section.settings.title_fontsize_mobile }}px;
+      text-align: center;
+    }
+
+    .st-product-benefit-tabs-section-image-content {
+      width: 100%;
+      max-height: unset;
+      height: 100%;
+    }
+
+    .st-product-benefit-tabs-section-text-content-subheading {
+      font-size: {{ section.settings.subtitle_fontsize_mobile }}px;
+    }
+  }
+</style>
+
+<div
+  id="product-benefit-tabs-data"
+  data-icons="[{% for block in section.blocks %}{% if block.settings.slider_icon %}&quot;{{ block.settings.slider_icon | image_url: width: 100 }}&quot;{% elsif block.settings.slider_icon_demo_url != blank %}&quot;{{ block.settings.slider_icon_demo_url }}&quot;{% else %}&quot;https://cdn.shopify.com/s/files/1/0799/5880/2740/files/perfume_1.svg?v=1728075130&quot;{% endif %}{% unless forloop.last %},{% endunless %}{% endfor %}]"
+  data-menu="[{% for block in section.blocks %}&quot;{{ block.settings.icon_title }}&quot;{% unless forloop.last %},{% endunless %}{% endfor %}]"
+  data-showicons="{{ section.settings.show_icons | json }}"
+></div>
+
+<div class="st_wrapper st_check-section--{{ section.id }}">
+  <section class="st-product-benefit-tabs-section">
+    <div class="st-product-benefit-tabs-section-heading">
+      <h1>{{ section.settings.title | replace: '[', '<span class="highlight">' | replace: ']', '</span>' }}</h1>
+    </div>
+
+    <div class="swiper-pagination-benefit-tabs"></div>
+    <div class="st-product-benefit-tabs-section-dropdown">
+      <button class="st-product-benefit-tabs-section-dropdown-button">Soft as a cloud</button>
+      <div id="myDropdown" class="st-product-benefit-tabs-section-dropdown-content"></div>
+    </div>
+
+    <div class="swiper st-product-benefit-tabs-section-swiper">
+      <div class="swiper-wrapper">
+        {% for block in section.blocks %}
+          <div class="swiper-slide">
+            <div class="st-product-benefit-tabs-section-text-content">
+              {% if section.settings.show_icons %}
+                <div class="st-product-benefit-tabs-section-text-content-icon">
+                  {% if block.settings.slider_icon %}
+                    <img src="{{ block.settings.slider_icon | image_url: width: 100 }}">
+                  {% elsif block.settings.slider_icon_demo_url != blank %}
+                    <img src="{{ block.settings.slider_icon_demo_url }}">
+                  {% else %}
+                    <img src="https://cdn.shopify.com/s/files/1/0799/5880/2740/files/perfume_1.svg?v=1728075130">
+                  {% endif %}
+                </div>
+              {% endif %}
+              <h2 class="st-product-benefit-tabs-section-text-content-subheading">
+                {{ block.settings.slider_subtitle }}
+              </h2>
+              <h3 class="st-product-benefit-tabs-section-text-content-description">
+                {{ block.settings.slider_description }}
+              </h3>
+            </div>
+            <div class="st-product-benefit-tabs-section-image-content">
+              {% if block.settings.slider_image %}
+                <img src="{{ block.settings.slider_image | image_url: width: 800 }}">
+              {% elsif block.settings.slider_image_demo_url != blank %}
+                <img src="{{ block.settings.slider_image_demo_url }}">
+              {% else %}
+                <img src="https://cdn.shopify.com/s/files/1/0799/5880/2740/files/placeholder_1920x1080_6e9610d7-ed6c-4956-9a78-a861864db570.png?v=1728076384">
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div>
+  </section>
+</div>
+
+{% schema %}
+{
+  "name": "💫: Product Benefit Tabs",
+  "class": "sternify-section",
+  "tag": "div",
+  "settings": [
+    {
+      "type": "header",
+      "content": "⚠️ Important ⚠️",
+      "info": "Please ensure that Sternify [App Extensions](https://www.sternify.com/app-extentions) are activated."
+    },
+    {
+      "type": "range",
+      "id": "margin_top",
+      "label": "Top Margin",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "default": 50,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "label": "Bottom Margin",
+      "min": 0,
+      "max": 150,
+      "step": 5,
+      "default": 50,
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "section_background_color",
+      "label": "Section Background Color",
+      "default": "rgba(0,0,0,0)",
+      "info": "Fills the full section including the top and bottom margins"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full Width",
+      "default": false,
+      "visible_if": "{{ section.settings.desktop_card_layout == false }}"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Maximum Width",
+      "min": 1200,
+      "max": 1600,
+      "step": 50,
+      "default": 1400,
+      "unit": "px",
+      "visible_if": "{{ section.settings.desktop_card_layout or section.settings.full_width == false }}"
+    },
+    {
+      "type": "header",
+      "content": "Card Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "desktop_card_layout",
+      "label": "Desktop Card Layout",
+      "default": true,
+      "info": "Rounds the section corners on desktop. Mobile always stays full width."
+    },
+    {
+      "type": "color",
+      "id": "section_bg_color",
+      "label": "Card Background Color",
+      "default": "rgba(0,0,0,0)",
+      "visible_if": "{{ section.settings.desktop_card_layout }}"
+    },
+    {
+      "type": "header",
+      "content": "Section Header"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "title",
+      "label": "Title",
+      "info": "You can highlight text by wrapping it in [brackets]",
+      "default": "it's what's inside that counts"
+    },
+    {
+      "type": "select",
+      "id": "header_title_highlight_mode",
+      "label": "Title Highlight Mode",
+      "options": [
+        { "value": "solid", "label": "Solid" },
+        { "value": "gradient", "label": "Gradient" }
+      ],
+      "default": "solid"
+    },
+    {
+      "type": "color",
+      "id": "header_title_highlight_color",
+      "label": "Title Highlight Color",
+      "default": "#dbbd21",
+      "visible_if": "{{ section.settings.header_title_highlight_mode == 'solid' }}"
+    },
+    {
+      "type": "color_background",
+      "id": "header_title_highlight_gradient",
+      "label": "Title Highlight Gradient",
+      "default": "linear-gradient(0deg, rgba(247, 222, 94, 1), rgba(219, 189, 33, 1) 100%)",
+      "visible_if": "{{ section.settings.header_title_highlight_mode == 'gradient' }}"
+    },
+    {
+      "type": "header",
+      "content": "Font Settings"
+    },
+    {
+      "type": "font_picker",
+      "id": "title_font",
+      "label": "Title Font",
+      "default": "poppins_n6"
+    },
+    {
+      "type": "range",
+      "id": "title_fontsize_desktop",
+      "label": "Title Font Size (Desktop)",
+      "min": 28,
+      "max": 45,
+      "step": 1,
+      "default": 34
+    },
+    {
+      "type": "range",
+      "id": "title_fontsize_mobile",
+      "label": "Title Font Size (Mobile)",
+      "min": 20,
+      "max": 40,
+      "step": 1,
+      "default": 24
+    },
+    {
+      "type": "font_picker",
+      "id": "tab_font",
+      "label": "Tab and Dropdown Font",
+      "default": "poppins_n5"
+    },
+    {
+      "type": "range",
+      "id": "tab_fontsize",
+      "label": "Tab and Dropdown Font Size",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "default": 15,
+      "unit": "px"
+    },
+    {
+      "type": "font_picker",
+      "id": "subtitle_font",
+      "label": "Benefit Subtitle Font",
+      "default": "poppins_n6"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_fontsize_desktop",
+      "label": "Benefit Subtitle Font Size (Desktop)",
+      "min": 10,
+      "max": 50,
+      "step": 1,
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "subtitle_fontsize_mobile",
+      "label": "Benefit Subtitle Font Size (Mobile)",
+      "min": 10,
+      "max": 40,
+      "step": 1,
+      "default": 14
+    },
+    {
+      "type": "font_picker",
+      "id": "text_font",
+      "label": "Description Text Font",
+      "default": "poppins_n4"
+    },
+    {
+      "type": "range",
+      "id": "text_fontsize",
+      "label": "Description Text Font Size",
+      "min": 10,
+      "max": 25,
+      "step": 1,
+      "default": 16
+    },
+    {
+      "type": "text_alignment",
+      "id": "text_alignment",
+      "label": "Description Text Alignment (Mobile)",
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Icon Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_icons",
+      "label": "Show Icons",
+      "default": true,
+      "info": "Enable or disable icons in tabs and dropdown"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_tabs",
+      "label": "Show Tabs",
+      "default": true,
+      "info": "Enable or disable tabs navigation (will always show dropdown on mobile)"
+    },
+    {
+      "type": "header",
+      "content": "Color Settings"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title Color",
+      "default": "#351416"
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Subtitle Color",
+      "default": "#351416"
+    },
+    {
+      "type": "color",
+      "id": "description_color",
+      "label": "Description Text Color",
+      "default": "#080808"
+    },
+    {
+      "type": "color",
+      "id": "nav_button_background",
+      "label": "Navigation Button Background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "nav_button_arrow",
+      "label": "Navigation Button Arrow Color",
+      "default": "#191919"
+    },
+    {
+      "type": "color",
+      "id": "tab_background",
+      "label": "Tab/Dropdown Background",
+      "default": "#FEFCF7"
+    },
+    {
+      "type": "color",
+      "id": "tab_text",
+      "label": "Tab/Dropdown Text Color",
+      "default": "#161616"
+    },
+    {
+      "type": "color",
+      "id": "active_tab_background",
+      "label": "Active Tab/Dropdown Background",
+      "default": "#FFFCF9"
+    },
+    {
+      "type": "color",
+      "id": "active_tab_text",
+      "label": "Active Tab/Dropdown Text Color",
+      "default": "#131313"
+    },
+    {
+      "type": "color",
+      "id": "active_tab_border",
+      "label": "Active Tab Border Color",
+      "default": "#C8B258"
+    },
+    {
+      "type": "range",
+      "id": "active_tab_border_thickness",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "label": "Active Tab Border Thickness",
+      "default": 1
+    }
+  ],
+  "blocks": [
+    {
+      "name": "Benefit Tab",
+      "type": "benefit_tab",
+      "limit": 7,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "slider_image",
+          "label": "Slider Image"
+        },
+        {
+          "type": "text",
+          "id": "slider_image_demo_url",
+          "label": "Demo Image URL",
+          "default": "https://cdn.shopify.com/s/files/1/0799/5880/2740/files/placeholder_1920x1080_6e9610d7-ed6c-4956-9a78-a861864db570.png?v=1728076384",
+          "visible_if": "{{ block.settings.slider_image_demo_url == 'st-internal' }}"
+        },
+        {
+          "type": "image_picker",
+          "id": "slider_icon",
+          "label": "Slider Icon",
+          "info": "Displayed when 'Show Icons' is enabled in Product Benefit Tabs."
+        },
+        {
+          "type": "text",
+          "id": "slider_icon_demo_url",
+          "label": "Demo Image URL",
+          "visible_if": "{{ block.settings.slider_icon_demo_url == 'st-internal' }}"
+        },
+        {
+          "type": "text",
+          "id": "icon_title",
+          "label": "Icon Title",
+          "default": "Morning Breeze"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "slider_subtitle",
+          "label": "Slider Subtitle",
+          "default": "The scent of morning."
+        },
+        {
+          "type": "richtext",
+          "id": "slider_description",
+          "label": "Slider Description",
+          "default": "<p>A refreshing fragrance that captures the lightness of morning. Notes of dewy flowers and juicy grass bring to life the feeling of a sunny spring morning, perfect for starting the day with a clear and invigorating freshness.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "💫: Product Benefit Tabs",
+      "blocks": [
+        {
+          "type": "benefit_tab"
+        },
+        {
+          "type": "benefit_tab"
+        },
+        {
+          "type": "benefit_tab"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
