@@ -11,58 +11,85 @@
   "sections": {
     "product_information": {
       "type": "st_product-information",
+      "name": "Sternify - Product Information",
+      "settings": {
+        "margin_top": 0,
+        "margin_bottom": 40,
+        "max_width": 1250,
+        "section_bg_color": "#FFFFFF",
+        "media_position": "left",
+        "heading_font": "poppins_n6",
+        "body_font": "poppins_n4",
+        "image_ratio": "square",
+        "show_gallery_arrows": true,
+        "arrow_bg_color": "#FFFFFF",
+        "arrow_icon_color": "#5B3A21",
+        "image_border_radius": 16,
+        "gallery_boxes_position": "right",
+        "gallery_boxes_width": 120,
+        "gallery_boxes_gap": 8,
+        "gallery_box_bg_color": "#FBF5EA",
+        "gallery_box_gradient_enable": false,
+        "gallery_box_border_enable": true,
+        "gallery_box_border_color": "#EBDCC2",
+        "gallery_box_border_width": 1,
+        "gallery_box_text_color": "#5B3A21",
+        "gallery_box_icon_color": "#D89B4A",
+        "gallery_box_radius": 14,
+        "row_border_color": "#EBDCC2",
+        "row_text_color": "#2A1B0E",
+        "row_icon_color": "#D89B4A",
+        "gallery_boxes_show_mobile": false,
+        "thumbs_align_desktop": "center",
+        "thumbs_align_mobile": "center",
+        "thumbs_size_desktop": 84,
+        "thumbs_size_mobile": 72,
+        "cause_bg_color": "#FBF5EA",
+        "cause_text_color": "#2A1B0E",
+        "cause_icon_color": "#D89B4A",
+        "cause_text_size": 15
+      },
       "blocks": {
         "app_review_stars": {
           "type": "shopify://apps/sternify/blocks/review_stars/fcc6e879-7d9e-4924-b387-68cfab68cec6",
           "settings": {
-            "advanced_settings": false,
-            "show_all_products": false,
-            "product": "",
             "text_format": "<p>[count] Reviews</p>",
             "hide_text": false,
             "widget_alignment": "left",
-            "text_color": "#7a6a55",
-            "star_color": "#d89b4a",
+            "text_color": "#7A6A55",
+            "star_color": "#D89B4A",
             "text_size": 14
           }
         },
         "title": {
           "type": "title",
           "settings": {
-            "custom_title": "",
-            "title_uppercase": false,
-            "title_color": "#2a1b0e",
+            "title_color": "#2A1B0E",
             "title_gradient_enable": true,
-            "title_gradient": "linear-gradient(99deg, rgba(91, 58, 33, 1) 0%, rgba(216, 155, 74, 1) 100%)",
             "highlight_color": "linear-gradient(99deg, rgba(216, 155, 74, 1) 0%, rgba(239, 196, 136, 1) 100%)",
             "title_size_desktop": 38,
-            "title_size_mobile": 28
+            "title_size_mobile": 28,
+            "title_gradient": "linear-gradient(99deg, rgba(91, 58, 33, 1) 0%, rgba(216, 155, 74, 1) 100%)"
           }
         },
         "subtitle": {
           "type": "subtitle",
           "settings": {
             "text": "A digestion supplement your dog [thinks is a treat], so it actually gets eaten.",
-            "subtitle_color": "#7a6a55",
+            "subtitle_color": "#7A6A55",
             "highlight_color": "linear-gradient(99deg, rgba(216, 155, 74, 1) 0%, rgba(239, 196, 136, 1) 100%)",
-            "subtitle_size": 15,
-            "subtitle_size_mobile": 14
+            "subtitle_size": 15
           }
         },
         "app_trust_badge": {
           "type": "shopify://apps/sternify/blocks/trust_badge/fcc6e879-7d9e-4924-b387-68cfab68cec6",
           "settings": {
             "style": "1",
-            "alignment": "flex-start",
-            "Abstand_oben": 0,
-            "Abstand_unten": 0,
             "box_text": "Zero spit-outs across 9,400 tins shipped",
-            "font_picker": "poppins_n4",
+            "box_background_color": "#F6EBD8",
+            "text_farbe": "#5B3A21",
             "text_size": 13,
-            "icon_size": 36,
-            "box_background_color": "#f6ebd8",
-            "bg_gradient": "",
-            "text_farbe": "#5b3a21"
+            "icon_size": 36
           }
         },
         "price": {
@@ -72,45 +99,29 @@
             "show_callout": true,
             "callout_text": "One tin lasts a full month",
             "callout_position": "below",
-            "callout_bg_color": "#5b3a21",
+            "callout_bg_color": "#5B3A21",
             "callout_gradient_enable": true,
-            "callout_gradient": "linear-gradient(99deg, rgba(91, 58, 33, 1), rgba(150, 95, 45, 1) 100%)",
-            "callout_text_color": "#ffffff",
-            "price_color": "#2a1b0e",
+            "callout_text_color": "#FFFFFF",
+            "price_color": "#2A1B0E",
             "price_size": 28,
-            "sale_badge_bg_color": "#5b3a21",
+            "sale_badge_bg_color": "#5B3A21",
             "sale_badge_gradient_enable": false,
-            "sale_badge_gradient": "linear-gradient(99deg, rgba(26, 26, 26, 1) 0%, rgba(70, 70, 70, 1) 100%)",
-            "sale_badge_text_color": "#ffffff"
+            "sale_badge_text_color": "#FFFFFF",
+            "callout_gradient": "linear-gradient(99deg, rgba(91, 58, 33, 1) 0%, rgba(150, 95, 45, 1) 100%)"
           }
         },
         "app_benefit_usp_with_icons": {
           "type": "shopify://apps/sternify/blocks/benefit_usp_with_icons/fcc6e879-7d9e-4924-b387-68cfab68cec6",
           "settings": {
-            "layout": "column",
-            "wrap_align": "start",
-            "column_gap": 16,
-            "row_gap": 8,
-            "Abstand_oben": 0,
-            "Abstand_unten": 0,
             "text_1": "Soft chews they take from your hand, no pill pockets",
             "text_2": "Two active ingredients, probiotics and pumpkin",
             "text_3": "60 chews per tin, two a day, thirty days done",
             "text_4": "",
             "text_5": "",
-            "text_color": "#2a1b0e",
-            "text_size": 13,
-            "font_family": "poppins_n4",
-            "icon_size": 20,
-            "icon_fit": "natural",
+            "text_color": "#2A1B0E",
             "enable_card_mode": false,
-            "card_background_color": "#f7f7f7",
-            "bg_gradient": "",
-            "card_border_radius": 8,
-            "card_padding": 16,
-            "card_border_thickness": 0,
-            "card_border_style": "solid",
-            "card_border_color": "#e1e1e1"
+            "text_size": 13,
+            "icon_size": 20
           }
         },
         "variant_picker": {
@@ -118,197 +129,91 @@
           "settings": {
             "picker_type": "pills",
             "enable_color_swatches": true,
-            "swatch_method": "color_list",
-            "swatch_color_map": "",
-            "pill_bg_color": "#ffffff",
-            "pill_text_color": "#2a1b0e",
-            "pill_border_color": "#ebdcc2",
-            "pill_selected_bg_color": "#f6ebd8",
-            "pill_selected_text_color": "#5b3a21",
-            "pill_selected_border_color": "#d89b4a"
+            "pill_bg_color": "#FFFFFF",
+            "pill_text_color": "#2A1B0E",
+            "pill_border_color": "#EBDCC2",
+            "pill_selected_bg_color": "#F6EBD8",
+            "pill_selected_text_color": "#5B3A21",
+            "pill_selected_border_color": "#D89B4A"
+          }
+        },
+        "row_dosing": {
+          "type": "collapsible_row",
+          "settings": {
+            "icon": "ruler",
+            "heading": "How many chews a day",
+            "content": "<p>Two chews a day for every dog, puppy to gentle giant. There is no chart to read and nothing to weigh. The dose is built for the smallest eater, so the biggest one simply gets it twice.</p><p>One tin holds 60 chews, which is thirty days. Most people set a reminder for the morning walk and never think about it again.</p>",
+            "open_default": false
           }
         },
         "app_inventory": {
           "type": "shopify://apps/sternify/blocks/inventory/fcc6e879-7d9e-4924-b387-68cfab68cec6",
           "settings": {
             "inventory_tracking": "manual",
-            "Abstand_oben": 0,
-            "Abstand_unten": 0,
             "mode": "sold_out",
             "inventory_text": "Low stock on this tin",
-            "font_picker": "poppins_n4",
-            "font_size": 14,
             "dynamic_available_text": "In stock - delivered in 2 to 4 days",
             "dynamic_sold_out_text": "Sold out",
-            "product": ""
+            "font_size": 14
           }
         },
         "buy_buttons": {
           "type": "buy_buttons",
           "settings": {
             "atc_text": "Add to cart",
-            "atc_icon_demo_url": "",
             "show_price_in_button": true,
             "sold_out_text": "Sold out",
             "added_text": "Added to your cart",
             "unavailable_text": "Unavailable",
             "after_add": "stay",
-            "atc_bg_color": "#5b3a21",
+            "atc_bg_color": "#5B3A21",
             "atc_gradient_enable": true,
-            "atc_gradient": "linear-gradient(99deg, rgba(91, 58, 33, 1), rgba(150, 95, 45, 1) 100%)",
-            "atc_text_color": "#ffffff",
+            "atc_gradient": "linear-gradient(99deg, rgba(91, 58, 33, 1) 0%, rgba(150, 95, 45, 1) 100%)",
+            "atc_text_color": "#FFFFFF",
             "atc_border_radius": 14,
             "atc_style": "lift",
-            "atc_shadow_color": "#3a2413",
+            "atc_shadow_color": "#3A2413",
             "show_cart_note": true,
             "cart_note": "Free shipping over $45 · 60-day money-back guarantee",
-            "cart_note_icon_demo_url": "",
-            "cart_note_color": "#7a6a55"
+            "cart_note_color": "#7A6A55"
           }
         },
         "app_payment_icons": {
           "type": "shopify://apps/sternify/blocks/payment_icons/fcc6e879-7d9e-4924-b387-68cfab68cec6",
           "settings": {
-            "Abstand_oben": 0,
-            "Abstand_unten": 0,
-            "alignment": "center",
-            "icon_height": 25,
-            "icon_gap": 5,
-            "grayscale": false,
-            "grayscale_opacity": 70,
-            "color_on_hover": true,
-            "show_secure_line": false,
-            "secure_text": "Secure checkout",
-            "secure_text_size": 12,
-            "secure_text_color": "#6a6a6a",
             "paypal": true,
-            "amex": true,
-            "klarna_rechnung": true,
-            "klarna_sofort": true,
             "visa": true,
             "mastercard": true,
-            "maestro": false,
-            "klarna": false,
+            "amex": true,
             "apple_pay": true,
-            "google_pay": true,
-            "shoppay": false,
-            "unionpay": false,
-            "twint": false,
-            "qrpayment": false,
-            "ideal": false,
-            "bancontact": false,
-            "efecty": false,
-            "nequi": false,
-            "pse": false,
-            "payu": false
-          }
-        },
-        "app_ugc_slider": {
-          "type": "shopify://apps/sternify/blocks/ugc_slider/fcc6e879-7d9e-4924-b387-68cfab68cec6",
-          "disabled": true,
-          "settings": {
-            "show_header": true,
-            "header_text": "<p>Chosen by <strong>12,000+</strong> dog owners</p>",
-            "header_text_color": "#2a1b0e",
-            "header_highlight_mode": "solid",
-            "header_highlight_color": "#d89b4a",
-            "header_highlight_gradient": "linear-gradient(90deg, #02B979, #506B61)",
-            "header_alignment": "center",
-            "header_font": "poppins_n4",
-            "header_font_size": 15,
-            "show_header_stars": true,
-            "header_star_style": "classic",
-            "header_star_rating": 5,
-            "spacing_top": 4,
-            "spacing_bottom": 4,
-            "autoplay": true,
-            "show_nav_buttons": false,
-            "nav_bg_color": "#ffffff",
-            "nav_icon_color": "#111111",
-            "show_nav_border": false,
-            "nav_border_color": "#111111",
-            "show_play_button": true,
-            "play_position": "center",
-            "play_icon_size": 28,
-            "play_icon_color": "#ffffff",
-            "show_play_bg": true,
-            "play_bg_color": "#ffffff",
-            "play_overlay_opacity": 20,
-            "play_bg_blur": 4,
-            "show_play_border": false,
-            "play_border_color": "#ffffff",
-            "enable_block_bg": false,
-            "block_bg_color": "#efefef",
-            "block_bg_radius": 12,
-            "slide_border_radius": 10,
-            "modal_mode": "fullscreen",
-            "modal_border_radius": 14,
-            "enable_video_progress": false,
-            "video_progress_position": "top",
-            "card_circular": false,
-            "circle_size": 96,
-            "show_card_border": false,
-            "card_border_color": "#cccccc",
-            "enable_pagination": true,
-            "pagination_style": "progressbar",
-            "pagination_color": "#dddddd",
-            "pagination_active_color": "#2a1b0e",
-            "slide_1_active": true,
-            "slide_1_video_demo_url": "https://cdn.shopify.com/videos/c/vp/b16c75507bd94c00a7c5d0561987bf8e/b16c75507bd94c00a7c5d0561987bf8e.HD-720p-4.5Mbps-89927069.mp4",
-            "slide_1_poster_demo_url": "https://cdn.shopify.com/s/files/1/0707/3549/5417/files/goodboy-ugc-01-paw-for-treat.jpg",
-            "slide_2_active": true,
-            "slide_2_video_demo_url": "https://cdn.shopify.com/videos/c/vp/f47957dc50814398b3c8fddeea8792d8/f47957dc50814398b3c8fddeea8792d8.HD-720p-4.5Mbps-89927075.mp4",
-            "slide_2_poster_demo_url": "https://cdn.shopify.com/s/files/1/0707/3549/5417/files/goodboy-ugc-02-kitchen-perfect-sit.jpg",
-            "slide_3_active": true,
-            "slide_3_video_demo_url": "https://cdn.shopify.com/videos/c/vp/aaa1cc9c7e8c42449addf6770b7760b9/aaa1cc9c7e8c42449addf6770b7760b9.HD-720p-4.5Mbps-89927084.mp4",
-            "slide_3_poster_demo_url": "https://cdn.shopify.com/s/files/1/0707/3549/5417/files/goodboy-ugc-03-park-bench-pov.jpg",
-            "slide_4_active": false,
-            "slide_4_video_demo_url": "",
-            "slide_4_poster_demo_url": "",
-            "slide_5_active": false,
-            "slide_5_video_demo_url": "",
-            "slide_5_poster_demo_url": "",
-            "slide_6_active": false,
-            "slide_6_video_demo_url": "",
-            "slide_6_poster_demo_url": ""
+            "google_pay": true
           }
         },
         "app_review_slider": {
           "type": "shopify://apps/sternify/blocks/review_slider/fcc6e879-7d9e-4924-b387-68cfab68cec6",
           "settings": {
-            "spacing_top": 0,
-            "spacing_bottom": 0,
-            "card_bg_color": "#ffffff",
+            "card_bg_color": "#FFFFFF",
             "card_border_radius": 14,
             "content_align": "flex-start",
             "show_card_border": true,
-            "card_border_color": "#ebdcc2",
+            "card_border_color": "#EBDCC2",
             "show_avatar": false,
-            "avatar_size": 62,
-            "avatar_size_mobile": 50,
-            "avatar_border_radius": 20,
             "show_verified": true,
             "verified_position": "name",
-            "verified_color": "#d89b4a",
+            "verified_color": "#D89B4A",
             "name_font": "poppins_n5",
-            "name_font_size": 14,
-            "name_font_size_mobile": 12,
-            "name_color": "#2a1b0e",
-            "star_size": 20,
-            "star_size_mobile": 16,
-            "star_color": "#d89b4a",
-            "star_empty_color": "#ebdcc2",
+            "name_color": "#2A1B0E",
+            "star_color": "#D89B4A",
+            "star_empty_color": "#EBDCC2",
             "text_font": "poppins_n4",
-            "text_font_size": 13,
-            "text_font_size_mobile": 12,
-            "text_color": "#6b5b47",
+            "text_color": "#6B5B47",
             "controls": "arrows",
-            "nav_bg_color": "#ffffff",
-            "nav_icon_color": "#5b3a21",
+            "nav_bg_color": "#FFFFFF",
+            "nav_icon_color": "#5B3A21",
             "show_nav_border": true,
-            "nav_border_color": "#ebdcc2",
-            "pagination_color": "#ebdcc2",
-            "pagination_active_color": "#5b3a21",
+            "nav_border_color": "#EBDCC2",
+            "pagination_color": "#EBDCC2",
+            "pagination_active_color": "#5B3A21",
             "loop": true,
             "autoplay": true,
             "autoplay_delay": 5,
@@ -325,59 +230,34 @@
             "review_3_stars": 10,
             "review_3_text": "<p>Bernese, 48 kilos, extremely fussy. She sits for these. The tin lasts exactly a month like it says on the label.</p>",
             "review_4_active": false,
-            "review_4_name": "Customer",
-            "review_4_stars": 10,
-            "review_4_text": "",
             "review_5_active": false,
-            "review_5_name": "Customer",
-            "review_5_stars": 10,
-            "review_5_text": "",
-            "review_6_active": false,
-            "review_6_name": "Customer",
-            "review_6_stars": 10,
-            "review_6_text": ""
+            "review_6_active": false
           }
         },
         "app_benefit_four_boxes_v2": {
           "type": "shopify://apps/sternify/blocks/benefit_four_boxes_v2/fcc6e879-7d9e-4924-b387-68cfab68cec6",
           "settings": {
-            "Abstand_oben": 0,
-            "Abstand_unten": 0,
-            "show_box_1": true,
             "titel_1": "<strong>They Eat It</strong>",
             "subtext_1": "No hiding in cheese",
-            "show_box_2": true,
             "titel_2": "<strong>2 Actives</strong>",
             "subtext_2": "Probiotics + pumpkin",
-            "show_box_3": true,
             "titel_3": "<strong>30 Days</strong>",
             "subtext_3": "One tin, one month",
-            "show_box_4": true,
             "titel_4": "<strong>60 Day Promise</strong>",
             "subtext_4": "Or your money back",
-            "font_picker": "poppins_n4",
+            "hintergrunds_farbe": "#FBF5EA",
+            "text_farbe": "#2A1B0E",
+            "border_color": "#D89B4A",
             "title_size": 11,
             "subtext_size": 10,
             "box_rounded": 12,
-            "hintergrunds_farbe": "#fbf5ea",
-            "bg_gradient": "",
-            "text_farbe": "#2a1b0e",
-            "border_color": "#d89b4a",
             "border_thickness": 0
           }
         },
         "app_shipping_timeline": {
           "type": "shopify://apps/sternify/blocks/shipping_timeline/fcc6e879-7d9e-4924-b387-68cfab68cec6",
           "settings": {
-            "Abstand_oben": 0,
-            "Abstand_unten": 0,
             "shipping_time_enabled": true,
-            "shipping_time": 3,
-            "delivery_time": 3,
-            "buffer_time": 3,
-            "calculate_weekends": false,
-            "show_shipping_days_as_text": false,
-            "cutoff_hour": 0,
             "ordered_text": "Ordered",
             "ordered_text_under": "Today",
             "shipped_text": "Shipped",
@@ -388,10 +268,9 @@
             "delivery_hours": "Hrs.",
             "delivery_minutes": "Min.",
             "animated_line": true,
-            "box_color": "#fbf5ea",
-            "bg_gradient": "",
-            "text_color": "#2a1b0e",
-            "hours_color": "#c4832f",
+            "box_color": "#FBF5EA",
+            "text_color": "#2A1B0E",
+            "hours_color": "#C4832F",
             "icon_size": 30
           }
         },
@@ -399,7 +278,6 @@
           "type": "gallery_box",
           "settings": {
             "icon": "heart",
-            "custom_icon_demo_url": "",
             "heading": "60 chews",
             "text": "Two a day"
           }
@@ -408,7 +286,6 @@
           "type": "gallery_box",
           "settings": {
             "icon": "leaf",
-            "custom_icon_demo_url": "",
             "heading": "2 actives",
             "text": "Probiotics, pumpkin"
           }
@@ -417,18 +294,8 @@
           "type": "gallery_box",
           "settings": {
             "icon": "check",
-            "custom_icon_demo_url": "",
             "heading": "All sizes",
             "text": "Puppy to giant"
-          }
-        },
-        "row_dosing": {
-          "type": "collapsible_row",
-          "settings": {
-            "icon": "ruler",
-            "heading": "How many chews a day",
-            "content": "<p>Two chews a day for every dog, puppy to gentle giant. There is no chart to read and nothing to weigh. The dose is built for the smallest eater, so the biggest one simply gets it twice.</p><p>One tin holds 60 chews, which is thirty days. Most people set a reminder for the morning walk and never think about it again.</p>",
-            "open_default": false
           }
         },
         "row_ingredients": {
@@ -452,8 +319,47 @@
         "cause_banner": {
           "type": "cause_banner",
           "settings": {
-            "text": "<p>A portion of every order is <strong>donated to local rescue shelters</strong> to help fund veterinary care for dogs waiting on a home.</p>",
-            "icon_demo_url": ""
+            "text": "<p>A portion of every order is <strong>donated to local rescue shelters</strong> to help fund veterinary care for dogs waiting on a home.</p>"
+          }
+        },
+        "app_ugc_slider": {
+          "type": "shopify://apps/sternify/blocks/ugc_slider/fcc6e879-7d9e-4924-b387-68cfab68cec6",
+          "settings": {
+            "show_header": true,
+            "header_text": "<p>Chosen by <strong>12,000+</strong> dog owners</p>",
+            "header_text_color": "#2A1B0E",
+            "header_highlight_mode": "solid",
+            "header_highlight_color": "#D89B4A",
+            "header_alignment": "center",
+            "header_font": "poppins_n4",
+            "header_font_size": 15,
+            "show_header_stars": true,
+            "header_star_style": "classic",
+            "header_star_rating": 5,
+            "spacing_top": 4,
+            "spacing_bottom": 4,
+            "autoplay": true,
+            "show_play_button": true,
+            "play_position": "center",
+            "play_icon_size": 28,
+            "slide_border_radius": 10,
+            "enable_pagination": true,
+            "pagination_style": "progressbar",
+            "pagination_color": "#DDDDDD",
+            "pagination_active_color": "#2A1B0E",
+            "modal_mode": "fullscreen",
+            "slide_1_active": true,
+            "slide_1_video_demo_url": "https://cdn.shopify.com/videos/c/vp/b16c75507bd94c00a7c5d0561987bf8e/b16c75507bd94c00a7c5d0561987bf8e.HD-720p-4.5Mbps-89927069.mp4",
+            "slide_1_poster_demo_url": "https://cdn.shopify.com/s/files/1/0707/3549/5417/files/goodboy-ugc-01-paw-for-treat.jpg",
+            "slide_2_active": true,
+            "slide_2_video_demo_url": "https://cdn.shopify.com/videos/c/vp/f47957dc50814398b3c8fddeea8792d8/f47957dc50814398b3c8fddeea8792d8.HD-720p-4.5Mbps-89927075.mp4",
+            "slide_2_poster_demo_url": "https://cdn.shopify.com/s/files/1/0707/3549/5417/files/goodboy-ugc-02-kitchen-perfect-sit.jpg",
+            "slide_3_active": true,
+            "slide_3_video_demo_url": "https://cdn.shopify.com/videos/c/vp/aaa1cc9c7e8c42449addf6770b7760b9/aaa1cc9c7e8c42449addf6770b7760b9.HD-720p-4.5Mbps-89927084.mp4",
+            "slide_3_poster_demo_url": "https://cdn.shopify.com/s/files/1/0707/3549/5417/files/goodboy-ugc-03-park-bench-pov.jpg",
+            "slide_4_active": false,
+            "slide_5_active": false,
+            "slide_6_active": false
           }
         }
       },
@@ -479,54 +385,37 @@
         "row_ingredients",
         "row_shipping",
         "cause_banner"
-      ],
-      "name": "Sternify - Product Information",
-      "settings": {
-        "margin_top": 0,
-        "margin_bottom": 40,
-        "max_width": 1250,
-        "section_bg_color": "#ffffff",
-        "section_bg_gradient_enable": false,
-        "section_bg_gradient": "linear-gradient(180deg, rgba(255, 255, 255, 1) 0%, rgba(246, 246, 246, 1) 100%)",
-        "media_position": "left",
-        "heading_font": "poppins_n6",
-        "body_font": "poppins_n4",
-        "image_ratio": "square",
-        "cause_bg_color": "#fbf5ea",
-        "cause_text_color": "#2a1b0e",
-        "cause_icon_color": "#d89b4a",
-        "cause_text_size": 15,
-        "thumbs_align_desktop": "center",
-        "thumbs_align_mobile": "center",
-        "thumbs_size_desktop": 84,
-        "thumbs_size_mobile": 72,
-        "show_gallery_arrows": true,
-        "arrow_bg_color": "#ffffff",
-        "arrow_icon_color": "#5b3a21",
-        "image_border_radius": 16,
-        "gallery_boxes_position": "right",
-        "gallery_boxes_show_mobile": false,
-        "gallery_boxes_width": 120,
-        "gallery_boxes_gap": 8,
-        "gallery_box_bg_color": "#fbf5ea",
-        "gallery_box_gradient_enable": false,
-        "gallery_box_gradient": "linear-gradient(180deg, rgba(250, 250, 250, 1) 0%, rgba(240, 240, 240, 1) 100%)",
-        "gallery_box_border_enable": true,
-        "gallery_box_border_color": "#ebdcc2",
-        "gallery_box_border_width": 1,
-        "gallery_box_text_color": "#5b3a21",
-        "gallery_box_icon_color": "#d89b4a",
-        "gallery_box_icon_gradient_enable": false,
-        "gallery_box_icon_gradient_start": "#dbbd21",
-        "gallery_box_icon_gradient_end": "#f0d65c",
-        "gallery_box_radius": 14,
-        "row_border_color": "#ebdcc2",
-        "row_text_color": "#2a1b0e",
-        "row_icon_color": "#d89b4a"
-      }
+      ]
     },
     "press_strip": {
       "type": "st_logo-slider",
+      "name": "Sternify - As Seen In",
+      "settings": {
+        "space_from_top": 35,
+        "space_from_bottom": 35,
+        "section_background_color": "#FBF5EA",
+        "box_enabled": false,
+        "section_max_width": 1200,
+        "layout": "title_top",
+        "mobile_layout": "stack",
+        "title": "AS SEEN IN",
+        "description": "<p>Written up by people who also have a dog that spits out tablets.</p>",
+        "title_font": "poppins_n6",
+        "title_size": 28,
+        "mobile_title_size": 20,
+        "title_color": "#A08B6E",
+        "description_font": "poppins_n4",
+        "description_size": 15,
+        "mobile_description_size": 12,
+        "description_color": "#A08B6E",
+        "logo_size": 110,
+        "mobile_logo_size": 70,
+        "grayscale_effect": true,
+        "scroll_speed": 30,
+        "scroll_direction": "left",
+        "pause_on_hover": true,
+        "content_gap": 45
+      },
       "blocks": {
         "logo_1": {
           "type": "logo",
@@ -565,108 +454,16 @@
         "logo_3",
         "logo_4",
         "logo_5"
-      ],
-      "name": "Sternify - As Seen In",
-      "settings": {
-        "space_from_top": 35,
-        "space_from_bottom": 35,
-        "section_background_color": "#fbf5ea",
-        "full_width": false,
-        "section_max_width": 1200,
-        "content_gap": 45,
-        "box_enabled": false,
-        "box_background_color": "#f8f8f8",
-        "content_padding": 30,
-        "border_radius": 12,
-        "layout": "title_top",
-        "mobile_layout": "stack",
-        "title": "AS SEEN IN",
-        "highlight_mode": "solid",
-        "highlight_color": "#dbbd21",
-        "highlight_gradient": "linear-gradient(0deg, rgba(247, 222, 94, 1), rgba(219, 189, 33, 1) 100%)",
-        "description": "<p>Written up by people who also have a dog that spits out tablets.</p>",
-        "title_font": "poppins_n6",
-        "title_size": 28,
-        "title_line_height": 1.3,
-        "mobile_title_size": 20,
-        "title_color": "#a08b6e",
-        "description_font": "poppins_n4",
-        "description_size": 15,
-        "description_line_height": 1.5,
-        "mobile_description_size": 12,
-        "description_color": "#a08b6e",
-        "logo_size": 110,
-        "mobile_logo_size": 70,
-        "logo_padding": 45,
-        "scroll_speed": 30,
-        "scroll_direction": "left",
-        "pause_on_hover": true,
-        "grayscale_effect": true
-      }
+      ]
     },
     "benefit_tabs": {
       "type": "st_product-benefit-tabs",
-      "blocks": {
-        "tab_1": {
-          "type": "benefit_tab",
-          "settings": {
-            "slider_image_demo_url": "https://cdn.shopify.com/s/files/1/0707/3549/5417/files/goodboy-product-04-closeup-gentle-take-macro.jpg",
-            "slider_icon_demo_url": "",
-            "icon_title": "Taken, not fought",
-            "slider_subtitle": "They think it is a treat",
-            "slider_description": "<p>A supplement only works on the days it gets eaten. This one is a soft chew they take straight off your palm, which is why nobody here owns a pill pocket or a slice of cheese with a tablet buried in it.</p>"
-          }
-        },
-        "tab_2": {
-          "type": "benefit_tab",
-          "settings": {
-            "slider_image_demo_url": "https://cdn.shopify.com/s/files/1/0707/3549/5417/files/goodboy-product-01-studio-product-cpr.jpg",
-            "slider_icon_demo_url": "",
-            "icon_title": "Two actives",
-            "slider_subtitle": "Probiotics and pumpkin",
-            "slider_description": "<p>Live probiotics to settle the gut flora, pumpkin for the fibre that firms things up. Two ingredients doing real work, instead of a label listing fourteen so it looks impressive on a shelf.</p>"
-          }
-        },
-        "tab_3": {
-          "type": "benefit_tab",
-          "settings": {
-            "slider_image_demo_url": "https://cdn.shopify.com/s/files/1/0707/3549/5417/files/goodboy-product-05-lifestyle-bernese-meadow.jpg",
-            "slider_icon_demo_url": "",
-            "icon_title": "Any size dog",
-            "slider_subtitle": "Puppies to gentle giants",
-            "slider_description": "<p>Two chews a day whatever they weigh. No dosing chart, no half-cutting a tablet over the sink. A bernese and a puppy get the same routine, which is the only way a routine survives a busy week.</p>"
-          }
-        },
-        "tab_4": {
-          "type": "benefit_tab",
-          "settings": {
-            "slider_image_demo_url": "https://cdn.shopify.com/s/files/1/0707/3549/5417/files/goodboy-product-03-lifestyle-family-kitchen.jpg",
-            "slider_icon_demo_url": "",
-            "icon_title": "A month a tin",
-            "slider_subtitle": "60 chews, thirty days",
-            "slider_description": "<p>Sixty chews, two a day, one calendar month. It sits by the kettle and gets handed over with the morning walk, so the tin runs out on schedule instead of gathering dust half full.</p>"
-          }
-        }
-      },
-      "block_order": [
-        "tab_1",
-        "tab_2",
-        "tab_3",
-        "tab_4"
-      ],
       "name": "Sternify - Benefits",
       "settings": {
         "margin_top": 55,
         "margin_bottom": 55,
-        "section_background_color": "rgba(0,0,0,0)",
-        "full_width": false,
         "max_width": 1400,
-        "desktop_card_layout": true,
-        "section_bg_color": "rgba(0,0,0,0)",
         "title": "The supplement they ask for",
-        "header_title_highlight_mode": "solid",
-        "header_title_highlight_color": "#dbbd21",
-        "header_title_highlight_gradient": "linear-gradient(0deg, rgba(247, 222, 94, 1), rgba(219, 189, 33, 1) 100%)",
         "title_font": "poppins_n6",
         "title_fontsize_desktop": 36,
         "title_fontsize_mobile": 28,
@@ -680,34 +477,109 @@
         "text_alignment": "left",
         "show_icons": false,
         "show_tabs": true,
-        "title_color": "#2a1b0e",
-        "subtitle_color": "#5b3a21",
-        "description_color": "#6b5b47",
-        "nav_button_background": "#ffffff",
-        "nav_button_arrow": "#5b3a21",
-        "tab_background": "#fbf5ea",
-        "tab_text": "#7a6a55",
-        "active_tab_background": "#d89b4a",
-        "active_tab_text": "#2a1b0e",
-        "active_tab_border": "#c4832f",
+        "title_color": "#2A1B0E",
+        "subtitle_color": "#5B3A21",
+        "description_color": "#6B5B47",
+        "nav_button_background": "#FFFFFF",
+        "nav_button_arrow": "#5B3A21",
+        "tab_background": "#FBF5EA",
+        "tab_text": "#7A6A55",
+        "active_tab_background": "#D89B4A",
+        "active_tab_text": "#2A1B0E",
+        "active_tab_border": "#C4832F",
         "active_tab_border_thickness": 2
-      }
+      },
+      "blocks": {
+        "tab_1": {
+          "type": "benefit_tab",
+          "settings": {
+            "slider_image_demo_url": "https://cdn.shopify.com/s/files/1/0707/3549/5417/files/goodboy-product-04-closeup-gentle-take-macro.jpg",
+            "icon_title": "Taken, not fought",
+            "slider_subtitle": "They think it is a treat",
+            "slider_description": "<p>A supplement only works on the days it gets eaten. This one is a soft chew they take straight off your palm, which is why nobody here owns a pill pocket or a slice of cheese with a tablet buried in it.</p>"
+          }
+        },
+        "tab_2": {
+          "type": "benefit_tab",
+          "settings": {
+            "slider_image_demo_url": "https://cdn.shopify.com/s/files/1/0707/3549/5417/files/goodboy-product-01-studio-product-cpr.jpg",
+            "icon_title": "Two actives",
+            "slider_subtitle": "Probiotics and pumpkin",
+            "slider_description": "<p>Live probiotics to settle the gut flora, pumpkin for the fibre that firms things up. Two ingredients doing real work, instead of a label listing fourteen so it looks impressive on a shelf.</p>"
+          }
+        },
+        "tab_3": {
+          "type": "benefit_tab",
+          "settings": {
+            "slider_image_demo_url": "https://cdn.shopify.com/s/files/1/0707/3549/5417/files/goodboy-product-05-lifestyle-bernese-meadow.jpg",
+            "icon_title": "Any size dog",
+            "slider_subtitle": "Puppies to gentle giants",
+            "slider_description": "<p>Two chews a day whatever they weigh. No dosing chart, no half-cutting a tablet over the sink. A bernese and a puppy get the same routine, which is the only way a routine survives a busy week.</p>"
+          }
+        },
+        "tab_4": {
+          "type": "benefit_tab",
+          "settings": {
+            "slider_image_demo_url": "https://cdn.shopify.com/s/files/1/0707/3549/5417/files/goodboy-product-03-lifestyle-family-kitchen.jpg",
+            "icon_title": "A month a tin",
+            "slider_subtitle": "60 chews, thirty days",
+            "slider_description": "<p>Sixty chews, two a day, one calendar month. It sits by the kettle and gets handed over with the morning walk, so the tin runs out on schedule instead of gathering dust half full.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "tab_1",
+        "tab_2",
+        "tab_3",
+        "tab_4"
+      ]
     },
     "how_it_works": {
       "type": "st_how-to-media",
+      "name": "Sternify - How It Works",
+      "settings": {
+        "margin_top": 60,
+        "margin_bottom": 60,
+        "full_width": false,
+        "max_width": 1300,
+        "section_bg_color": "#FBF5EA",
+        "mobile_layout": "swiper",
+        "header_font": "poppins_n6",
+        "section_title": "Three days to a [settled gut]",
+        "header_title_highlight_color": "#C4832F",
+        "header_color": "#2A1B0E",
+        "header_fontsize_desktop": 38,
+        "header_fontsize_mobile": 28,
+        "section_subtitle_font": "poppins_n4",
+        "section_subtitle": "No mixing, no measuring, no hiding it in food.",
+        "section_subtitle_color": "#7A6A55",
+        "section_subtitle_fontsize_desktop": 18,
+        "section_subtitle_fontsize_mobile": 14,
+        "horizontal_alignment": "left",
+        "ratio": "square",
+        "card_gap": 25,
+        "card_border_radius": 14,
+        "add_line_break": true,
+        "brakeline_color": "#EBDCC2",
+        "card_shadow": false,
+        "icon": false,
+        "card_title_font": "poppins_n4",
+        "card_title_fontsize": 20,
+        "card_title_color": "#2A1B0E",
+        "card_title_hover_effect": true,
+        "card_description_font": "poppins_n4",
+        "card_description_fontsize": 15,
+        "card_description_color": "#7A6A55"
+      },
       "blocks": {
         "step_1": {
           "type": "step",
           "settings": {
             "media_type": "image",
             "image_demo_url": "https://cdn.shopify.com/s/files/1/0707/3549/5417/files/goodboy-ugc-01-paw-for-treat.jpg",
-            "video_demo_url": "",
-            "icon_image_demo_url": "",
             "title": "Offer it",
             "description": "<p>Hold one out the way you would any treat. Most dogs take it on the first try, which is the whole reason we made a chew rather than a capsule.</p>",
-            "show_button": false,
-            "button_text": "Learn More",
-            "button_link": ""
+            "show_button": false
           }
         },
         "step_2": {
@@ -715,13 +587,9 @@
           "settings": {
             "media_type": "image",
             "image_demo_url": "https://cdn.shopify.com/s/files/1/0707/3549/5417/files/goodboy-ugc-05-bowl-topdown.jpg",
-            "video_demo_url": "",
-            "icon_image_demo_url": "",
             "title": "Twice a day",
             "description": "<p>One in the morning, one in the evening, next to the bowl so you do not forget. Same two chews whether they are four kilos or forty.</p>",
-            "show_button": false,
-            "button_text": "Learn More",
-            "button_link": ""
+            "show_button": false
           }
         },
         "step_3": {
@@ -729,13 +597,9 @@
           "settings": {
             "media_type": "image",
             "image_demo_url": "https://cdn.shopify.com/s/files/1/0707/3549/5417/files/goodboy-ugc-06-car-trunk-hike.jpg",
-            "video_demo_url": "",
-            "icon_image_demo_url": "",
             "title": "Keep going",
             "description": "<p>Most owners see firmer stools inside a week and a calmer stomach by week three. One tin covers the full thirty days it takes to get there.</p>",
-            "show_button": false,
-            "button_text": "Learn More",
-            "button_link": ""
+            "show_button": false
           }
         }
       },
@@ -743,131 +607,44 @@
         "step_1",
         "step_2",
         "step_3"
-      ],
-      "name": "Sternify - How It Works",
-      "settings": {
-        "margin_top": 60,
-        "margin_bottom": 60,
-        "section_background_color": "rgba(0,0,0,0)",
-        "full_width": false,
-        "max_width": 1300,
-        "desktop_card_layout": true,
-        "section_bg_color": "#fbf5ea",
-        "mobile_layout": "swiper",
-        "header_font": "poppins_n6",
-        "section_title": "Three days to a [settled gut]",
-        "header_title_highlight_mode": "solid",
-        "header_title_highlight_color": "#c4832f",
-        "header_title_highlight_gradient": "linear-gradient(0deg, rgba(247, 222, 94, 1), rgba(219, 189, 33, 1) 100%)",
-        "header_color": "#2a1b0e",
-        "header_fontsize_desktop": 38,
-        "header_fontsize_mobile": 28,
-        "section_subtitle_font": "poppins_n4",
-        "section_subtitle": "No mixing, no measuring, no hiding it in food.",
-        "section_subtitle_color": "#7a6a55",
-        "section_subtitle_fontsize_desktop": 18,
-        "section_subtitle_fontsize_mobile": 14,
-        "show_mute_button": false,
-        "mute_button_size": 35,
-        "mute_button_icon_color": "#ffffff",
-        "horizontal_alignment": "left",
-        "ratio": "square",
-        "card_gap": 25,
-        "card_border_radius": 14,
-        "add_line_break": true,
-        "brakeline_color": "#ebdcc2",
-        "card_shadow": false,
-        "icon": false,
-        "icon_size": 40,
-        "icon_padding": 5,
-        "icon_bg_enable": true,
-        "icon_bg_color": "#f0f0f0",
-        "icon_border_radius": 50,
-        "number_icon_color": "#000000",
-        "card_title_font": "poppins_n4",
-        "card_title_fontsize": 20,
-        "card_title_color": "#2a1b0e",
-        "card_title_hover_effect": true,
-        "card_description_font": "poppins_n4",
-        "card_description_fontsize": 15,
-        "card_description_color": "#7a6a55",
-        "button_font": "poppins_n6",
-        "button_fontsize": 16,
-        "button_text_color": "#000000",
-        "button_bg_enable": false,
-        "button_bg_color": "#dbbd21",
-        "button_border_radius": 6
-      }
-    },
-    "image_benefits": {
-      "type": "st_image-with-benefits",
-      "blocks": {
-        "b1": {
-          "type": "benefit",
-          "settings": {
-            "benefit_icon_demo_url": "",
-            "benefit_title": "Treat First",
-            "benefit_text": "<p>A soft chew they take from the hand, which is the only reason a daily supplement actually gets eaten.</p>"
-          }
-        },
-        "b2": {
-          "type": "benefit",
-          "settings": {
-            "benefit_icon_demo_url": "",
-            "benefit_title": "Two Actives",
-            "benefit_text": "<p>Probiotics and pumpkin. Two things doing the work, with nothing padding out the label.</p>"
-          }
-        },
-        "b3": {
-          "type": "benefit",
-          "settings": {
-            "benefit_icon_demo_url": "",
-            "benefit_title": "60 Chews, 30 Days",
-            "benefit_text": "<p>Two a day, one tin a month. The routine fits the tin rather than the other way around.</p>"
-          }
-        },
-        "b4": {
-          "type": "benefit",
-          "settings": {
-            "benefit_icon_demo_url": "",
-            "benefit_title": "Puppies To Giants",
-            "benefit_text": "<p>The same chew suits a spaniel and a bernese, so multi-dog households buy one tin, not three.</p>"
-          }
-        }
-      },
-      "block_order": [
-        "b1",
-        "b2",
-        "b3",
-        "b4"
-      ],
-      "name": "Sternify - Benefits",
-      "settings": {
-        "margin_top": 40,
-        "margin_bottom": 40,
-        "section_background_color": "rgba(0,0,0,0)",
-        "full_width": false,
-        "max_block_width": 1400,
-        "desktop_card_layout": true,
-        "section_bg_color": "rgba(0,0,0,0)",
-        "main_image_demo_url": "https://cdn.shopify.com/s/files/1/0707/3549/5417/files/goodboy-bundle-1er.png",
-        "headline_text": "Inside the tin",
-        "header_title_highlight_mode": "solid",
-        "header_title_highlight_color": "#dbbd21",
-        "header_title_highlight_gradient": "linear-gradient(0deg, rgba(247, 222, 94, 1), rgba(219, 189, 33, 1) 100%)",
-        "font_settings": "poppins_n4",
-        "headline_font": "poppins_n6",
-        "headline_text_size": 44,
-        "headline_text_size_mobile": 45,
-        "headline_text_color": "#2a1b0e",
-        "benefit_title_color": "#2a1b0e",
-        "benefit_text_color": "#6b5b47",
-        "icon_size_desktop": 44,
-        "icon_size_mobile": 32
-      }
+      ]
     },
     "ugc_reviews": {
       "type": "st_image-testimonials",
+      "name": "Sternify - UGC Reviews",
+      "settings": {
+        "margin_top": 50,
+        "margin_bottom": 50,
+        "bg_color_mode": "solid",
+        "section_bg_color": "#FBF5EA",
+        "desktop_card_layout": false,
+        "max_width": 1400,
+        "show_header": true,
+        "header_alignment": "left",
+        "content_gap": 30,
+        "header_title": "Sat for, [not spat out]",
+        "header_title_color": "#2A1B0E",
+        "header_title_highlight_mode": "solid",
+        "header_title_highlight_color_solid": "#C4832F",
+        "header_title_font": "poppins_n6",
+        "header_title_fontsize_desktop": 34,
+        "header_title_fontsize_mobile": 24,
+        "header_subtitle": "Sent in by 9,400 households and their extremely food-motivated dogs.",
+        "header_subtitle_color": "#7A6A55",
+        "header_subtitle_font": "poppins_n4",
+        "header_subtitle_fontsize_desktop": 16,
+        "header_subtitle_fontsize_mobile": 14,
+        "image_aspect_ratio": "4 / 6",
+        "star_color": "#FFFFFF",
+        "review_text_color": "#FFFFFF",
+        "review_text_font": "poppins_n4",
+        "review_text_fontsize_desktop": 13,
+        "review_text_fontsize_mobile": 13,
+        "name_color": "#FFFFFF",
+        "name_font": "poppins_n5",
+        "name_fontsize": 14,
+        "verified_badge_color": "#EFC488"
+      },
       "blocks": {
         "t1": {
           "type": "testimonial",
@@ -926,61 +703,37 @@
         "t3",
         "t4",
         "t5"
-      ],
-      "name": "Sternify - UGC Reviews",
-      "settings": {
-        "margin_top": 50,
-        "margin_bottom": 50,
-        "section_background_color": "rgba(0,0,0,0)",
-        "full_width": false,
-        "max_width": 1400,
-        "desktop_card_layout": false,
-        "bg_color_mode": "solid",
-        "section_bg_color": "#fbf5ea",
-        "section_bg_gradient": "linear-gradient(180deg, #f9f9f9 0%, #eaeaea 100%)",
-        "show_header": true,
-        "header_alignment": "left",
-        "content_gap": 30,
-        "header_title": "Sat for, [not spat out]",
-        "header_title_color": "#2a1b0e",
-        "header_title_highlight_mode": "solid",
-        "header_title_highlight_color_solid": "#c4832f",
-        "header_title_highlight_color_gradient": "linear-gradient(0deg, rgba(247, 222, 94, 1), rgba(219, 189, 33, 1) 100%)",
-        "header_title_font": "poppins_n6",
-        "header_title_fontsize_desktop": 34,
-        "header_title_fontsize_mobile": 24,
-        "header_subtitle": "Sent in by 9,400 households and their extremely food-motivated dogs.",
-        "header_subtitle_color": "#7a6a55",
-        "header_subtitle_font": "poppins_n4",
-        "header_subtitle_fontsize_desktop": 16,
-        "header_subtitle_fontsize_mobile": 14,
-        "image_aspect_ratio": "4 / 6",
-        "star_color": "#ffffff",
-        "review_text_color": "#ffffff",
-        "review_text_font": "poppins_n4",
-        "review_text_fontsize_desktop": 13,
-        "review_text_fontsize_mobile": 13,
-        "name_color": "#ffffff",
-        "name_font": "poppins_n5",
-        "name_fontsize": 14,
-        "verified_badge_color": "#efc488"
-      }
+      ]
     },
     "why_it_works": {
       "type": "st_media-and-content",
+      "name": "Sternify - Why It Works",
+      "settings": {
+        "media_type": "image",
+        "image_demo_url": "https://cdn.shopify.com/s/files/1/0707/3549/5417/files/goodboy-product-02-studio-dog-golden.jpg",
+        "desktop_layout": "media_left",
+        "mobile_layout": "media_top",
+        "section_max_width": 1300,
+        "content_padding": 45,
+        "content_gap": 25,
+        "border_radius": 14,
+        "space_from_top": 40,
+        "space_from_bottom": 40,
+        "section_background_color": "#FFFFFF",
+        "box_enabled": true,
+        "background_color": "#FBF5EA"
+      },
       "blocks": {
         "title_1": {
           "type": "title",
           "settings": {
             "heading_text": "The best formula loses to [the one they eat]",
-            "title_color": "#2a1b0e",
-            "header_title_highlight_mode": "solid",
-            "highlight_color": "#c4832f",
-            "header_title_highlight_gradient": "linear-gradient(0deg, rgba(247, 222, 94, 1), rgba(219, 189, 33, 1) 100%)",
+            "highlight_color": "#C4832F",
             "title_font": "poppins_n6",
             "title_size": 34,
+            "title_line_height": 1.3,
             "mobile_title_size": 24,
-            "title_line_height": 1.3
+            "title_color": "#2A1B0E"
           }
         },
         "description_1": {
@@ -991,20 +744,19 @@
             "description_size": 16,
             "description_line_height": 1.7,
             "mobile_description_size": 14,
-            "description_color": "#6b5b47"
+            "description_color": "#6B5B47"
           }
         },
         "icon_1": {
           "type": "icon_and_text",
           "settings": {
             "feature_text": "Taken from the hand, no hiding it in food.",
-            "icon_demo_url": "",
             "feature_font": "poppins_n4",
             "feature_size": 15,
-            "feature_color": "#5b3a21",
+            "feature_color": "#5B3A21",
             "icon_size": 20,
-            "icon_background": "#d89b4a",
-            "icon_color": "#ffffff",
+            "icon_background": "#D89B4A",
+            "icon_color": "#FFFFFF",
             "icon_opacity": 1
           }
         },
@@ -1012,13 +764,12 @@
           "type": "icon_and_text",
           "settings": {
             "feature_text": "Probiotics and pumpkin, two actives only.",
-            "icon_demo_url": "",
             "feature_font": "poppins_n4",
             "feature_size": 15,
-            "feature_color": "#5b3a21",
+            "feature_color": "#5B3A21",
             "icon_size": 20,
-            "icon_background": "#d89b4a",
-            "icon_color": "#ffffff",
+            "icon_background": "#D89B4A",
+            "icon_color": "#FFFFFF",
             "icon_opacity": 1
           }
         },
@@ -1026,13 +777,12 @@
           "type": "icon_and_text",
           "settings": {
             "feature_text": "Same two chews for puppies and gentle giants.",
-            "icon_demo_url": "",
             "feature_font": "poppins_n4",
             "feature_size": 15,
-            "feature_color": "#5b3a21",
+            "feature_color": "#5B3A21",
             "icon_size": 20,
-            "icon_background": "#d89b4a",
-            "icon_color": "#ffffff",
+            "icon_background": "#D89B4A",
+            "icon_color": "#FFFFFF",
             "icon_opacity": 1
           }
         },
@@ -1043,21 +793,21 @@
             "testimonial": "<p>We had two half-used tubs of powder in the cupboard he never touched. This tin is empty and he has been asking for the next one.</p>",
             "customer_name": "Marcus B.",
             "rating": 5,
-            "star_color": "#d89b4a",
-            "star_color_background": "#e7e1d6",
+            "star_color": "#D89B4A",
+            "star_color_background": "#E7E1D6",
             "star_size": 16,
             "show_border": true,
-            "border_color": "#ebdcc2",
-            "background_color": "#ffffff",
+            "border_color": "#EBDCC2",
+            "background_color": "#FFFFFF",
             "border_radius": 14,
             "padding": 20,
             "avatar_size": 50,
             "testimonial_font": "poppins_n4",
             "testimonial_size": 15,
-            "testimonial_color": "#6b5b47",
+            "testimonial_color": "#6B5B47",
             "name_font": "poppins_n5",
             "name_size": 14,
-            "name_color": "#5b3a21"
+            "name_color": "#5B3A21"
           }
         }
       },
@@ -1068,32 +818,52 @@
         "icon_2",
         "icon_3",
         "social_proof_1"
-      ],
-      "name": "Sternify - Why It Works",
-      "settings": {
-        "media_type": "image",
-        "image_demo_url": "https://cdn.shopify.com/s/files/1/0707/3549/5417/files/goodboy-product-02-studio-dog-golden.jpg",
-        "video_file_demo_url": "",
-        "video_with_sound": false,
-        "video_poster_demo_url": "",
-        "play_button_color": "#ffffff",
-        "play_button_background": "#00000099",
-        "desktop_layout": "media_left",
-        "mobile_layout": "media_top",
-        "content_padding": 45,
-        "content_gap": 25,
-        "space_from_top": 40,
-        "space_from_bottom": 40,
-        "section_background_color": "#ffffff",
-        "full_width": false,
-        "section_max_width": 1300,
-        "box_enabled": true,
-        "border_radius": 14,
-        "background_color": "#fbf5ea"
-      }
+      ]
     },
     "proof_numbers": {
       "type": "st_stats-with-image",
+      "name": "Sternify - Proven Results",
+      "settings": {
+        "margin_top": 50,
+        "margin_bottom": 50,
+        "max_width": 1400,
+        "bg_color_mode": "solid",
+        "section_bg_color_solid": "#3A2413",
+        "desktop_card_layout": true,
+        "header_alignment": "left",
+        "header_title": "Made for dogs who [refuse everything]",
+        "header_title_color": "#FFFFFF",
+        "header_title_highlight_mode": "solid",
+        "header_title_highlight_color_solid": "#EFC488",
+        "header_title_font": "poppins_n6",
+        "header_title_fontsize_desktop": 34,
+        "header_title_fontsize_mobile": 24,
+        "header_subtitle": "Tested on the fussiest eaters we could find.",
+        "header_subtitle_color": "#D8C7AE",
+        "header_subtitle_font": "poppins_n4",
+        "header_subtitle_fontsize_desktop": 16,
+        "header_subtitle_fontsize_mobile": 14,
+        "stat_color_mode": "solid",
+        "stat_color_solid": "#EFC488",
+        "stat_font": "poppins_n4",
+        "stat_fontsize_desktop": 48,
+        "stat_fontsize_mobile": 36,
+        "stat_title_color": "#FFFFFF",
+        "stat_title_font": "poppins_n5",
+        "stat_subtitle_color": "#D8C7AE",
+        "stat_subtitle_font": "poppins_n4",
+        "stat_divider": true,
+        "stat_divider_color": "#7A5433",
+        "image_demo_url": "https://cdn.shopify.com/s/files/1/0707/3549/5417/files/goodboy-hero-pack-portrait.jpg",
+        "desktop_image_position": "right",
+        "image_size": 45,
+        "image_border_radius": 14,
+        "show_footer": true,
+        "footer_text": "Across a 30-day feeding trial with 640 dogs, 4 kg terriers to 60 kg bernese.",
+        "footer_text_color": "#D8C7AE",
+        "footer_text_font": "poppins_n4",
+        "footer_border_color": "#7A5433"
+      },
       "blocks": {
         "st1": {
           "type": "stat",
@@ -1124,65 +894,34 @@
         "st1",
         "st2",
         "st3"
-      ],
-      "name": "Sternify - Proven Results",
-      "settings": {
-        "margin_top": 50,
-        "margin_bottom": 50,
-        "section_background_color": "rgba(0,0,0,0)",
-        "full_width": false,
-        "max_width": 1400,
-        "desktop_card_layout": true,
-        "bg_color_mode": "solid",
-        "section_bg_color_solid": "#3a2413",
-        "section_bg_color_gradient": "linear-gradient(0deg, #f1f1f1, #f9f9f9 100%)",
-        "header_alignment": "left",
-        "header_title": "Made for dogs who [refuse everything]",
-        "header_title_color": "#ffffff",
-        "header_title_highlight_mode": "solid",
-        "header_title_highlight_color_solid": "#efc488",
-        "header_title_highlight_color_gradient": "linear-gradient(0deg, rgba(247, 222, 94, 1), rgba(219, 189, 33, 1) 100%)",
-        "header_title_font": "poppins_n6",
-        "header_title_fontsize_desktop": 34,
-        "header_title_fontsize_mobile": 24,
-        "header_subtitle": "Tested on the fussiest eaters we could find.",
-        "header_subtitle_color": "#d8c7ae",
-        "header_subtitle_font": "poppins_n4",
-        "header_subtitle_fontsize_desktop": 16,
-        "header_subtitle_fontsize_mobile": 14,
-        "stat_color_mode": "solid",
-        "stat_color_solid": "#efc488",
-        "stat_color_gradient": "linear-gradient(90deg, rgba(242, 223, 126, 1), rgba(219, 189, 33, 1) 100%)",
-        "stat_font": "poppins_n4",
-        "stat_fontsize_desktop": 48,
-        "stat_fontsize_mobile": 36,
-        "stat_title_color": "#ffffff",
-        "stat_title_font": "poppins_n5",
-        "stat_title_fontsize_desktop": 16,
-        "stat_title_fontsize_mobile": 14,
-        "stat_subtitle_color": "#d8c7ae",
-        "stat_subtitle_font": "poppins_n4",
-        "stat_subtitle_fontsize_desktop": 14,
-        "stat_subtitle_fontsize_mobile": 13,
-        "stat_divider": true,
-        "stat_divider_color": "#7a5433",
-        "image_demo_url": "https://cdn.shopify.com/s/files/1/0707/3549/5417/files/goodboy-hero-pack-portrait.jpg",
-        "desktop_image_position": "right",
-        "image_size": 45,
-        "image_border_radius": 14,
-        "show_footer": true,
-        "footer_text": "Across a 30-day feeding trial with 640 dogs, 4 kg terriers to 60 kg bernese.",
-        "footer_text_color": "#d8c7ae",
-        "footer_text_font": "poppins_n4",
-        "footer_text_fontsize_desktop": 13,
-        "footer_text_fontsize_mobile": 12,
-        "footer_icon_demo_url": "",
-        "footer_icon_size": 16,
-        "footer_border_color": "#7a5433"
-      }
+      ]
     },
     "comparison": {
       "type": "st_table",
+      "name": "Sternify - Why Choose Us",
+      "settings": {
+        "margin_top": 55,
+        "margin_bottom": 55,
+        "columns_number": "3",
+        "font_picker": "poppins_n5",
+        "header_text": "How we compare",
+        "header_size": 40,
+        "header_style": "normal",
+        "column_1_text": "Happy Gut Chews",
+        "column_1_image_demo_url": "https://cdn.shopify.com/s/files/1/0707/3549/5417/files/goodboy-bundle-1er.png",
+        "column_2_text": "Powder in the bowl",
+        "column_3_text": "Vet tablets",
+        "highlighted_color": "#5B3A21",
+        "highlighted_text_color": "#FFFFFF",
+        "highlighted_icon_color": "#EFC488",
+        "others_text_color": "#7A6A55",
+        "others_icon_color": "#BFAE95",
+        "benefit_color": "#2A1B0E",
+        "table_color": "#FFFFFF",
+        "border_color": "#EBDCC2",
+        "border_thickness": 2,
+        "border_radius": 14
+      },
       "blocks": {
         "r1": {
           "type": "Reihe",
@@ -1190,13 +929,10 @@
             "reihe_text": "Eaten willingly, straight from the hand",
             "compare_1_mode": "icon",
             "compare_1": "check",
-            "compare_1_text": "",
             "compare_2_mode": "icon",
             "compare_2": "cross",
-            "compare_2_text": "",
             "compare_3_mode": "icon",
-            "compare_3": "cross",
-            "compare_3_text": ""
+            "compare_3": "cross"
           }
         },
         "r2": {
@@ -1205,13 +941,10 @@
             "reihe_text": "No pill pockets, cheese or peanut butter",
             "compare_1_mode": "icon",
             "compare_1": "check",
-            "compare_1_text": "",
             "compare_2_mode": "icon",
             "compare_2": "check",
-            "compare_2_text": "",
             "compare_3_mode": "icon",
-            "compare_3": "cross",
-            "compare_3_text": ""
+            "compare_3": "cross"
           }
         },
         "r3": {
@@ -1220,13 +953,10 @@
             "reihe_text": "Same dose for puppies and gentle giants",
             "compare_1_mode": "icon",
             "compare_1": "check",
-            "compare_1_text": "",
             "compare_2_mode": "icon",
             "compare_2": "cross",
-            "compare_2_text": "",
             "compare_3_mode": "icon",
-            "compare_3": "cross",
-            "compare_3_text": ""
+            "compare_3": "cross"
           }
         },
         "r4": {
@@ -1235,13 +965,10 @@
             "reihe_text": "Live probiotics plus pumpkin fibre",
             "compare_1_mode": "icon",
             "compare_1": "check",
-            "compare_1_text": "",
             "compare_2_mode": "icon",
             "compare_2": "check",
-            "compare_2_text": "",
             "compare_3_mode": "icon",
-            "compare_3": "cross",
-            "compare_3_text": ""
+            "compare_3": "cross"
           }
         },
         "r5": {
@@ -1250,13 +977,10 @@
             "reihe_text": "Nothing left in the bowl at the end of the week",
             "compare_1_mode": "icon",
             "compare_1": "check",
-            "compare_1_text": "",
             "compare_2_mode": "icon",
             "compare_2": "cross",
-            "compare_2_text": "",
             "compare_3_mode": "icon",
-            "compare_3": "cross",
-            "compare_3_text": ""
+            "compare_3": "cross"
           }
         },
         "r6": {
@@ -1264,13 +988,10 @@
           "settings": {
             "reihe_text": "One tin covers a full month",
             "compare_1_mode": "text",
-            "compare_1": "check",
             "compare_1_text": "30 days",
             "compare_2_mode": "text",
-            "compare_2": "check",
             "compare_2_text": "Varies",
             "compare_3_mode": "text",
-            "compare_3": "cross",
             "compare_3_text": "Varies"
           }
         }
@@ -1282,119 +1003,27 @@
         "r4",
         "r5",
         "r6"
-      ],
-      "name": "Sternify - Why Choose Us",
-      "settings": {
-        "columns_number": "3",
-        "margin_top": 55,
-        "margin_bottom": 55,
-        "section_background_color": "rgba(0,0,0,0)",
-        "full_width": false,
-        "max_width": 1400,
-        "desktop_card_layout": true,
-        "section_bg_color": "#f9f9f9",
-        "header_text": "How we compare",
-        "header_title_color": "#1a1a1a",
-        "header_title_highlight_mode": "solid",
-        "header_title_highlight_color": "#dbbd21",
-        "header_title_highlight_gradient": "linear-gradient(0deg, rgba(247, 222, 94, 1), rgba(219, 189, 33, 1) 100%)",
-        "header_title_font": "poppins_n6",
-        "header_size": 40,
-        "mobile_header_size": 24,
-        "header_style": "normal",
-        "font_picker": "poppins_n5",
-        "column_1_text": "Happy Gut Chews",
-        "column_1_image_demo_url": "https://cdn.shopify.com/s/files/1/0707/3549/5417/files/goodboy-bundle-1er.png",
-        "column_2_text": "Powder in the bowl",
-        "column_3_text": "Vet tablets",
-        "highlighted_color": "#5b3a21",
-        "highlighted_text_color": "#ffffff",
-        "highlighted_icon_color": "#efc488",
-        "others_text_color": "#7a6a55",
-        "others_icon_color": "#bfae95",
-        "benefit_color": "#2a1b0e",
-        "table_color": "#ffffff",
-        "border_color": "#ebdcc2",
-        "border_thickness": 2,
-        "border_radius": 14
-      }
+      ]
     },
     "results_stats": {
       "type": "st_stats-benefits",
-      "blocks": {
-        "s1": {
-          "type": "benefit_stat",
-          "settings": {
-            "number": 96,
-            "number_suffix": "%",
-            "number_prefix": "+",
-            "show_prefix": false,
-            "number_color": "#c4832f",
-            "stat_title": "took the first chew without a fight",
-            "title_color": "#2a1b0e",
-            "description": "Day one of a 30-day feeding trial with 640 dogs",
-            "description_color": "#7a6a55",
-            "box_background_color": "#ffffff"
-          }
-        },
-        "s2": {
-          "type": "benefit_stat",
-          "settings": {
-            "number": 89,
-            "number_suffix": "%",
-            "number_prefix": "+",
-            "show_prefix": false,
-            "number_color": "#c4832f",
-            "stat_title": "reported firmer stools by week two",
-            "title_color": "#2a1b0e",
-            "description": "Owner-reported across the same 640 dogs",
-            "description_color": "#7a6a55",
-            "box_background_color": "#ffffff"
-          }
-        },
-        "s3": {
-          "type": "benefit_stat",
-          "settings": {
-            "number": 92,
-            "number_suffix": "%",
-            "number_prefix": "+",
-            "show_prefix": false,
-            "number_color": "#c4832f",
-            "stat_title": "finished the tin and ordered a second",
-            "title_color": "#2a1b0e",
-            "description": "Repeat-order data across the first six months",
-            "description_color": "#7a6a55",
-            "box_background_color": "#ffffff"
-          }
-        }
-      },
-      "block_order": [
-        "s1",
-        "s2",
-        "s3"
-      ],
       "name": "Sternify - Results & Stats",
       "settings": {
+        "section_max_width": 1200,
         "space_from_top": 60,
         "space_from_bottom": 60,
-        "section_background_color": "rgba(0,0,0,0)",
-        "full_width": false,
-        "section_max_width": 1200,
-        "desktop_card_layout": true,
-        "section_background": "#fbf5ea",
-        "title_bottom_margin": 30,
+        "section_background": "#FBF5EA",
         "title": "From [refused] to finished",
         "title_alignment": "center",
-        "title_color": "#2a1b0e",
-        "header_title_highlight_mode": "solid",
-        "highlight_color": "#c4832f",
-        "header_title_highlight_gradient": "linear-gradient(0deg, rgba(247, 222, 94, 1), rgba(219, 189, 33, 1) 100%)",
         "title_font": "poppins_n6",
         "title_size": 36,
         "mobile_title_size": 28,
         "title_line_height": 1.2,
+        "title_bottom_margin": 30,
+        "title_color": "#2A1B0E",
+        "highlight_color": "#C4832F",
         "show_highlight_underline": true,
-        "highlight_underline_color": "#d89b4a",
+        "highlight_underline_color": "#D89B4A",
         "columns_desktop": 3,
         "mobile_layout": "stacked",
         "grid_gap": 30,
@@ -1419,10 +1048,110 @@
         "enable_hover_effect": true,
         "hover_lift": 5,
         "hover_transition_speed": 300
-      }
+      },
+      "blocks": {
+        "s1": {
+          "type": "benefit_stat",
+          "settings": {
+            "number": 96,
+            "number_suffix": "%",
+            "show_prefix": false,
+            "number_color": "#C4832F",
+            "stat_title": "took the first chew without a fight",
+            "title_color": "#2A1B0E",
+            "description": "Day one of a 30-day feeding trial with 640 dogs",
+            "description_color": "#7A6A55",
+            "box_background_color": "#FFFFFF"
+          }
+        },
+        "s2": {
+          "type": "benefit_stat",
+          "settings": {
+            "number": 89,
+            "number_suffix": "%",
+            "show_prefix": false,
+            "number_color": "#C4832F",
+            "stat_title": "reported firmer stools by week two",
+            "title_color": "#2A1B0E",
+            "description": "Owner-reported across the same 640 dogs",
+            "description_color": "#7A6A55",
+            "box_background_color": "#FFFFFF"
+          }
+        },
+        "s3": {
+          "type": "benefit_stat",
+          "settings": {
+            "number": 92,
+            "number_suffix": "%",
+            "show_prefix": false,
+            "number_color": "#C4832F",
+            "stat_title": "finished the tin and ordered a second",
+            "title_color": "#2A1B0E",
+            "description": "Repeat-order data across the first six months",
+            "description_color": "#7A6A55",
+            "box_background_color": "#FFFFFF"
+          }
+        }
+      },
+      "block_order": [
+        "s1",
+        "s2",
+        "s3"
+      ]
     },
     "customer_stories": {
       "type": "st_product-testimonials",
+      "name": "Sternify - Customer Reviews",
+      "settings": {
+        "margin_top": 45,
+        "margin_bottom": 45,
+        "section_bg_color": "#FFFFFF",
+        "desktop_card_layout": false,
+        "max_width": 1400,
+        "content_gap": 30,
+        "header_title": "One tin in, [nothing left over]",
+        "header_title_color": "#2A1B0E",
+        "header_title_highlight_mode": "solid",
+        "header_title_highlight_color_solid": "#C4832F",
+        "header_title_font": "poppins_n6",
+        "header_title_fontsize_desktop": 34,
+        "header_title_fontsize_mobile": 24,
+        "header_subtitle": "A month of chews later, in their own words.",
+        "header_subtitle_color": "#7A6A55",
+        "header_subtitle_font": "poppins_n4",
+        "header_subtitle_fontsize_desktop": 16,
+        "header_subtitle_fontsize_mobile": 14,
+        "rating_value": 5,
+        "rating_star_color": "#D89B4A",
+        "rating_text": "4.9 out of 5 from 2,600+ tins",
+        "rating_text_color": "#2A1B0E",
+        "rating_text_font": "poppins_n5",
+        "rating_bg_color": "#FBF5EA",
+        "rating_enable_border": true,
+        "rating_border_color": "#EBDCC2",
+        "rating_border_radius": 14,
+        "testimonial_card_size": 420,
+        "testimonial_border_color": "#EBDCC2",
+        "testimonial_bg_color": "#FBF5EA",
+        "testimonial_nav_button_bg_color": "#FFFFFF",
+        "testimonial_nav_button_icon_color": "#5B3A21",
+        "testimonial_nav_button_border_color": "#EBDCC2",
+        "testimonial_image_aspect_ratio": "9 / 13",
+        "testimonial_image_position": "center",
+        "testimonial_star_color": "#D89B4A",
+        "customer_badge_bg_color": "#F6EBD8",
+        "customer_badge_text_color": "#5B3A21",
+        "customer_badge_font": "poppins_n5",
+        "review_text_color": "#2A1B0E",
+        "review_text_font": "poppins_n4",
+        "product_box_bg_color": "#F6EBD8",
+        "product_title_color": "#2A1B0E",
+        "product_title_font": "poppins_n5",
+        "product_price_color": "#C4832F",
+        "product_price_font": "poppins_n4",
+        "product_subtitle_color": "#7A6A55",
+        "product_subtitle_font": "poppins_n4"
+      },
       "blocks": {
         "c1": {
           "type": "testimonial",
@@ -1430,11 +1159,8 @@
             "image_demo_url": "https://cdn.shopify.com/s/files/1/0707/3549/5417/files/goodboy-ugc-01-paw-for-treat.jpg",
             "rating": 5,
             "customer_name": "Hannah, 34",
-            "user_icon_demo_url": "",
             "text": "Our golden has refused every powder, capsule and paste we have bought him. He gives a paw for these before I have the lid off. Thirty days in, the tin is empty, which has genuinely never happened in this house.",
-            "linked_product": "",
-            "product_subtitle_text": "Verified purchase",
-            "product_subtitle_icon_demo_url": ""
+            "product_subtitle_text": "Verified purchase"
           }
         },
         "c2": {
@@ -1443,11 +1169,8 @@
             "image_demo_url": "https://cdn.shopify.com/s/files/1/0707/3549/5417/files/goodboy-ugc-02-kitchen-perfect-sit.jpg",
             "rating": 5,
             "customer_name": "Daniel, 41",
-            "user_icon_demo_url": "",
             "text": "The lab had a dodgy stomach roughly every other week and we could never pin down why. Two chews a morning and we are a month clear. He now parks himself by the counter the second he hears the tin.",
-            "linked_product": "",
-            "product_subtitle_text": "Verified purchase",
-            "product_subtitle_icon_demo_url": ""
+            "product_subtitle_text": "Verified purchase"
           }
         },
         "c3": {
@@ -1456,11 +1179,8 @@
             "image_demo_url": "https://cdn.shopify.com/s/files/1/0707/3549/5417/files/goodboy-ugc-03-park-bench-pov.jpg",
             "rating": 5,
             "customer_name": "Priya, 29",
-            "user_icon_demo_url": "",
             "text": "Forty-eight kilos of bernese and unbelievably picky with it. I hand one over on the bench halfway round the walk and that is the routine sorted. No dosing chart to work out either, which I appreciate more than I expected.",
-            "linked_product": "",
-            "product_subtitle_text": "Verified purchase",
-            "product_subtitle_icon_demo_url": ""
+            "product_subtitle_text": "Verified purchase"
           }
         },
         "c4": {
@@ -1469,11 +1189,8 @@
             "image_demo_url": "https://cdn.shopify.com/s/files/1/0707/3549/5417/files/goodboy-ugc-04-lick-selfie.jpg",
             "rating": 5,
             "customer_name": "Owen, 36",
-            "user_icon_demo_url": "",
             "text": "The vet checked his coat and weight at the annual and asked what we were using. I did not have a better answer than a chew he thinks is a treat.",
-            "linked_product": "",
-            "product_subtitle_text": "Verified purchase",
-            "product_subtitle_icon_demo_url": ""
+            "product_subtitle_text": "Verified purchase"
           }
         },
         "c5": {
@@ -1482,11 +1199,8 @@
             "image_demo_url": "https://cdn.shopify.com/s/files/1/0707/3549/5417/files/goodboy-ugc-05-bowl-topdown.jpg",
             "rating": 5,
             "customer_name": "Elise, 30",
-            "user_icon_demo_url": "",
             "text": "It goes in next to breakfast and that is the whole routine. No pill pockets, no wrapping anything in cheese, no standing there negotiating with a dog.",
-            "linked_product": "",
-            "product_subtitle_text": "Verified purchase",
-            "product_subtitle_icon_demo_url": ""
+            "product_subtitle_text": "Verified purchase"
           }
         },
         "c6": {
@@ -1495,11 +1209,8 @@
             "image_demo_url": "https://cdn.shopify.com/s/files/1/0707/3549/5417/files/goodboy-ugc-06-car-trunk-hike.jpg",
             "rating": 5,
             "customer_name": "Bastian, 41",
-            "user_icon_demo_url": "",
             "text": "He gets one in the boot before we set off and the rest of the walk is uneventful, which it very much was not before. Six months on and nothing has gone backwards.",
-            "linked_product": "",
-            "product_subtitle_text": "Verified purchase",
-            "product_subtitle_icon_demo_url": ""
+            "product_subtitle_text": "Verified purchase"
           }
         }
       },
@@ -1510,65 +1221,45 @@
         "c4",
         "c5",
         "c6"
-      ],
-      "name": "Sternify - Customer Reviews",
-      "settings": {
-        "margin_top": 45,
-        "margin_bottom": 45,
-        "section_background_color": "rgba(0,0,0,0)",
-        "full_width": false,
-        "max_width": 1400,
-        "desktop_card_layout": false,
-        "section_bg_color": "#ffffff",
-        "content_gap": 30,
-        "header_title": "One tin in, [nothing left over]",
-        "header_title_color": "#2a1b0e",
-        "header_title_highlight_mode": "solid",
-        "header_title_highlight_color_solid": "#c4832f",
-        "header_title_highlight_color_gradient": "linear-gradient(0deg, rgba(247, 222, 94, 1), rgba(219, 189, 33, 1) 100%)",
-        "header_title_font": "poppins_n6",
-        "header_title_fontsize_desktop": 34,
-        "header_title_fontsize_mobile": 24,
-        "header_subtitle": "A month of chews later, in their own words.",
-        "header_subtitle_color": "#7a6a55",
-        "header_subtitle_font": "poppins_n4",
-        "header_subtitle_fontsize_desktop": 16,
-        "header_subtitle_fontsize_mobile": 14,
-        "rating_value": 5,
-        "rating_star_color": "#d89b4a",
-        "rating_text": "4.9 out of 5 from 2,600+ tins",
-        "rating_text_color": "#2a1b0e",
-        "rating_text_font": "poppins_n5",
-        "rating_bg_color": "#FBF5EA",
-        "rating_enable_border": true,
-        "rating_border_color": "#ebdcc2",
-        "rating_border_radius": 14,
-        "testimonial_card_size": 420,
-        "testimonial_border_color": "#ebdcc2",
-        "testimonial_bg_color": "#fbf5ea",
-        "testimonial_nav_button_bg_color": "#ffffff",
-        "testimonial_nav_button_icon_color": "#5b3a21",
-        "testimonial_nav_button_border_color": "#ebdcc2",
-        "testimonial_image_aspect_ratio": "9 / 13",
-        "testimonial_image_position": "center",
-        "testimonial_star_color": "#d89b4a",
-        "customer_badge_bg_color": "#f6ebd8",
-        "customer_badge_text_color": "#5b3a21",
-        "customer_badge_font": "poppins_n5",
-        "review_text_color": "#2a1b0e",
-        "review_text_font": "poppins_n4",
-        "show_current_product": false,
-        "product_box_bg_color": "#f6ebd8",
-        "product_title_color": "#2a1b0e",
-        "product_title_font": "poppins_n5",
-        "product_price_color": "#c4832f",
-        "product_price_font": "poppins_n4",
-        "product_subtitle_color": "#7a6a55",
-        "product_subtitle_font": "poppins_n4"
-      }
+      ]
     },
     "review_slider": {
       "type": "st_review-slider-cta",
+      "name": "Sternify - Review Slider",
+      "settings": {
+        "margin_top": 45,
+        "margin_bottom": 45,
+        "section_bg_color": "#FBF5EA",
+        "desktop_card_layout": true,
+        "max_width": 1400,
+        "layout_type": "inline",
+        "header_title": "2,600 reviews and [counting]",
+        "header_title_color": "#2A1B0E",
+        "header_title_highlight_mode": "solid",
+        "header_title_highlight_color_solid": "#C4832F",
+        "header_title_font": "poppins_n6",
+        "header_title_fontsize_desktop": 30,
+        "header_title_fontsize_mobile": 22,
+        "image_slide_width": 300,
+        "image_border_radius": 14,
+        "show_image_fade": false,
+        "cta_button_enabled": true,
+        "cta_button_text": "Get a tin",
+        "cta_button_text_color": "#FFFFFF",
+        "cta_button_text_font": "poppins_n4",
+        "cta_bg_color_mode": "solid",
+        "cta_bg_color_solid": "#5B3A21",
+        "cta_border_radius": 14,
+        "reviews_star_rating_color": "#D89B4A",
+        "reviews_reviewer_name_color": "#2A1B0E",
+        "reviews_reviewer_name_font": "poppins_n4",
+        "reviews_title_color": "#2A1B0E",
+        "reviews_title_font": "poppins_n4",
+        "reviews_body_color": "#6B5B47",
+        "reviews_body_font": "poppins_n4",
+        "nav_pagination_color": "#5B3A21",
+        "nav_pagination_border": true
+      },
       "blocks": {
         "rv1": {
           "type": "review",
@@ -1627,61 +1318,46 @@
         "rv3",
         "rv4",
         "rv5"
-      ],
-      "name": "Sternify - Review Slider",
-      "settings": {
-        "margin_top": 45,
-        "margin_bottom": 45,
-        "section_background_color": "rgba(0,0,0,0)",
-        "full_width": false,
-        "max_width": 1400,
-        "desktop_card_layout": true,
-        "section_bg_color": "#fbf5ea",
-        "layout_type": "inline",
-        "header_title": "2,600 reviews and [counting]",
-        "header_title_color": "#2a1b0e",
-        "header_title_highlight_mode": "solid",
-        "header_title_highlight_color_solid": "#c4832f",
-        "header_title_highlight_color_gradient": "linear-gradient(0deg, rgba(247, 222, 94, 1), rgba(219, 189, 33, 1) 100%)",
-        "header_title_font": "poppins_n6",
-        "header_title_fontsize_desktop": 30,
-        "header_title_fontsize_mobile": 22,
-        "image_slide_width": 300,
-        "image_slide_width_mobile": 78,
-        "image_border_radius": 14,
-        "show_image_fade": false,
-        "cta_button_enabled": true,
-        "cta_button_text": "Get a tin",
-        "cta_button_url": "",
-        "cta_button_text_color": "#ffffff",
-        "cta_button_text_font": "poppins_n4",
-        "cta_button_text_fontsize_desktop": 16,
-        "cta_button_text_fontsize_mobile": 16,
-        "cta_bg_color_mode": "solid",
-        "cta_bg_color_solid": "#5b3a21",
-        "cta_bg_color_gradient": "linear-gradient(0deg, #000000 0%, #4a4a4a 100%)",
-        "cta_border_radius": 14,
-        "reviews_star_rating_color": "#d89b4a",
-        "reviews_reviewer_name_color": "#2a1b0e",
-        "reviews_reviewer_name_font": "poppins_n4",
-        "reviews_reviewer_name_fontsize_desktop": 13,
-        "reviews_reviewer_name_fontsize_mobile": 12,
-        "reviews_title_color": "#2a1b0e",
-        "reviews_title_font": "poppins_n4",
-        "reviews_title_fontsize_desktop": 17,
-        "reviews_title_fontsize_mobile": 16,
-        "reviews_body_color": "#6b5b47",
-        "reviews_body_font": "poppins_n4",
-        "reviews_body_fontsize_desktop": 14,
-        "reviews_body_fontsize_mobile": 13,
-        "nav_pagination_color": "#5b3a21",
-        "nav_pagination_border": true,
-        "nav_pagination_border_radius": 18,
-        "nav_counter_font": "poppins_n4"
-      }
+      ]
     },
     "guarantee": {
       "type": "st_photo-guarantee",
+      "name": "Sternify - Our Guarantee",
+      "settings": {
+        "margin_top": 45,
+        "margin_bottom": 45,
+        "bg_color_mode": "solid",
+        "section_bg_color_solid": "#FFFFFF",
+        "desktop_card_layout": true,
+        "max_width": 1400,
+        "header_title": "[60 days] to change their mind",
+        "header_title_color": "#2A1B0E",
+        "header_title_highlight_mode": "solid",
+        "header_title_highlight_color_solid": "#C4832F",
+        "header_title_font": "poppins_n6",
+        "header_title_fontsize": 34,
+        "header_subtitle": "Open the tin and offer one. If your dog turns their nose up, or the tin is still half full at the end of the month, email us and we refund it. Half-eaten tins included, that is rather the point.",
+        "header_subtitle_color": "#7A6A55",
+        "header_subtitle_font": "poppins_n4",
+        "header_subtitle_fontsize": 16,
+        "header_icon_enable": false,
+        "button_enable": true,
+        "button_bg_color_mode": "solid",
+        "button_bg_color_solid": "#5B3A21",
+        "button_text": "TRY A TIN",
+        "button_text_color": "#FFFFFF",
+        "button_text_font": "poppins_n5",
+        "button_text_fontsize": 16,
+        "button_border_radius": 14,
+        "benefit_text_color": "#2A1B0E",
+        "benefit_text_font": "poppins_n4",
+        "benefit_text_fontsize": 14,
+        "image_alignment": "right",
+        "image_border_radius": 14,
+        "enable_image_frame": true,
+        "image_frame_color": "#FFFFFF",
+        "num_images": "4"
+      },
       "blocks": {
         "img_1": {
           "type": "image",
@@ -1710,21 +1386,18 @@
         "b_1": {
           "type": "benefit",
           "settings": {
-            "benefit_icon_demo_url": "",
             "benefit_title": "60-Day Money-Back Promise"
           }
         },
         "b_2": {
           "type": "benefit",
           "settings": {
-            "benefit_icon_demo_url": "",
             "benefit_title": "Free Shipping Over $45"
           }
         },
         "b_3": {
           "type": "benefit",
           "settings": {
-            "benefit_icon_demo_url": "",
             "benefit_title": "Two Actives, No Filler"
           }
         }
@@ -1737,60 +1410,57 @@
         "b_1",
         "b_2",
         "b_3"
-      ],
-      "name": "Sternify - Our Guarantee",
-      "settings": {
-        "margin_top": 45,
-        "margin_bottom": 45,
-        "section_background_color": "rgba(0,0,0,0)",
-        "full_width": false,
-        "max_width": 1400,
-        "desktop_card_layout": true,
-        "bg_color_mode": "solid",
-        "section_bg_color_solid": "#ffffff",
-        "section_bg_color_gradient": "linear-gradient(0deg, #f9f9f9, #ffffff 100%)",
-        "header_title": "[60 days] to change their mind",
-        "header_title_color": "#2a1b0e",
-        "header_title_highlight_mode": "solid",
-        "header_title_highlight_color_solid": "#c4832f",
-        "header_title_highlight_color_gradient": "linear-gradient(0deg, rgba(247, 222, 94, 1), rgba(219, 189, 33, 1) 100%)",
-        "header_title_font": "poppins_n6",
-        "header_title_fontsize": 34,
-        "header_title_fontsize_mobile": 24,
-        "header_subtitle": "Open the tin and offer one. If your dog turns their nose up, or the tin is still half full at the end of the month, email us and we refund it. Half-eaten tins included, that is rather the point.",
-        "header_subtitle_color": "#7a6a55",
-        "header_subtitle_font": "poppins_n4",
-        "header_subtitle_fontsize": 16,
-        "header_subtitle_fontsize_mobile": 14,
-        "header_icon_enable": false,
-        "header_icon_demo_url": "",
-        "header_icon_size_desktop": 48,
-        "header_icon_size_mobile": 36,
-        "button_enable": true,
-        "button_action": "",
-        "button_bg_color_mode": "solid",
-        "button_bg_color_solid": "#5b3a21",
-        "button_bg_color_gradient": "linear-gradient(0deg, #1a1a1a, #1a1a1a 100%)",
-        "button_text": "TRY A TIN",
-        "button_text_color": "#ffffff",
-        "button_text_font": "poppins_n5",
-        "button_text_fontsize": 16,
-        "button_border_radius": 14,
-        "benefit_text_color": "#2a1b0e",
-        "benefit_text_font": "poppins_n4",
-        "benefit_text_fontsize": 14,
-        "benefit_icon_size_desktop": 32,
-        "benefit_icon_size_mobile": 24,
-        "num_images": "4",
-        "image_alignment": "right",
-        "image_border_radius": 14,
-        "enable_image_frame": true,
-        "image_frame_color": "#ffffff",
-        "frame_border_radius": 0
-      }
+      ]
     },
     "faq": {
       "type": "st_faq-and-text",
+      "name": "Sternify - FAQ",
+      "settings": {
+        "section_background_color": "#FBF5EA",
+        "box_mode_enabled": false,
+        "border_radius": 14,
+        "background_color": "#FBF5EA",
+        "space_from_top": 60,
+        "space_from_bottom": 60,
+        "section_max_width": 1200,
+        "left_column_width": 35,
+        "accordion_behavior": true,
+        "layout_style": "simple",
+        "box_bg_color": "#FFFFFF",
+        "box_border_radius": 14,
+        "box_spacing": 15,
+        "heading_text": "Answers to your [important] questions",
+        "title_font": "poppins_n6",
+        "title_size": 36,
+        "mobile_title_size": 26,
+        "mobile_title_alignment": "center",
+        "title_line_height": 1.3,
+        "title_color": "#2A1B0E",
+        "highlight_color": "#C4832F",
+        "show_social_proof": true,
+        "social_proof_visibility": "both",
+        "social_image_1_demo_url": "https://cdn.shopify.com/s/files/1/0707/3549/5417/files/goodboy-ugc-01-paw-for-treat.jpg",
+        "social_image_2_demo_url": "https://cdn.shopify.com/s/files/1/0707/3549/5417/files/goodboy-ugc-02-kitchen-perfect-sit.jpg",
+        "social_image_3_demo_url": "https://cdn.shopify.com/s/files/1/0707/3549/5417/files/goodboy-ugc-03-park-bench-pov.jpg",
+        "social_image_size": 50,
+        "social_text": "Trusted by 9,400+ dog households",
+        "text_font": "poppins_n4",
+        "social_text_size": 14,
+        "social_text_color": "#7A6A55",
+        "question_font": "poppins_n5",
+        "question_size": 18,
+        "mobile_question_size": 16,
+        "question_padding": 20,
+        "question_color": "#2A1B0E",
+        "icon_color": "#C4832F",
+        "icon_size": 16,
+        "answer_font": "poppins_n4",
+        "answer_size": 16,
+        "mobile_answer_size": 14,
+        "answer_line_height": 1.6,
+        "answer_color": "#6B5B47",
+        "divider_color": "#E3D2B8"
+      },
       "blocks": {
         "q1": {
           "type": "faq_item",
@@ -1834,57 +1504,7 @@
         "q3",
         "q4",
         "q5"
-      ],
-      "name": "Sternify - FAQ",
-      "settings": {
-        "space_from_top": 60,
-        "space_from_bottom": 60,
-        "section_background_color": "#fbf5ea",
-        "full_width": false,
-        "section_max_width": 1200,
-        "left_column_width": 35,
-        "accordion_behavior": true,
-        "box_mode_enabled": false,
-        "background_color": "#fbf5ea",
-        "border_radius": 14,
-        "layout_style": "simple",
-        "box_bg_color": "#ffffff",
-        "box_border_radius": 14,
-        "box_spacing": 15,
-        "heading_text": "Answers to your [important] questions",
-        "title_font": "poppins_n6",
-        "title_size": 36,
-        "mobile_title_size": 26,
-        "mobile_title_alignment": "center",
-        "title_line_height": 1.3,
-        "title_color": "#2a1b0e",
-        "highlight_mode": "solid",
-        "highlight_color": "#c4832f",
-        "highlight_gradient": "linear-gradient(0deg, rgba(247, 222, 94, 1), rgba(219, 189, 33, 1) 100%)",
-        "show_social_proof": true,
-        "social_proof_visibility": "both",
-        "social_image_1_demo_url": "https://cdn.shopify.com/s/files/1/0707/3549/5417/files/goodboy-ugc-01-paw-for-treat.jpg",
-        "social_image_2_demo_url": "https://cdn.shopify.com/s/files/1/0707/3549/5417/files/goodboy-ugc-02-kitchen-perfect-sit.jpg",
-        "social_image_3_demo_url": "https://cdn.shopify.com/s/files/1/0707/3549/5417/files/goodboy-ugc-03-park-bench-pov.jpg",
-        "social_image_size": 50,
-        "social_text": "Trusted by 9,400+ dog households",
-        "text_font": "poppins_n4",
-        "social_text_size": 14,
-        "social_text_color": "#7a6a55",
-        "question_font": "poppins_n5",
-        "question_size": 18,
-        "mobile_question_size": 16,
-        "question_padding": 20,
-        "question_color": "#2a1b0e",
-        "icon_color": "#c4832f",
-        "icon_size": 16,
-        "answer_font": "poppins_n4",
-        "answer_size": 16,
-        "mobile_answer_size": 14,
-        "answer_line_height": 1.6,
-        "answer_color": "#6b5b47",
-        "divider_color": "#e3d2b8"
-      }
+      ]
     },
     "related_products": {
       "type": "st_related-products",
@@ -1892,32 +1512,27 @@
       "settings": {
         "margin_top": 50,
         "margin_bottom": 50,
-        "section_background_color": "rgba(0,0,0,0)",
         "full_width": true,
         "max_width": 1400,
-        "desktop_card_layout": true,
-        "section_bg_color": "#ffffff",
+        "section_bg_color": "#FFFFFF",
         "product_source": "api",
-        "collection": "",
         "product_order": "default",
         "product_limit": 4,
         "header_font": "poppins_n6",
         "section_title": "More for your [good boy]",
-        "header_title_highlight_mode": "solid",
-        "header_title_highlight_color": "#c4832f",
-        "header_title_highlight_gradient": "linear-gradient(0deg, rgba(247, 222, 94, 1), rgba(219, 189, 33, 1) 100%)",
-        "header_color": "#2a1b0e",
+        "header_title_highlight_color": "#C4832F",
+        "header_color": "#2A1B0E",
         "header_fontsize_desktop": 36,
         "header_fontsize_mobile": 26,
         "show_subtitle": true,
         "section_subtitle_font": "poppins_n4",
         "section_subtitle": "The rest of the routine, in the same tin size.",
-        "section_subtitle_color": "#7a6a55",
+        "section_subtitle_color": "#7A6A55",
         "section_subtitle_fontsize_desktop": 18,
         "section_subtitle_fontsize_mobile": 14,
         "card_style": "text_card",
-        "card_bg_color": "#fbf5ea",
-        "card_border_color": "#ebdcc2",
+        "card_bg_color": "#FBF5EA",
+        "card_border_color": "#EBDCC2",
         "mobile_card_size": 280,
         "enable_card_hover_lift": true,
         "product_gap": 20,
@@ -1925,22 +1540,20 @@
         "product_info_alignment": "left",
         "product_title_font": "poppins_n5",
         "product_title_fontsize": 16,
-        "product_title_color": "#2a1b0e",
+        "product_title_color": "#2A1B0E",
         "product_price_font": "poppins_n4",
         "product_price_fontsize": 14,
-        "product_price_color": "#7a6a55",
+        "product_price_color": "#7A6A55",
         "enable_sale_badge": true,
         "badge_text": "Save",
-        "badge_show_amount_in_euro": false,
         "badge_text_size": 10,
-        "badge_text_color": "#ffffff",
+        "badge_text_color": "#FFFFFF",
         "enable_badge_gradient": false,
-        "badge_gradient": "linear-gradient(220deg, rgba(0, 0, 0, 1), rgba(219, 193, 9, 1) 100%)",
-        "badge_bg_color": "#5b3a21",
+        "badge_bg_color": "#5B3A21",
         "badge_border_radius": 6,
-        "nav_arrow_color": "#5b3a21",
+        "nav_arrow_color": "#5B3A21",
         "enable_nav_arrow_background": false,
-        "nav_arrow_bg_color": "#ffffff"
+        "nav_arrow_bg_color": "#FFFFFF"
       }
     },
     "reviews_list": {
@@ -1949,7 +1562,6 @@
         "review_widget": {
           "type": "shopify://apps/sternify/blocks/review_widget/fcc6e879-7d9e-4924-b387-68cfab68cec6",
           "settings": {
-            "advanced_settings": false,
             "show_all_products": false,
             "product": "{{product}}"
           }
@@ -1958,30 +1570,78 @@
       "block_order": [
         "review_widget"
       ],
+      "settings": {}
+    },
+    "image_benefits": {
+      "type": "st_image-with-benefits",
+      "name": "Sternify - Benefits",
       "settings": {
-        "color_text": "",
-        "color_background": "",
-        "gradient_background": "",
-        "color_highlight": "",
-        "gradient_highlight": "",
-        "color_button_text": "",
-        "color_button_background": "",
-        "color_button_gradient": "",
-        "padding_top": 72,
-        "padding_bottom": 72,
-        "divider": false,
-        "full_width": false,
-        "rounded": false
-      }
+        "margin_top": 40,
+        "margin_bottom": 40,
+        "main_image_demo_url": "https://cdn.shopify.com/s/files/1/0707/3549/5417/files/goodboy-bundle-1er.png",
+        "headline_text": "Inside the tin",
+        "max_block_width": 1400,
+        "font_settings": "poppins_n4",
+        "headline_font": "poppins_n6",
+        "headline_text_size": 44,
+        "headline_text_color": "#2A1B0E",
+        "benefit_title_color": "#2A1B0E",
+        "benefit_text_color": "#6B5B47",
+        "icon_size_desktop": 44,
+        "icon_size_mobile": 32
+      },
+      "blocks": {
+        "b1": {
+          "type": "benefit",
+          "settings": {
+            "benefit_title": "Treat First",
+            "benefit_text": "<p>A soft chew they take from the hand, which is the only reason a daily supplement actually gets eaten.</p>"
+          }
+        },
+        "b2": {
+          "type": "benefit",
+          "settings": {
+            "benefit_title": "Two Actives",
+            "benefit_text": "<p>Probiotics and pumpkin. Two things doing the work, with nothing padding out the label.</p>"
+          }
+        },
+        "b3": {
+          "type": "benefit",
+          "settings": {
+            "benefit_title": "60 Chews, 30 Days",
+            "benefit_text": "<p>Two a day, one tin a month. The routine fits the tin rather than the other way around.</p>"
+          }
+        },
+        "b4": {
+          "type": "benefit",
+          "settings": {
+            "benefit_title": "Puppies To Giants",
+            "benefit_text": "<p>The same chew suits a spaniel and a bernese, so multi-dog households buy one tin, not three.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "b1",
+        "b2",
+        "b3",
+        "b4"
+      ]
     },
     "footer": {
       "type": "st_footer",
+      "name": "Sternify - Footer",
+      "settings": {
+        "margin_top": 50,
+        "full_width": true,
+        "max_width": 1400,
+        "section_bg_color": "#3A2413"
+      },
       "blocks": {
         "newsletter": {
           "type": "newsletter",
           "settings": {
             "newsletter_br": true,
-            "newsletter_border_color": "#5b3a21",
+            "newsletter_border_color": "#5B3A21",
             "title": "Good things for good dogs",
             "show_description": true,
             "description": "Restock reminders timed to your tin, plus new formulas before they go live. No spam, unsubscribe any time.",
@@ -1992,21 +1652,19 @@
             "title_font": "poppins_n6",
             "title_size": 28,
             "mobile_title_size": 22,
-            "title_color": "#ffffff",
+            "title_color": "#FFFFFF",
             "description_font": "poppins_n4",
             "description_size": 15,
             "mobile_description_size": 13,
-            "description_color": "#b8a488",
+            "description_color": "#B8A488",
             "input_bg_color": "rgba(0,0,0,0)",
-            "input_text_color": "#ffffff",
-            "input_placeholder_color": "#b8a488",
-            "input_border_color": "#d89b4a",
+            "input_text_color": "#FFFFFF",
+            "input_placeholder_color": "#B8A488",
+            "input_border_color": "#D89B4A",
             "form_border_radius": 8,
-            "button_bg_color": "#d89b4a",
-            "button_text_color": "#2a1b0e",
+            "button_bg_color": "#D89B4A",
+            "button_text_color": "#2A1B0E",
             "enable_button_hover": false,
-            "button_hover_bg_color": "#333333",
-            "button_hover_text_color": "#ffffff",
             "newsletter_form_success_title": "Thanks for subscribing!",
             "newsletter_form_success_subtitle": "Please check your email to confirm your subscription."
           }
@@ -2015,22 +1673,20 @@
           "type": "shop_detail",
           "settings": {
             "show_logo": false,
-            "logo_demo_url": "https://cdn.shopify.com/s/files/1/0892/7533/4981/files/Group_2085663205.png?v=1759141634",
             "logo_width": 160,
             "description": "<p>Supplements built as treats first, so the tin actually gets finished.<br/><br/></p><p>Premium brand from Germany 🇩🇪</p>",
             "description_font": "poppins_n4",
             "description_size": 14,
             "mobile_description_size": 13,
-            "description_color": "#b8a488",
+            "description_color": "#B8A488",
             "show_support_badge": true,
-            "support_badge_avatar_demo_url": "https://cdn.shopify.com/s/files/1/0892/7533/4981/files/Generated_Image_September_30_2025_-_12_01PM.png?v=1759226532",
             "support_badge_text": "<strong>Questions?</strong> Our team replies within a few hours.",
             "support_badge_avatar_size": 34,
-            "support_badge_bg_color": "#d89b4a",
+            "support_badge_bg_color": "#D89B4A",
             "support_badge_text_font": "poppins_n5",
             "support_badge_text_size": 12,
             "mobile_support_badge_text_size": 11,
-            "support_badge_text_color": "#2a1b0e",
+            "support_badge_text_color": "#2A1B0E",
             "enable_badge_link": true,
             "badge_link_url": ""
           }
@@ -2043,14 +1699,14 @@
             "title_font": "poppins_n6",
             "title_size": 18,
             "mobile_title_size": 16,
-            "title_color": "#efc488",
+            "title_color": "#EFC488",
             "link_font": "poppins_n4",
             "link_size": 14,
             "mobile_link_size": 13,
-            "link_color": "#b8a488",
-            "link_hover_color": "#ffffff",
+            "link_color": "#B8A488",
+            "link_hover_color": "#FFFFFF",
             "mobile_bottom_border": true,
-            "mobile_border_color": "#5b3a21"
+            "mobile_border_color": "#5B3A21"
           }
         },
         "important_links": {
@@ -2061,37 +1717,32 @@
             "title_font": "poppins_n6",
             "title_size": 18,
             "mobile_title_size": 16,
-            "title_color": "#efc488",
+            "title_color": "#EFC488",
             "link_font": "poppins_n4",
             "link_size": 14,
             "mobile_link_size": 13,
-            "link_color": "#b8a488",
-            "link_hover_color": "#ffffff",
+            "link_color": "#B8A488",
+            "link_hover_color": "#FFFFFF",
             "mobile_bottom_border": true,
-            "mobile_border_color": "#5b3a21"
+            "mobile_border_color": "#5B3A21"
           }
         },
         "social_media": {
           "type": "social_media",
           "settings": {
             "title": "Follow us",
-            "facebook_url": "shopify://collections",
-            "instagram_url": "shopify://collections",
-            "youtube_url": "shopify://collections",
-            "tiktok_url": "shopify://collections",
-            "twitter_url": "",
             "title_font": "poppins_n6",
             "title_size": 18,
             "mobile_title_size": 16,
-            "title_color": "#efc488",
+            "title_color": "#EFC488",
             "icon_size": 40,
             "icon_gap": 10,
             "enable_hover_effects": true,
             "enable_transparent_bg": true,
-            "icon_bg_color": "#5b3a21",
-            "icon_hover_bg_color": "#d89b4a",
-            "icon_color": "#ffffff",
-            "icon_hover_color": "#2a1b0e",
+            "icon_bg_color": "#5B3A21",
+            "icon_hover_bg_color": "#D89B4A",
+            "icon_color": "#FFFFFF",
+            "icon_hover_color": "#2A1B0E",
             "icon_border_radius": 10
           }
         },
@@ -2102,14 +1753,10 @@
             "copyright_text": "Copyright © Sternify 2026",
             "show_payment_methods": true,
             "show_default_icons": true,
-            "custom_icon_1_demo_url": "",
-            "custom_icon_2_demo_url": "",
-            "custom_icon_3_demo_url": "",
-            "custom_icon_4_demo_url": "",
             "text_font": "poppins_n4",
             "text_size": 12,
             "mobile_text_size": 11,
-            "text_color": "#9c8a72",
+            "text_color": "#9C8A72",
             "icon_width": 45,
             "icon_height": 32
           }
@@ -2122,15 +1769,7 @@
         "important_links",
         "social_media",
         "footer_bar"
-      ],
-      "name": "Sternify - Footer",
-      "settings": {
-        "margin_top": 50,
-        "section_background_color": "rgba(0,0,0,0)",
-        "full_width": true,
-        "max_width": 1400,
-        "section_bg_color": "#3a2413"
-      }
+      ]
     }
   },
   "order": [
